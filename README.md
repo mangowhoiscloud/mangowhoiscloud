@@ -13,7 +13,7 @@
   - Role: Cloud Storage Dev
   - Duration: 2024.12 - 2025.03
 - 👨🏻‍⚖️ [Aimo (App)] (https://github.com/KTB16Team)
-  - Role: Backend
+  - Role: Back-end
   - Duration: 2024.10 ~ 2024.11
 - ☘️ [Dream (App)](https://github.com/KakaoTech-Hackathon-Dream)
   - Role: DevOps 
