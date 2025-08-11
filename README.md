@@ -19,7 +19,7 @@
   - Role: DevOps 
   - Duration: 2024.09.04 - 2024.09.07
 - 🦭 [Harpsharp (Web, MSA-style)](https://github.com/2024KBC10/HarpSharp_SERVER)
-  - Role: DevOps, Back-end
+  - Role: Back-end, DevOps
   - Duration: 2024.07.17 - 2024.09.02
 - 🐟 [Fisher Market, built on ERC-1155](https://github.com/mng990/ethereum_FisheriesMarket)
   - Role: Back-end
