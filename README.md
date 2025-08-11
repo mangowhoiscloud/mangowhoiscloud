@@ -6,6 +6,15 @@
 ----
 
 #### Projects
+- 🪣 [Rakuten OStore v1.0.0](https://github.com/orgs/RobinSystems/repositories)
+  - Role: Cloud Storage Dev
+  - Duration: 2025.03 - 2025.04
+- 🐳 [Robin Storage v5.5.0](https://github.com/orgs/RobinSystems/repositories)
+  - Role: Cloud Storage Dev
+  - Duration: 2024.12 - 2025.03
+- 👨🏻‍⚖️ [Aimo (App)] (https://github.com/KTB16Team)
+  - Role: Backend
+  - Duration: 2024.10 ~ 2024.11
 - ☘️ [Dream (App)](https://github.com/KakaoTech-Hackathon-Dream)
   - Role: DevOps 
   - Duration: 2024.09.04 ~ 2024.09.07
@@ -20,12 +29,12 @@
 
 #### Organization
 - KaKao-Tech Bootcamp  
-  Duration: 2024.07 ~ 2024.11.18
+  - Duration: 2024.07 ~ 2024.11.18
 - Rakuten Symphony Korea  
-  Duration: 2024.12.09
+  - Duration: 2024.12.09
   
 #### Education
 - Pusan National Univalsity, Computer Science & Engineering
-  Duration: 2017.03 ~ 2023.08
+  - Duration: 2017.03 ~ 2023.08
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=footer)
