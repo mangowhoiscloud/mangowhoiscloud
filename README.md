@@ -29,7 +29,7 @@
 
 #### Organization
 - Rakuten Symphony Korea
-  - Cloud Engineer
+  - Role: Cloud Engineer
   - Duration: 2024.12.09
 - KaKao-Tech Bootcamp  
   - Duration: 2024.07 ~ 2024.11.18
