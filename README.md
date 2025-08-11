@@ -30,12 +30,12 @@
 #### Organization
 - Rakuten Symphony Korea
   - Role: Cloud Engineer
-  - Duration: 2024.12.09
+  - Duration: 2024.12.09 - 2025.08.31
 - KaKao-Tech Bootcamp  
-  - Duration: 2024.07 ~ 2024.11.18
+  - Duration: 2024.07 - 2024.11.18
   
 #### Education
 - Pusan National Univalsity, Computer Science & Engineering
-  - Duration: 2017.03 ~ 2023.08
+  - Duration: 2017.03 - 2023.08
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=footer)
