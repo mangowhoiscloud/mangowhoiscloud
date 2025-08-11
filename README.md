@@ -14,16 +14,16 @@
   - Duration: 2024.12 - 2025.03
 - 👨🏻‍⚖️ [Aimo (App)](https://github.com/KTB16Team)
   - Role: Back-end
-  - Duration: 2024.10 ~ 2024.11
+  - Duration: 2024.10 - 2024.11
 - ☘️ [Dream (App)](https://github.com/KakaoTech-Hackathon-Dream)
   - Role: DevOps 
-  - Duration: 2024.09.04 ~ 2024.09.07
+  - Duration: 2024.09.04 - 2024.09.07
 - 🦭 [Harpsharp (Web, MSA-style)](https://github.com/2024KBC10/HarpSharp_SERVER)
   - Role: DevOps, Back-end
-  - Duration: 2024.07.17 ~ 2024.09.02
+  - Duration: 2024.07.17 - 2024.09.02
 - 🐟 [Fisher Market, built on ERC-1155](https://github.com/mng990/ethereum_FisheriesMarket)
   - Role: Back-end
-  - Duration: 2022.03.16 ~ 2022.11.14
+  - Duration: 2022.03.16 - 2022.11.14
  
 ----
 
