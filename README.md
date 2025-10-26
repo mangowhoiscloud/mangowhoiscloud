@@ -6,7 +6,7 @@
 ----
 
 #### Projects
-- 🐳 [Robin Storage v5.5.0](https://github.com/RobinSystems)
+- 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Role: Cloud Storage Dev
   - Duration: 2024.12.09 - 2025.08.31
 - 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
