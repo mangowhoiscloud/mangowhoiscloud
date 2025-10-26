@@ -6,12 +6,12 @@
 ----
 
 #### Projects
-- 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
-  - Role: Cloud Storage Dev
-  - Duration: 2025.03 - 2025.05
 - 🐳 [Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Role: Cloud Storage Dev
-  - Duration: 2024.12 - 2025.08
+  - Duration: 2024.12.09 - 2025.08.31
+- 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
+  - Role: Cloud Storage Dev
+  - Duration: 2025.03.03 - 2025.05.31
 - 👨🏻‍⚖️ [Aimo (App)](https://github.com/KTB16Team)
   - Role: Back-end
   - Duration: 2024.10 - 2024.11
