@@ -38,7 +38,8 @@
   - Duration: 2024.07 - 2024.11.18
   
 #### Education
-- Pusan National Univalsity, Bachelor of Computer Science & Engineering
+- Pusan National Univalsity
+  - Bachelor of Computer Science & Engineering
   - Duration: 2017.03 - 2023.08
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=footer)
