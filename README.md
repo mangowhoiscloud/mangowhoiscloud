@@ -6,6 +6,9 @@
 ----
 
 #### Projects
+- [SeSACTHON: RAG, GEN AI 기반 재활용 분류 및 캐릭터 생성 앱](https://github.com/SeSACTHON/backend)
+  - Role: Backend, DevOps
+  - Duration: 2025.10.30 - Present
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Role: Cloud Storage Dev
   - Duration: 2024.12.09 - 2025.08.31
@@ -13,16 +16,16 @@
   - Role: Cloud Storage Dev
   - Duration: 2025.03.03 - 2025.05.31
 - 👨🏻‍⚖️ [Aimo (App)](https://github.com/KTB16Team)
-  - Role: Back-end
+  - Role: Backend
   - Duration: 2024.10 - 2024.11
 - ☘️ [Dream (App)](https://github.com/KakaoTech-Hackathon-Dream)
   - Role: DevOps 
   - Duration: 2024.09.04 - 2024.09.07
 - 🦭 [Harpsharp (Web, MSA-style)](https://github.com/2024KBC10/HarpSharp_SERVER)
-  - Role: Back-end, DevOps
+  - Role: Backend, DevOps
   - Duration: 2024.07.17 - 2024.09.02
 - 🐟 [Fisher Market, built on ERC-1155](https://github.com/mng990/ethereum_FisheriesMarket)
-  - Role: Back-end
+  - Role: Backend
   - Duration: 2022.03.16 - 2022.11.14
  
 ----
