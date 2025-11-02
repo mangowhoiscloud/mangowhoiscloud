@@ -9,12 +9,12 @@
 - ♻️ [SeSACTHON: RAG/LLM 기반 재활용 분류 및 캐릭터 생성 앱](https://github.com/SeSACTHON/backend)
   - Role: Backend, DevOps
   - Duration: 2025.10.30 - Present
-- 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
-  - Role: Cloud Storage Dev
-  - Duration: 2024.12.09 - 2025.08.31
 - 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
   - Role: Cloud Storage Dev
   - Duration: 2025.03.03 - 2025.05.31
+- 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
+  - Role: Cloud Storage Dev
+  - Duration: 2024.12.09 - 2025.08.31
 - 👨🏻‍⚖️ [Aimo (App)](https://github.com/KTB16Team)
   - Role: Backend
   - Duration: 2024.10 - 2024.11
