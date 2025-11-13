@@ -42,4 +42,12 @@
   - Bachelor of Computer Science & Engineering
   - Duration: 2017.03 - 2023.08
 
+### Certification
+- OPIc IH
+- Engineer Information Processing
+
+### Language
+- Korean (Native)
+- English (Professional Proficiently)
+
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=footer)
