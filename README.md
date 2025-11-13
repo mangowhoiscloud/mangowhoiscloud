@@ -10,18 +10,18 @@
   - Role: Backend, DevOps
   - Duration: 2025.10.30 - Present
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
-  - Role: Cloud Storage Dev
+  - Role: Jr.Cloud Storage Dev
   - Duration: 2024.12.09 - 2025.08.31
 - 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
-  - Role: Cloud Storage Dev
+  - Role: Jr.Cloud Storage Dev
   - Duration: 2025.03.03 - 2025.05.31
-- 👨🏻‍⚖️ [Aimo (App)](https://github.com/KTB16Team)
+- 👨🏻‍⚖️ [Aimo (App, LLM)](https://github.com/KTB16Team)
   - Role: Backend
   - Duration: 2024.10 - 2024.11
-- ☘️ [Dream (App)](https://github.com/KakaoTech-Hackathon-Dream)
+- ☘️ [Dream (App, LLM, RAG)](https://github.com/KakaoTech-Hackathon-Dream)
   - Role: DevOps 
   - Duration: 2024.09.04 - 2024.09.07
-- 🦭 [Harpsharp (Web, MSA-style)](https://github.com/2024KBC10/HarpSharp_SERVER)
+- 🦭 [Harpsharp (Web, MSA-style)]
   - Role: Backend, DevOps
   - Duration: 2024.07.17 - 2024.09.02
 - 🐟 [Fisher Market, built on ERC-1155](https://github.com/mng990/ethereum_FisheriesMarket)
@@ -32,7 +32,7 @@
 
 #### Organization
 - Rakuten Symphony Korea
-  - Role: Cloud Engineer - Jr. Storage Dev
+  - Role: Cloud Engineer (Jr. Storage Dev)
   - Duration: 2024.12.09 - 2025.08.31
 - KaKao-Tech Bootcamp  
   - Duration: 2024.07 - 2024.11.18
