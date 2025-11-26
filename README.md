@@ -9,7 +9,7 @@
 - ♻️ [이코에코(Eco²): RAG/LLM 기반 재활용 분류 및 캐릭터 생성 앱](https://github.com/SeSACTHON/backend)
   - Role: Backend, DevOps
   - Duration: 2025.10.30 - Present
-  - Status: 6th/181로 2025 새싹톤 본선 진출 확정, 본선은 12.02 예정 
+  - Status: 6th / 181로 2025 새싹톤 본선 진출 확정, 본선은 12.02 예정 
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Role: Jr.Cloud Storage Dev
   - Duration: 2024.12.09 - 2025.08.31
