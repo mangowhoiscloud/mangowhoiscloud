@@ -7,7 +7,7 @@
 
 #### Projects
 - ♻️ [이코에코(Eco²): RAG/LLM 기반 재활용 분류 및 캐릭터 생성 앱](https://github.com/SeSACTHON/backend)
-  - Role: Backend, DevOps
+  - Role: Backend, Infrastructure
   - Duration: 2025.10.30 - 2025.12.02
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
