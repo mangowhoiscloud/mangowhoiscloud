@@ -16,7 +16,7 @@
   - Duration: 2024.12.09 - 2025.08.31
 - 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
   - Job Title: Cloud Engineer, Full-time
-  - Role: Jr. Cloud Storage Dev, Full-time
+  - Role: Jr. Cloud Storage Dev
   - Duration: 2025.03.03 - 2025.05.31
 - 👨🏻‍⚖️ [Aimo (App, LLM)](https://github.com/KTB16Team)
   - Role: Backend
