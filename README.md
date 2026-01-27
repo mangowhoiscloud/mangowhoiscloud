@@ -11,10 +11,12 @@
   - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - Present (Advancement)
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
+  - Org: Rakuten Symphony
   - Job Title: Cloud Engineer, Full-time
   - Role: Jr. Cloud Storage Dev
   - Duration: 2024.12.09 - 2025.08.31
 - 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
+  - Org: Rakuten Symphony
   - Job Title: Cloud Engineer, Full-time
   - Role: Jr. Cloud Storage Dev
   - Duration: 2025.03.03 - 2025.05.31
