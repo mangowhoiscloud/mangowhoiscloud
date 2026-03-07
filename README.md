@@ -7,7 +7,7 @@
 
 #### Projects
 - ♻️ [이코에코(Eco²): LangGraph/Retrieval 기반 분리배출 에이전트(Web/App)](https://github.com/SeSACTHON/backend)
-  - Role: Backend, Infrastructure
+  - Role: Backend, Infrastructure, Harness(Workflow + Chat Agent Harness FE/BE)
   - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - Present (Advancement)
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
