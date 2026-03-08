@@ -10,12 +10,9 @@
   - Role: Backend, Infrastructure, Harness (E2E Workflow + Chat Agent Harness FE/BE)
   - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - 2026.02.26 (Advancement)
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
-- 🌍 [GEODE v6.0: Undervalued IP Discovery Agent (CLI, LangGraph Multi-Agent)](https://github.com/mangowhoiscloud/geode)
+- 💎 [GEODE: Undervalued IP Discovery Agent (CLI, LangGraph Multi-Agent)](https://github.com/mangowhoiscloud/geode)
   - Role: Harness (Pipeline Design, Prompt Engineering, Evaluation)
-  - Stack: Python, LangGraph, Claude API, CLI (uv + Typer)
-- ⚖️ [LLMART: Game Selection & Value Inference Pipeline (CLI, LLM-as-Judge)](https://github.com/mangowhoiscloud/llmart)
-  - Role: Harness (Evaluation Framework, Judge Prompt Design)
-  - Stack: Python, LLM-as-Judge, CLI (uv)
+  - Stack: Python, LangGraph, Multi-LLM SDK, CLI (uv + Typer)
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Org: Rakuten Symphony
   - Job Title: Cloud Engineer, Full-time
