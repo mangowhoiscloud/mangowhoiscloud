@@ -11,7 +11,7 @@
   - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - 2026.02.26 (Advancement)
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
 - 💎 [GEODE: Undervalued IP Discovery Agent (CLI, LangGraph Multi-Agent)](https://github.com/mangowhoiscloud/geode)
-  - Role: Harness (Pipeline Design, Implement, Prompt Engineering, Evaluation)
+  - Role: Harness (StateGraph Design, Implement, Prompt Engineering, Evaluation)
   - Stack: LangGraph, Multi-LLM SDK, CLI (uv + Typer)
 - 🛒 [LLMART — Game Selection & Value Inference Pipeline (CLI, LambdaMART + LLM-as-Judge)](https://github.com/mangowhoiscloud/llmart)
   - Role: Harness (Pipeline Design, Implement)
