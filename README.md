@@ -13,6 +13,7 @@
 - 💎 [GEODE: Undervalued IP Discovery Agent (CLI, LangGraph Multi-Agent)](https://github.com/mangowhoiscloud/geode)
   - Role: Harness (Intent-Driven, Orchestration, Evaluation, Tool-Registry/Tool-Use)
   - Stack: LangGraph, Multi-LLM SDK, CLI (uv + Typer)
+  - Duration: 2026.02 - 2026.03
 - 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
   - Org: Rakuten Symphony
   - Job Title: Cloud Engineer, Full-time
