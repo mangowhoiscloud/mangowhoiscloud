@@ -10,7 +10,7 @@
   - Role: Backend, Infrastructure, Harness (E2E Workflow + Chat Agent Harness FE/BE)
   - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - 2026.02.26 (Advancement)
   - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
-- 💎 [GEODE: 게임 IP 도메인 자율 실행 하네스 (CLI, LangGraph Multi-Agent)](https://github.com/mangowhoiscloud/geode)
+- 💎 [GEODE: 자율 실행 하네스 (CLI, Agentic Loop, Additional Plug-In DAGs)](https://github.com/mangowhoiscloud/geode)
   - Role: Harness (Intent-Driven, Orchestration, Evaluation, Tool-Registry/Tool-Use)
   - Stack: LangGraph, Multi-LLM SDK, CLI (uv + Typer)
   - Duration: 2026.02 (Research & Design) - 2026.03 (Implement & Develop)
