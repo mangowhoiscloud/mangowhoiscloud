@@ -1,7 +1,8 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
-  Loop-driven developer. 설계하고, 만들고, 측정하고, 부수고, 다시 만든다.
+  Loop-driven developer.<br/>
+  동작하는 코드를 부수고 더 나은 구조로 재조립하는 과정 자체가 설계 방법론.
 </p>
 
 <p align="center">
@@ -23,7 +24,8 @@
 
 ### Loop
 
-매 프로젝트마다 같은 루프를 돌린다. 한 바퀴가 끝나면 더 단단해진 버전으로 다음 바퀴를 시작한다.
+완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓는 루프.
+프로젝트가 바뀌어도 이 사이클은 동일하게 반복된다.
 
 ```
 Plan → Build → Measure → Break → Rebuild → Share → (repeat)
@@ -31,9 +33,9 @@ Plan → Build → Measure → Break → Rebuild → Share → (repeat)
 
 | Project | Loop in Action |
 |---------|---------------|
-| **Eco²** | Sync(0%) → Celery(35%) → KEDA(86%) → Event Bus(97.8%) — 같은 문제를 4번 부수고 4번 다시 지었다 |
-| **GEODE** | 22일, 119 PR. Research→Implement→Verify→Merge를 하루 5회 이상 반복. 매 PR이 루프 한 바퀴 |
-| **REODE** | GEODE를 부수고 도메인을 뜯어내 범용 에이전트로 재조립. 루프의 다음 바퀴 |
+| **Eco²** | 완료율 0%의 Sync 구조에서 출발, Grafana/ELK 계측 결과를 근거로 아키텍처를 네 번 전환해 **VU 1,000 / 97.8%** 도달 |
+| **GEODE** | 22일간 119 PR. 하루 5회 이상 Research→Implement→Verify→Merge 사이클을 실행하며 35K LOC의 에이전트를 단독 구축 |
+| **REODE** | GEODE에서 도메인 레이어를 분리하고 PipelineTemplate Protocol로 재조립. 같은 인프라가 코드 마이그레이션 도메인에서 작동함을 실증 |
 
 ---
 
@@ -124,5 +126,5 @@ mangowhoiscloud/
 ---
 
 <p align="center">
-  <sub>루프를 돌릴수록 단단해진다.</sub>
+  <sub>매 바퀴마다 구조가 단단해지고, 그 과정 전체를 공개합니다.</sub>
 </p>
