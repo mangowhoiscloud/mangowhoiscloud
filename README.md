@@ -35,11 +35,11 @@
 
 Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다. 아래는 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
 
-**Eco².** 5인 팀 Solo Backend/Infra. LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 **VU 1,000 / 97.8%** 도달. Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**. 새싹톤 **4th/181**.
+- **Eco²** 5인 팀 Solo Backend/Infra. LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 **VU 1,000 / 97.8%** 도달. Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**. 새싹톤 **4th/181**.
 
-**GEODE.** Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 38 tools × 15 rounds 자율 실행. Hexagonal Architecture 30 Ports, 27-Event Hook Observer, PromptAssembler SHA-256 caching **90% 비용 절감**. 22일간 **119 PR, 35K LOC, 2,366+ tests**.
+- **GEODE** Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 38 tools × 15 rounds 자율 실행. Hexagonal Architecture 30 Ports, 27-Event Hook Observer, PromptAssembler SHA-256 caching **90% 비용 절감**. 22일간 **119 PR, 35K LOC, 2,366+ tests**.
 
-**REODE.** GEODE v0.12.0 fork. DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션 파이프라인 플러그인 등록. 동일 인프라가 도메인 교체 후에도 작동하며, 아키텍처의 도메인 무관성을 실증.
+- **REODE** GEODE v0.12.0 fork. DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션 파이프라인 플러그인 등록. 동일 인프라가 도메인 교체 후에도 작동하며, 아키텍처의 도메인 무관성을 실증.
 
 ---
 
