@@ -56,6 +56,23 @@ mangowhoiscloud/
 
 ---
 
+### Projects
+
+| Year | Project | Role | Link |
+|------|---------|------|------|
+| 2026 | **REODE** — Migration & Coding Core Agent @ Pinkx Lab | AI R&D Freelance | `private` |
+| 2026 | **GEODE** — 범용 자율 실행 에이전트, 35K LOC, 2,366+ tests | Solo Full-Stack | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026 | **LLMART** — CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
+| 2025 | **Eco²** — AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | Solo Backend & Infra | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025 | **Rakuten OStore v1.0.0** — PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
+| 2024 | **Rakuten Robin Storage v5.5.0** — 분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
+| 2024 | **Aimo** — LLM 기반 법률 상담 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
+| 2024 | **Dream** — LLM + RAG 기반 꿈 해석 앱 | DevOps | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
+| 2024 | **Musinsa Product API** — 상품 API 개발 과제 | Backend | [mng990/musinsa-test](https://github.com/mng990/musinsa-test) |
+| 2022 | **Fisher Market** — ERC-1155 기반 수산물 거래 DApp | Backend | [mng990/ethereum_FisheriesMarket](https://github.com/mng990/ethereum_FisheriesMarket) |
+
+---
+
 ### Stack
 
 **Lang** &nbsp;
