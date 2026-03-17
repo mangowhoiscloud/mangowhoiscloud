@@ -22,6 +22,18 @@
 
 ---
 
+### Harness Engineering
+
+Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부른다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트의 컨텍스트 전체를 제어한다. 같은 접근을 직접 실천한 사례들.
+
+**Eco²** — LangGraph Multi-Agent 하네스를 밑바닥부터 구축. Sync Thread Pool에서 시작해 Event Bus 3-Tier까지, Grafana/ELK 계측 결과가 아키텍처 전환의 유일한 근거였다. Auth 병목 48 RPS → Go gRPC 사이드카로 오프로드 → **1,477 RPS**. Swiss Cheese 3-Layer 평가 파이프라인에서 LLM 응답 품질 **69.4 → 99.8/100**.
+
+**GEODE** — 고정 DAG 파이프라인의 한계를 확인하고, Claude Code의 `while(tool_use)` 패턴을 참고해 AgenticLoop를 설계했다. 38 tools, 15 rounds 자율 실행. 도메인 파이프라인은 도구 중 하나로 재배치. PromptAssembler 6-Phase가 시스템 프롬프트를 SHA-256으로 고정해 Anthropic prompt caching 자동 활성화, 반복 호출 **90% 비용 절감**. `.claude/` 디렉토리에 CLAUDE.md(SOT) + skills/(12+) + rules/ + worktrees/를 배치하고, 이 구조 위에서 22일간 **119 PR**을 실행했다.
+
+**REODE** — GEODE를 포크한 뒤 GameIP 도메인을 전부 제거하고, DomainPort를 PipelineTemplate Protocol로 교체했다. `register_domain()`으로 코드 마이그레이션 파이프라인을 플러그인 등록. 동일한 AgenticLoop · Hook · Memory · Verification 인프라가 도메인 교체 후에도 그대로 작동한다.
+
+---
+
 ### Loop
 
 완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓는 루프.
@@ -52,7 +64,7 @@ mangowhoiscloud/
 ├── 2024.12-2025.08/  Rakuten Symphony Korea
 │   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
 │
-├── 2025.10-2026.02/  Eco² (Solo Backend & Infra)
+├── 2025.10-2026.02/  Eco² (5인 팀 Solo Backend & Infra)
 │   └── AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181
 │
 ├── 2026.02-present/  GEODE (Solo)
@@ -71,7 +83,7 @@ mangowhoiscloud/
 | 2026 | **REODE** — Migration & Coding Core Agent @ Pinkx Lab | AI R&D Freelance | `private` |
 | 2026 | **GEODE** — 범용 자율 실행 에이전트, 35K LOC, 2,366+ tests | Solo Full-Stack | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026 | **LLMART** — CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
-| 2025 | **Eco²** — AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | Solo Backend & Infra | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025 | **Eco²** — AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | 5인 팀 Solo Backend & Infra | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2025 | **Rakuten OStore v1.0.0** — PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024 | **Rakuten Robin Storage v5.5.0** — 분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024 | **Aimo** — LLM 기반 법률 상담 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
