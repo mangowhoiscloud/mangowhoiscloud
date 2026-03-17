@@ -34,8 +34,9 @@
 | **검증 파이프라인** | 비결정론적 출력을 신뢰할 수 있는 수준으로 수렴 | Eco² Swiss Cheese 3-Layer(69.4 → 99.8/100), GEODE 5-Layer Verification |
 | **관측** | 위 세 가지가 실제로 작동하는지 측정하는 계측 | Eco² 4-Pillar Observability, GEODE 27-Event Hook Observer |
 
-Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다. 
-아래는 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
+Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다.<br>
+Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다.<br>
+아래는 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 실천과 시행착오를 반복해 온 기록입니다.<br>
 
 - **Eco²**: 5인 팀 내 Backend/Infra에서 출발해 Chat-based Harness를 포함한 E2E Product Engineering까지. LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 **VU 1,000 / 97.8%** 도달. Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**
 
