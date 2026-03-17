@@ -1,59 +1,105 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=header&text=mango&fontColor=f5f5f2&fontSize=90)
+<h1 align="center">류지환 (Jihwan Ryu)</h1>
 
-[![Solved.ac프로필](http://mazassumnida.wtf/api/v2/generate_badge?boj=mng051)](https://solved.ac/mng051)
-<img src="http://mazandi.herokuapp.com/api?handle=mng051&theme=warm"/>
+<p align="center">
+  Loop-driven developer. 설계하고, 만들고, 측정하고, 부수고, 다시 만든다.
+</p>
 
-----
+<p align="center">
+  <a href="https://www.youtube.com/@mango_fr">
+    <img src="https://img.shields.io/badge/YouTube-@mango__fr-FF0000?style=flat-square&logo=youtube&logoColor=white" />
+  </a>
+  <a href="https://rooftopsnow.tistory.com">
+    <img src="https://img.shields.io/badge/Blog-mango__fr_개발기-FF5722?style=flat-square&logo=tistory&logoColor=white" />
+  </a>
+  <a href="https://linkedin.com/in/jihwan-ryu-b6b04a202">
+    <img src="https://img.shields.io/badge/LinkedIn-Jihwan_Ryu-0A66C2?style=flat-square&logo=linkedin&logoColor=white" />
+  </a>
+  <a href="https://github.com/mng990">
+    <img src="https://img.shields.io/badge/prev-mng990-181717?style=flat-square&logo=github&logoColor=white" />
+  </a>
+</p>
 
-#### Projects
-- ♻️ [이코에코(Eco²): LangGraph 기반 분리배출 멀티 에이전트(Web/App)](https://github.com/SeSACTHON/backend)
-  - Role: Backend, Infrastructure, Harness (E2E Workflow + Chat Agent Harness FE/BE)
-  - Duration: 2025.10.30 - 2025.12.02(MVP), 2025.12.05 - 2026.02.26 (Advancement)
-  - Prize: 2025 AI 새싹톤 우수상 🏆 (TOP 4 of 181 teams, 서울시 주최, DACON 운영)
-- 💎 [GEODE: 자율 실행 하네스 (CLI, Agentic Loop, Additional Plug-In DAGs)](https://github.com/mangowhoiscloud/geode)
-  - Role: Harness (Intent-Driven, Orchestration, Evaluation, Tool-Registry/Tool-Use)
-  - Stack: LangGraph, Multi-LLM SDK, CLI (uv + Typer)
-  - Duration: 2026.02 (Research & Design) - 2026.03 (Implement & Develop)
-- 🐳 [Rakuten CNP: Robin Storage v5.5.0](https://github.com/RobinSystems)
-  - Org: Rakuten Symphony
-  - Job Title: Cloud Engineer, Full-time
-  - Role: Jr. Cloud Storage Dev
-  - Duration: 2024.12.09 - 2025.08.31
-- 🪣 [Rakuten OStore v1.0.0](https://github.com/RobinSystems)
-  - Org: Rakuten Symphony
-  - Job Title: Cloud Engineer, Full-time
-  - Role: Jr. Cloud Storage Dev
-  - Duration: 2025.03.03 - 2025.05.31
-- 👨🏻‍⚖️ [Aimo (App, LLM)](https://github.com/KTB16Team)
-  - Role: Backend
-  - Duration: 2024.10 - 2024.11
-- ☘️ [Dream (App, LLM, RAG)](https://github.com/KakaoTech-Hackathon-Dream)
-  - Role: DevOps 
-  - Duration: 2024.09.04 - 2024.09.07
-- 🐟 [Fisher Market, built on ERC-1155](https://github.com/mng990/ethereum_FisheriesMarket)
-  - Role: Backend
-  - Duration: 2022.03.16 - 2022.11.14
- 
-----
+---
 
-#### Organization
-- Rakuten Symphony Korea
-  - Role: Cloud Engineer (Jr. Storage Dev)
-  - Duration: 2024.12.09 - 2025.08.31
-- KaKao-Tech Bootcamp  
-  - Duration: 2024.07 - 2024.11.18
-  
-#### Education
-- Pusan National Univalsity
-  - Bachelor of Computer Science & Engineering
-  - Duration: 2017.03 - 2023.08
+### Loop
 
-#### Certification
-- OPIc IH
-- Engineer Information Processing
+매 프로젝트마다 같은 루프를 돌린다. 한 바퀴가 끝나면 더 단단해진 버전으로 다음 바퀴를 시작한다.
 
-#### Language
-- Korean (Native)
-- English (Professional Proficiently)
+```
+Plan → Build → Measure → Break → Rebuild → Share → (repeat)
+```
 
-![footer](https://capsule-render.vercel.app/api?type=waving&color=ffd20a&height=100&section=footer)
+| Project | Loop in Action |
+|---------|---------------|
+| **Eco²** | Sync(0%) → Celery(35%) → KEDA(86%) → Event Bus(97.8%) — 같은 문제를 4번 부수고 4번 다시 지었다 |
+| **GEODE** | 22일, 119 PR. Research→Implement→Verify→Merge를 하루 5회 이상 반복. 매 PR이 루프 한 바퀴 |
+| **REODE** | GEODE를 부수고 도메인을 뜯어내 범용 에이전트로 재조립. 루프의 다음 바퀴 |
+
+---
+
+### Timeline
+
+```
+mangowhoiscloud/
+├── 2025.04-2026.01/  Rakuten Symphony Korea
+│   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
+│
+├── 2025.10-2026.02/  Eco² (Solo Backend & Infra)
+│   └── AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181
+│
+├── 2026.02-present/  GEODE (Solo)
+│   └── 자율 실행 에이전트, 35K LOC, 2,366+ tests
+│
+└── 2026.03-present/  REODE @ Pinkx Lab (Freelance)
+    └── Migration & Coding Core Agent
+```
+
+---
+
+### Stack
+
+**Lang** &nbsp;
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
+![C](https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=c&logoColor=black)
+
+**AI** &nbsp;
+![Claude](https://img.shields.io/badge/Claude-D4A574?style=flat-square&logo=anthropic&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?style=flat-square&logo=langchain&logoColor=white)
+![LangSmith](https://img.shields.io/badge/LangSmith-1C3C3C?style=flat-square&logo=langchain&logoColor=white)
+
+**Backend** &nbsp;
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![gRPC](https://img.shields.io/badge/gRPC-244C5A?style=flat-square&logo=google&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white)
+
+**Infra** &nbsp;
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Istio](https://img.shields.io/badge/Istio-466BB0?style=flat-square&logo=istio&logoColor=white)
+![ArgoCD](https://img.shields.io/badge/ArgoCD-EF7B4D?style=flat-square&logo=argo&logoColor=white)
+
+**Observability** &nbsp;
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
+![Jaeger](https://img.shields.io/badge/Jaeger-66CFE3?style=flat-square&logo=jaeger&logoColor=black)
+![OpenTelemetry](https://img.shields.io/badge/OTel-7B5EA7?style=flat-square&logo=opentelemetry&logoColor=white)
+![ELK](https://img.shields.io/badge/ELK-005571?style=flat-square&logo=elastic&logoColor=white)
+
+**Tooling** &nbsp;
+![Claude Code](https://img.shields.io/badge/Claude_Code-D4A574?style=flat-square&logo=anthropic&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Tailwind](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+
+---
+
+<p align="center">
+  <sub>루프를 돌릴수록 단단해진다.</sub>
+</p>
