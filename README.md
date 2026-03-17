@@ -1,9 +1,5 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
-<h2 align="center">
-  Harness Engineering
-</h2>
-
 <p align="center">
   <a href="https://www.youtube.com/@mango_fr">
     <img src="https://img.shields.io/badge/YouTube-@mango__fr-FF0000?style=flat-square&logo=youtube&logoColor=white" />
