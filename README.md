@@ -1,7 +1,7 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
-  Loop-driven developer. 설계하고, 만들고, 측정하고, 부수고, 다시 만든다.
+  Loop-driven developer. 설계하고, 만들고, 측정하고, 부수고, 다시 만듭니다.
 </p>
 
 <p align="center">
@@ -23,17 +23,17 @@
 
 ### Loop
 
-매 프로젝트마다 같은 루프를 돌린다. 한 바퀴가 끝나면 더 단단해진 버전으로 다음 바퀴를 시작한다.
+매 프로젝트마다 아래와 같은 루프를 수행합니다. 한 바퀴가 끝나면 더 단단해진 버전으로 다음 바퀴를 시작합니다.
 
 ```
-Plan → Build → Measure → Break → Rebuild → Share → (repeat)
+Research → Plan → Build → Measure → Context → Rebuild → Share → (repeat)
 ```
 
 | Project | Loop in Action |
 |---------|---------------|
-| **Eco²** | Sync(0%) → Celery(35%) → KEDA(86%) → Event Bus(97.8%) — 같은 문제를 4번 부수고 4번 다시 지었다 |
-| **GEODE** | 22일, 119 PR. Research→Implement→Verify→Merge를 하루 5회 이상 반복. 매 PR이 루프 한 바퀴 |
-| **REODE** | GEODE를 부수고 도메인을 뜯어내 범용 에이전트로 재조립. 루프의 다음 바퀴 |
+| **Eco²** | Sync(0%) → Celery(35%) → KEDA(86%) → Event Bus(97.8%) — 같은 문제를 4번 부수고 4번 다시 지으며 개선 |
+| **GEODE** | 22일, 119 PR. Research→Implement→Verify→Merge를 하루 5회 이상 반복. 매 PR이 n번의 재귀 개선 루프 |
+| **REODE** | GEODE를 부수고 도메인을 뜯어내 범용 에이전트로 재조립. 루프의 다음 파생 |
 
 ---
 
@@ -97,9 +97,3 @@ mangowhoiscloud/
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![Tailwind](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-
----
-
-<p align="center">
-  <sub>루프를 돌릴수록 단단해진다.</sub>
-</p>
