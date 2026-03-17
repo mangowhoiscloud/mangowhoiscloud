@@ -24,20 +24,20 @@
 
 ### Harness Engineering
 
-Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부른다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트의 컨텍스트 전체를 제어한다. 같은 접근을 직접 실천한 사례들.
+Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트의 컨텍스트 전체를 제어합니다. 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 사례입니다.
 
-**Eco².** LangGraph Multi-Agent 하네스를 밑바닥부터 구축. Sync Thread Pool에서 시작해 Event Bus 3-Tier까지, Grafana/ELK 계측 결과가 아키텍처 전환의 유일한 근거였다. Auth 병목 48 RPS를 Go gRPC 사이드카로 오프로드해 **1,477 RPS**까지 끌어올렸고, Swiss Cheese 3-Layer 평가 파이프라인에서 LLM 응답 품질을 **69.4 → 99.8/100**으로 수렴시켰다.
+**Eco².** 5인 팀에서 백엔드와 인프라를 단독으로 맡아 LangGraph Multi-Agent 하네스를 밑바닥부터 구축했습니다. Sync Thread Pool(완료율 0%)에서 출발해 Grafana/ELK 계측 결과만을 근거로 아키텍처를 네 차례 전환, Event Bus 3-Tier에서 **VU 1,000 / 97.8%**에 도달했습니다. JWT Auth 병목 48 RPS를 Go gRPC ext-authz 사이드카로 오프로드해 **1,477 RPS**까지 끌어올렸고, Swiss Cheese 3-Layer 평가 파이프라인(Code Grader < 50ms + LLM Judge BARS 5축 + CUSUM 드리프트)에서 LLM 응답 품질을 **69.4 → 99.8/100**으로 수렴시켰습니다. 2025 AI 새싹톤 **181팀 중 4위(우수상)**.
 
-**GEODE.** 고정 DAG 파이프라인의 한계를 확인하고, Claude Code의 `while(tool_use)` 패턴을 참고해 AgenticLoop를 설계했다. 38 tools, 15 rounds 자율 실행. 도메인 파이프라인은 도구 중 하나로 재배치. PromptAssembler 6-Phase가 시스템 프롬프트를 SHA-256으로 고정해 Anthropic prompt caching을 자동 활성화하고, 반복 호출 비용을 **90% 절감**했다. `.claude/` 디렉토리에 CLAUDE.md(SOT), skills/(12+), rules/, worktrees/를 배치하고, 이 구조 위에서 22일간 **119 PR**을 실행했다.
+**GEODE.** 고정 8-Node DAG 파이프라인이 새 도메인을 수용하지 못하는 한계를 확인하고, Claude Code의 `while(tool_use)` 패턴을 참고해 AgenticLoop를 설계했습니다. 38 tools, 15 rounds 자율 실행 체계에서 도메인 파이프라인은 도구 중 하나로 재배치됩니다. PromptAssembler 6-Phase가 시스템 프롬프트를 SHA-256으로 고정해 Anthropic prompt caching을 자동 활성화하고, 반복 호출 비용을 **90% 절감**했습니다. Hexagonal Architecture(30 Ports)로 비즈니스 로직과 Provider를 완전 분리하고, 27-Event Hook Observer로 노드 코드 수정 없이 관측/드리프트 감지를 플러그인으로 부착했습니다. `.claude/` 디렉토리에 CLAUDE.md(SOT), skills/(12+), rules/, worktrees/를 배치하고, 이 구조 위에서 22일간 **119 PR**, **35K LOC**, **2,366+ tests**를 실행했습니다.
 
-**REODE.** GEODE를 포크한 뒤 GameIP 도메인을 전부 제거하고, DomainPort를 PipelineTemplate Protocol로 교체했다. `register_domain()`으로 코드 마이그레이션 파이프라인을 플러그인 등록. 동일한 AgenticLoop, Hook, Memory, Verification 인프라가 도메인 교체 후에도 그대로 작동한다.
+**REODE.** GEODE v0.12.0을 포크한 뒤 GameIP 도메인을 전부 제거하고, DomainPort를 PipelineTemplate Protocol로 교체했습니다. `register_domain()`으로 코드 마이그레이션 파이프라인(ASSESS → PLAN → TRANSFORM → VALIDATE → MEASURE)을 플러그인 등록합니다. 동일한 AgenticLoop, Hook, Memory, Verification 인프라가 도메인 교체 후에도 그대로 작동하며, 이 포크 자체가 GEODE 아키텍처의 도메인 무관성을 실증합니다.
 
 ---
 
 ### Loop
 
-완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓는 루프.
-프로젝트와 도메인은 바뀌어도 개발의 사이클은 동일하게 반복됩니다.
+완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓습니다.
+프로젝트와 도메인이 바뀌어도 이 사이클은 동일하게 반복됩니다.
 
 ```
 Plan → Build → Measure → Break → Rebuild → Share → (repeat)
@@ -45,9 +45,9 @@ Plan → Build → Measure → Break → Rebuild → Share → (repeat)
 
 | Project | Loop in Action |
 |---------|---------------|
-| **Eco²** | 완료율 0%의 Sync 구조에서 출발, Grafana/ELK 계측 결과를 근거로 아키텍처를 네 번 전환해 **VU 1,000 / 97.8%** 도달 |
-| **GEODE** | 22일간 119 PR. 하루 5회 이상 Research→Implement→Verify→Merge 사이클을 실행하며 35K LOC의 에이전트를 단독 구축 |
-| **REODE** | GEODE에서 도메인 레이어를 분리하고 PipelineTemplate Protocol로 재조립. 같은 인프라가 코드 마이그레이션 도메인에서 작동함을 실증 |
+| **Eco²** | 완료율 0%의 Sync 구조에서 출발, Grafana/ELK 계측 결과를 근거로 아키텍처를 네 번 전환해 **VU 1,000 / 97.8%**에 도달했습니다 |
+| **GEODE** | 22일간 119 PR. 하루 5회 이상 Research→Implement→Verify→Merge 사이클을 실행하며 35K LOC 에이전트를 단독 구축했습니다 |
+| **REODE** | GEODE에서 도메인 레이어를 분리하고 PipelineTemplate Protocol로 재조립. 동일 인프라가 코드 마이그레이션 도메인에서 작동함을 실증했습니다 |
 
 ---
 
