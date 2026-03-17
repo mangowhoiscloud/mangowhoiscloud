@@ -69,10 +69,10 @@ mangowhoiscloud/
 │   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
 │
 ├── 2025.10-2026.02/  Eco² (MVP: 5인 팀 Solo Backend & Infra, E2E: Product Engineer)
-│   └── AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181
+│   └── AI Multi-Agent, 24-Node K8s, MVP: 2025 AI 새싹톤 우수상 수상4th/181, 3개월간 E2E로 FE/BE/Harness(LLM) 개발 및 운용
 │
 ├── 2026.02-present/  GEODE (Solo)
-│   └── 자율 실행 에이전트, 35K LOC, 2,366+ tests
+│   └── 게임 IP 도메인 탐색 에이전트(DAG) -> 자율 실행 에이전트로 디벨롭, 도메인 기능은 Plug-in 레벨로 격하. 
 │
 └── 2026.03-present/  REODE @ Pinkx Lab (Freelance)
     └── Migration & Coding Core Agent
