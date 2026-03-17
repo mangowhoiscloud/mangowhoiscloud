@@ -41,7 +41,7 @@ Research → Plan → Build → Measure → Context → Rebuild → Share → (r
 
 ```
 mangowhoiscloud/
-├── 2025.04-2026.01/  Rakuten Symphony Korea
+├── 2025.08-2025.12/  Rakuten Symphony Korea
 │   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
 │
 ├── 2025.10-2026.02/  Eco² (Solo Backend & Infra)
