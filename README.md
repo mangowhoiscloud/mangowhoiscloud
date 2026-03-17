@@ -87,14 +87,13 @@ mangowhoiscloud/
 | Date | Project | Role | Link |
 |------|---------|------|------|
 | 2026.03 - 2026.05 | **REODE**:Migration & Coding Core Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
-| 2026.02 - 2026.03 | **GEODE**:범용 자율 실행 에이전트, 35K LOC, 2,366+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 리서치 에이전트, 35K LOC, 2,366+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 - 2026.02 | **LLMART(AD ONLY)**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: Backend & Infra, E2E: Product Engineer | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2025.03 - 2025.06 | **Rakuten OStore v1.0.0**:PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024.12.09 - 2025.08.31 | **Rakuten Robin Storage v5.5.0**:분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024 | **Aimo**:LLM 기반 법률 상담 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
 | 2024 | **Dream**:LLM + RAG 기반 꿈 해석 앱 | DevOps | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
-| 2024 | **Musinsa Product API**:상품 API 개발 과제 | Backend | [mng990/musinsa-test](https://github.com/mng990/musinsa-test) |
 | 2022 | **Fisher Market**:ERC-1155 기반 수산물 거래 DApp | Backend | [mng990/ethereum_FisheriesMarket](https://github.com/mng990/ethereum_FisheriesMarket) |
 
 ---
