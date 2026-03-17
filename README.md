@@ -1,7 +1,8 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
-  Harness Engineering
+  Harness Engineering<br/>
+  LLM이 올바른 방향으로 작동하도록 구조를 설계하는 엔지니어링.
 </p>
 
 <p align="center">
@@ -18,6 +19,27 @@
     <img src="https://img.shields.io/badge/prev-mng990-181717?style=flat-square&logo=github&logoColor=white" />
   </a>
 </p>
+
+---
+
+### Harness Engineering
+
+전통 소프트웨어에서 엔지니어는 코드를 직접 작성합니다. 에이전틱 시스템에서 엔지니어의 역할은 LLM이 올바른 방향으로 작동하도록 구조를 설계하는 쪽으로 이동합니다. 하네스(harness)는 원래 "대상을 제어 가능한 환경에 묶어두고 관측하는 틀"이며, LLM 맥락에서는 네 가지 축으로 구성됩니다.
+
+| 축 | 역할 | 실천 사례 |
+|---|---|---|
+| **컨텍스트 제어** | 어떤 정보를 언제 얼마나 LLM에 주입할지 설계 | GEODE PromptAssembler 6-Phase, SHA-256 고정으로 prompt caching 활성화(비용 90% 절감) |
+| **실행 루프** | LLM 출력을 받아 다음 행동을 결정하는 오케스트레이션 | GEODE AgenticLoop `while(tool_use)`, 38 tools × 15 rounds 자율 실행 |
+| **검증 파이프라인** | 비결정론적 출력을 신뢰할 수 있는 수준으로 수렴 | Eco² Swiss Cheese 3-Layer(69.4 → 99.8/100), GEODE 5-Layer Verification |
+| **관측** | 위 세 가지가 실제로 작동하는지 측정하는 계측 | Eco² 4-Pillar Observability, GEODE 27-Event Hook Observer |
+
+Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다. 아래는 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
+
+**Eco².** 5인 팀에서 백엔드와 인프라를 단독으로 맡아 LangGraph Multi-Agent 하네스를 구축했습니다. Sync Thread Pool(완료율 0%)에서 출발해 Grafana/ELK 계측 결과만을 근거로 아키텍처를 네 차례 전환, Event Bus 3-Tier에서 **VU 1,000 / 97.8%**에 도달했습니다. JWT Auth 병목 48 RPS를 Go gRPC ext-authz 사이드카로 오프로드해 **1,477 RPS**로 끌어올렸고, Swiss Cheese 3-Layer 평가 파이프라인(Code Grader < 50ms, LLM Judge BARS 5축, CUSUM 드리프트)에서 LLM 응답 품질을 **69.4 → 99.8/100**으로 수렴시켰습니다. 2025 AI 새싹톤 **181팀 중 4위(우수상)**.
+
+**GEODE.** 고정 8-Node DAG가 새 도메인을 수용하지 못하는 한계를 확인하고, Claude Code의 `while(tool_use)` 패턴을 참고해 AgenticLoop를 설계했습니다. 38 tools, 15 rounds 자율 실행 체계에서 도메인 파이프라인은 도구 중 하나로 재배치됩니다. Hexagonal Architecture(30 Ports)로 비즈니스 로직과 Provider를 완전 분리하고, 27-Event Hook Observer로 노드 코드 수정 없이 관측과 드리프트 감지를 플러그인으로 부착했습니다. `.claude/` 디렉토리에 CLAUDE.md(SOT), skills/(12+), rules/, worktrees/를 배치하고, 이 구조 위에서 22일간 **119 PR**, **35K LOC**, **2,366+ tests**를 실행했습니다.
+
+**REODE.** GEODE v0.12.0을 포크한 뒤 GameIP 도메인을 전부 제거하고, DomainPort를 PipelineTemplate Protocol로 교체했습니다. `register_domain()`으로 코드 마이그레이션 파이프라인(ASSESS → PLAN → TRANSFORM → VALIDATE → MEASURE)을 플러그인 등록합니다. 동일한 AgenticLoop, Hook, Memory, Verification 인프라가 도메인 교체 후에도 그대로 작동하며, 이 포크 자체가 GEODE 아키텍처의 도메인 무관성을 실증합니다.
 
 ---
 
