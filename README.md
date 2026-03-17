@@ -1,7 +1,7 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
-  Loop-driven developer.<br/>
+  Harness Engineering <br/>
   동작하는 코드를 부수고 더 나은 구조로 재조립하는 과정 자체가 설계 방법론.
 </p>
 
@@ -25,7 +25,7 @@
 ### Loop
 
 완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓는 루프.
-프로젝트가 바뀌어도 이 사이클은 동일하게 반복된다.
+프로젝트와 도메인은 바뀌어도 개발의 사이클은 동일하게 반복됩니다.
 
 ```
 Plan → Build → Measure → Break → Rebuild → Share → (repeat)
