@@ -89,7 +89,7 @@ Parent AgenticLoop
        └─ Below → fix batch → re-score (loop)
 ```
 
-19개 커스텀 스킬(`/ratchet-loop`, `/code-review-workflow`, `/java-migration` 등)이 도메인 지식을 재사용 가능한 프롬프트로 인코딩하여 세션마다 동일 품질을 보장합니다.
+19개 커스텀 스킬(`/ratchet-loop`, `/code-review-workflow` 등)이 도메인 지식을 재사용 가능한 프롬프트로 인코딩하여 세션마다 동일 품질을 보장합니다.
 
 #### Loop in Action
 
