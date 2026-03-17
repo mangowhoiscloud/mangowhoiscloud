@@ -87,7 +87,7 @@ mangowhoiscloud/
 
 | Year | Project | Role | Link |
 |------|---------|------|------|
-| 2026 | **REODE**:Migration & Coding Core Agent @ Pinkx Lab | AI R&D Freelance | Pinx Lab |
+| 2026 | **REODE**:Migration & Coding Core Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
 | 2026 | **GEODE**:범용 자율 실행 에이전트, 35K LOC, 2,366+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026 | **LLMART**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: Backend & Infra, E2E: Product Engineer | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
