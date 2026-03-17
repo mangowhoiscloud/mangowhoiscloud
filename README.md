@@ -24,7 +24,9 @@
 
 ### Harness Engineering
 
-전통 소프트웨어에서 엔지니어는 코드를 직접 작성합니다. 에이전틱 시스템에서 엔지니어의 역할은 LLM이 올바른 방향으로 작동하도록 구조를 설계하는 쪽으로 이동합니다. 하네스(harness)는 원래 "대상을 제어 가능한 환경에 묶어두고 관측하는 틀"이며, LLM 맥락에서는 네 가지 축으로 구성됩니다.
+전통적인 소프트웨어 개발에서 엔지니어는 코드를 직접 작성해 왔습니다.
+에이전틱 시스템에서 엔지니어의 역할은 LLM이 올바른 방향으로 작동하도록 구조를 설계하는 쪽으로 이동합니다. 
+LLM에게 하네스(harness)는 "대상을 제어 가능한 환경에 묶어두고 관측하는 틀"이며, LLM 맥락에서는 네 가지 축으로 구성됩니다.
 
 | 축 | 역할 | 실천 사례 |
 |---|---|---|
@@ -33,11 +35,13 @@
 | **검증 파이프라인** | 비결정론적 출력을 신뢰할 수 있는 수준으로 수렴 | Eco² Swiss Cheese 3-Layer(69.4 → 99.8/100), GEODE 5-Layer Verification |
 | **관측** | 위 세 가지가 실제로 작동하는지 측정하는 계측 | Eco² 4-Pillar Observability, GEODE 27-Event Hook Observer |
 
-Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다. Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다. 아래는 같은 접근을 분산 스토리지, Multi-Agent 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
+Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라 부릅니다.
+Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다.
+아래는 같은 접근을 Multi-Agent 하네스와 분산 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
 
 **Eco².** 5인 팀 Solo Backend/Infra. LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 **VU 1,000 / 97.8%** 도달. Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**. 새싹톤 **4th/181**.
 
-**GEODE.** Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 38 tools × 15 rounds 자율 실행. Hexagonal Architecture 30 Ports, 27-Event Hook Observer, PromptAssembler SHA-256 caching **90% 비용 절감**. 22일간 **119 PR, 35K LOC, 2,366+ tests**.
+**GEODE.** Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 38 tools × 15 rounds 자율 실행. Hexagonal Architecture 30 Ports, 27-Event Hook Observer, PromptAssembler SHA-256 caching **90% 비용 절감**.
 
 **REODE.** GEODE v0.12.0 fork. DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션 파이프라인 플러그인 등록. 동일 인프라가 도메인 교체 후에도 작동하며, 아키텍처의 도메인 무관성을 실증.
 
@@ -45,7 +49,7 @@ Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라
 
 ### Loop
 
-완성된 시스템을 측정하고, 병목이 보이면 부수고, 더 나은 구조로 다시 쌓습니다.
+시스템을 구축, 관측하고, 병목을 부수고, 더 나은 구조로 개선합니다.
 프로젝트와 도메인이 바뀌어도 이 사이클은 동일하게 반복됩니다.
 
 ```
@@ -130,14 +134,14 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.03 - 2026.05 | **REODE**:Migration & Coding Core Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
-| 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 리서치 에이전트, 35K LOC, 2,366+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026.03 - 2026.05 | **REODE**:Migration & Coding Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
+| 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 리서치 에이전트, IP 탐색 에이전트(DAG)는 Plug-In 레이어로 활용 | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 - 2026.02 | **LLMART(AD ONLY)**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: Backend & Infra, E2E: Product Engineer | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2025.03 - 2025.06 | **Rakuten OStore v1.0.0**:PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024.12.09 - 2025.08.31 | **Rakuten Robin Storage v5.5.0**:분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
-| 2024 | **Aimo**:LLM 기반 법률 상담 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
-| 2024 | **Dream**:LLM + RAG 기반 꿈 해석 앱 | DevOps | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
+| 2024 | **Aimo**:LLM 기반 갈등 중재 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
+| 2024 | **Dream**:LLM + RAG 기반 이미지/스토리 생성 앱 | DevOps | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2022 | **Fisher Market**:ERC-1155 기반 수산물 거래 DApp | Backend | [mng990/ethereum_FisheriesMarket](https://github.com/mng990/ethereum_FisheriesMarket) |
 
 ---
@@ -181,7 +185,3 @@ mangowhoiscloud/
 ![ELK](https://img.shields.io/badge/ELK-005571?style=flat-square&logo=elastic&logoColor=white)
 
 ---
-
-<p align="center">
-  <sub>매 바퀴마다 구조가 단단해지고, 그 과정 전체를 공개합니다.</sub>
-</p>
