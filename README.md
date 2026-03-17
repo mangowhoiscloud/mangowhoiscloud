@@ -54,7 +54,7 @@ Plan → Build → Measure → Break → Rebuild → Share → (repeat)
 |---------|---------------|
 | **Eco²** | 완료율 0%의 Sync 구조에서 출발, Grafana/ELK 계측 결과를 근거로 아키텍처를 네 번 전환해 **VU 1,000 / 97.8%**에 도달했습니다 |
 | **GEODE** | 22일간 119 PR. 하루 5회 이상 Research→Implement→Verify→Merge 사이클을 실행하며 35K LOC 에이전트를 단독 구축했습니다 |
-| **REODE** | GEODE에서 도메인 레이어를 분리하고 PipelineTemplate Protocol로 재조립. 동일 인프라가 코드 마이그레이션 도메인에서 작동함을 실증했습니다 |
+| **REODE** | GEODE에서 도메인 레이어를 분리하고 Pipeline Protocol로 재조립. 마이그레이션 & 리팩토링 도메인으로 가능성을 검증 중 |
 
 ---
 
