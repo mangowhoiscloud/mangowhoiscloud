@@ -65,8 +65,8 @@ mangowhoiscloud/
 ├── 2024.07-2024.11/  카카오테크 부트캠프
 │   └── Backend · DevOps · LLM
 │
-├── 2024.12-2025.08/  Rakuten Symphony Korea
-│   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
+├── 2024.12-2025.08/  Rakuten Symphony Korea, Jr. Cloud Engineer, Full-time
+│   └── PB급 분산 스토리지 개발, 글로벌 팀 22-40명, 영어 기반
 │
 ├── 2025.10-2026.02/  Eco² (MVP: 5인 팀 Solo Backend & Infra, E2E: Product Engineer)
 │   └── AI Multi-Agent, 24-Node K8s, MVP: 2025 AI 새싹톤 우수상 수상4th/181, 3개월간 E2E로 FE/BE/Harness(LLM) 개발 및 운용
