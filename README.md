@@ -111,14 +111,14 @@ mangowhoiscloud/
 ├── 2024.07-2024.11/  카카오테크 부트캠프
 │   └── Backend · DevOps · LLM
 │
-├── 2024.12-2025.08/  Rakuten Symphony Korea
-│   └── PB급 분산 스토리지, 글로벌 팀 22-40명, 영어 기반
+├── 2024.12-2025.08/  Rakuten Symphony Korea, Jr. Cloud Engineer, Full-time
+│   └── PB급 분산 스토리지 개발, 글로벌 팀 22-40명, 영어 기반
 │
-├── 2025.10-2026.02/  Eco² (5인 팀 Solo Backend & Infra)
-│   └── AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181
+├── 2025.10-2026.02/  Eco² (MVP: 5인 팀 Solo Backend & Infra, E2E: Product Engineer)
+│   └── AI Multi-Agent, 24-Node K8s, MVP: 2025 AI 새싹톤 우수상 수상 4th/181, 3개월간 E2E로 FE/BE/Harness(LLM) 개발 및 운용
 │
 ├── 2026.02-present/  GEODE (Solo)
-│   └── 자율 실행 에이전트, 35K LOC, 2,366+ tests
+│   └── 게임 IP 도메인 탐색 에이전트(DAG) -> 자율 실행 에이전트로 디벨롭, 도메인 기능은 Plug-in 레벨로 격하.
 │
 └── 2026.03-present/  REODE @ Pinkx Lab (Freelance)
     └── Migration & Coding Core Agent
@@ -128,14 +128,14 @@ mangowhoiscloud/
 
 ### Projects
 
-| Year | Project | Role | Link |
+| Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026 | **REODE**:Migration & Coding Core Agent @ Pinkx Lab | AI R&D Freelance | Pinkx Lab |
-| 2026 | **GEODE**:범용 자율 실행 에이전트, 35K LOC, 2,366+ tests | Solo Full-Stack | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
-| 2026 | **LLMART**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
-| 2025 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | 5인 팀 Solo Backend & Infra | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
-| 2025 | **Rakuten OStore v1.0.0**:PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
-| 2024 | **Rakuten Robin Storage v5.5.0**:분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
+| 2026.03 - 2026.05 | **REODE**:Migration & Coding Core Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
+| 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 리서치 에이전트, 35K LOC, 2,366+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026.02 - 2026.02 | **LLMART(AD ONLY)**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
+| 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: Backend & Infra, E2E: Product Engineer | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025.03 - 2025.06 | **Rakuten OStore v1.0.0**:PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
+| 2024.12.09 - 2025.08.31 | **Rakuten Robin Storage v5.5.0**:분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024 | **Aimo**:LLM 기반 법률 상담 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
 | 2024 | **Dream**:LLM + RAG 기반 꿈 해석 앱 | DevOps | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2022 | **Fisher Market**:ERC-1155 기반 수산물 거래 DApp | Backend | [mng990/ethereum_FisheriesMarket](https://github.com/mng990/ethereum_FisheriesMarket) |
@@ -149,12 +149,16 @@ mangowhoiscloud/
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 ![C](https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=c&logoColor=black)
 
-**AI** &nbsp;
-![Claude](https://img.shields.io/badge/Claude-D4A574?style=flat-square&logo=anthropic&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white)
+**Harness(Develop)** &nbsp;
+![Claude Agent SDK](https://img.shields.io/badge/Claude-D4A574?style=flat-square&logo=anthropic&logoColor=white)
+![OpenAI Agent SDK](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
+![Gemini SDK](https://img.shields.io/badge/Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?style=flat-square&logo=langchain&logoColor=white)
 ![LangSmith](https://img.shields.io/badge/LangSmith-1C3C3C?style=flat-square&logo=langchain&logoColor=white)
+
+**Harness(Use)** &nbsp;
+![Claude Code Max](https://img.shields.io/badge/Claude_Code_Max_×20-D4A574?style=flat-square&logo=anthropic&logoColor=white)
+![Opus 4.6](https://img.shields.io/badge/Opus_4.6-D4A574?style=flat-square&logo=anthropic&logoColor=white)
 
 **Backend** &nbsp;
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
@@ -175,10 +179,6 @@ mangowhoiscloud/
 ![Jaeger](https://img.shields.io/badge/Jaeger-66CFE3?style=flat-square&logo=jaeger&logoColor=black)
 ![OpenTelemetry](https://img.shields.io/badge/OTel-7B5EA7?style=flat-square&logo=opentelemetry&logoColor=white)
 ![ELK](https://img.shields.io/badge/ELK-005571?style=flat-square&logo=elastic&logoColor=white)
-
-**Harness** &nbsp;
-![Claude Code Max](https://img.shields.io/badge/Claude_Code_Max_×20-D4A574?style=flat-square&logo=anthropic&logoColor=white)
-![Opus 4.6](https://img.shields.io/badge/Opus_4.6-D4A574?style=flat-square&logo=anthropic&logoColor=white)
 
 ---
 
