@@ -39,18 +39,26 @@ Karpathy는 nanochat을 "the simplest experimental harness for training LLMs"라
 Claude Code는 `.claude/` 디렉토리 하나로 에이전트 컨텍스트를 제어합니다.
 아래는 같은 접근을 Multi-Agent 하네스와 분산 백엔드, 자율 실행 에이전트에 걸쳐 직접 실천한 기록입니다.
 
-**Eco².** 5인 팀 Solo Backend/Infra. LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 **VU 1,000 / 97.8%** 도달. Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**. 새싹톤 **4th/181**.
+**Eco²** 
+MVP: 5인 팀 Solo Backend/Infra, E2E Product Engineering
+LangGraph Multi-Agent 하네스를 구축하고, 계측 근거로 아키텍처를 네 차례 전환해 LLMx2 DAG **VU 1,000 / 97.8%** 도달.
+Auth Offloading **48 → 1,477 RPS**. Swiss Cheese 3-Layer 평가에서 **69.4 → 99.8/100**. 
+2025 AI 새싹톤 우수상 수상 (**4th/181**)
 
-**GEODE.** Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 38 tools × 15 rounds 자율 실행. Hexagonal Architecture 30 Ports, 27-Event Hook Observer, PromptAssembler SHA-256 caching **90% 비용 절감**.
+**GEODE** 
+Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 
+38 tools × 15 rounds 자율 실행. Domain-specific한 탐색/가치추론을 지원하는 DAG형 PLUG-IN.
 
-**REODE.** GEODE v0.12.0 fork. DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션 파이프라인 플러그인 등록. 동일 인프라가 도메인 교체 후에도 작동하며, 아키텍처의 도메인 무관성을 실증.
+**REODE** 
+GEODE v0.12.0 fork. 
+DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션, 코드 리뷰 파이프라인 DAG 개발.
 
 ---
 
 ### Loop
 
-시스템을 구축, 관측하고, 병목을 부수고, 더 나은 구조로 개선합니다.
-프로젝트와 도메인이 바뀌어도 이 사이클은 동일하게 반복됩니다.
+시스템을 구축하고, 관측하고, 병목을 부수고, 더 나은 구조로 개선합니다.
+프로젝트와 도메인이 바뀌어도 개발(DAG)은 일관되게 반복됩니다.
 
 ```
 Plan → Build → Measure → Break → Rebuild → Share → (repeat)
@@ -125,7 +133,7 @@ mangowhoiscloud/
 │   └── 게임 IP 도메인 탐색 에이전트(DAG) -> 자율 실행 에이전트로 디벨롭, 도메인 기능은 Plug-in 레벨로 격하.
 │
 └── 2026.03-present/  REODE @ Pinkx Lab (Freelance)
-    └── Migration & Coding Core Agent
+    └── Migration & Coding Core Agent, 자율 실행 + 마이그레이션/리뷰/코딩 파이프라인(DAG)
 ```
 
 ---
