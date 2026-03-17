@@ -1,9 +1,9 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
-<p align="center">
+<h2 align="center">
   Harness Engineering<br/>
   LLM이 올바른 방향으로 작동하도록 구조를 설계하는 엔지니어링
-</p>
+</h2>
 
 <p align="center">
   <a href="https://www.youtube.com/@mango_fr">
