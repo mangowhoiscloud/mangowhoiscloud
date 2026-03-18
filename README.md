@@ -138,7 +138,7 @@ mangowhoiscloud/
 ├── 2026.02-present/  GEODE (Solo)
 │   └── 게임 IP 도메인 가치추론 에이전트(DAG) -> 자율 실행 에이전트로 디벨롭, 도메인 기능은 Plug-in 레벨로 격하.
 │
-└── 2026.03-present/  REODE @ Pinkx Lab (Freelance)
+└── 2026.03-2026.05/  REODE @ Pinkx Lab (Freelance)
     └── Migration & Coding Core Agent, 자율 실행 + 마이그레이션/리뷰/코딩 파이프라인(DAG)
 ```
 
