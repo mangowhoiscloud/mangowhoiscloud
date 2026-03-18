@@ -55,9 +55,9 @@ Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 25일간 *
 - **Verification.** 5-Layer(G1-G4 Schema/Range/Grounding/Consistency + BiasBuster + Cross-LLM Krippendorff α≥0.67). Dynamic Graph로 confidence 기반 node skipping.
 - **Integration.** Gateway Inbound(Slack/Discord/Telegram → Lane Queue). Calendar Sync(Google Calendar/CalDAV). Graceful Degradation(API key 없으면 dry-run, MCP 불가 시 fixture fallback, 항상 운영 가능).
 
-**REODE** 
-GEODE v0.12.0 fork. 
-DomainPort → PipelineTemplate Protocol 교체, `register_domain()`으로 마이그레이션, 코드 리뷰 파이프라인 DAG 개발.
+**REODE**
+GEODE v0.12.0 fork → Migration & Coding Agent.
+3-Layer Hybrid(PipelineTemplate+LanguageAdapter), MigrationScorecard 3-Tier(Gate/Quality/Insight), 6 LLM Provider, Stop hook 기반 progress 추적.
 
 ---
 
@@ -89,7 +89,8 @@ Code ─→ Ratchet Gate ─→ Commit ─→ PR ─→ CI Gate ─→ Merge ─
 |-------|------|-----------|
 | Pre-Commit | ruff + mypy + pytest + bandit | All pass, zero tolerance |
 | PR | GitHub Actions CI | `gh pr checks --watch` 전체 green |
-| Post-Merge | docs-sync validation | CLAUDE.md, CHANGELOG.md, README.md 수치 일치 |
+| Post-Merge | docs-sync validation | CLAUDE.md, CHANGELOG.md, progress.md 수치 일치 |
+| Session End | Stop hook (`check-progress.sh`) | 오늘 커밋 있으면 progress.md 갱신 리마인드 |
 
 #### Multi-Agent Loop
 
@@ -115,7 +116,7 @@ Parent AgenticLoop
 |---------|------|--------|
 | **Eco²** | 완료율 0% Sync 구조 → Grafana/EFK 계측 근거 아키텍처 4회 전환 | **VU 1,000 / 97.8%**, 69.4→99.8/100 |
 | **GEODE** | Research→Implement→Verify→Merge ×5/day, 래칫 기반 25일 스프린트 | **243 PR, 41K LOC, 2,636+ tests** |
-| **REODE** | DomainPort→PipelineTemplate Protocol 교체, 래칫+멀티에이전트 파이프라인 | **도메인 무관성 실증, 1,805 tests** |
+| **REODE** | 3-Layer Hybrid + Scorecard 3-Tier + Stop hook progress 추적 | **143 modules, 1,894 tests, 6 LLM providers** |
 
 ---
 
