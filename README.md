@@ -114,7 +114,7 @@ Parent AgenticLoop
 
 | Project | Loop | Result |
 |---------|------|--------|
-| **Eco²** | 완료율 0% Sync 구조 → Grafana/ELK 계측 근거 아키텍처 4회 전환 | **VU 1,000 / 97.8%**, 69.4→99.8/100 |
+| **Eco²** | 완료율 0% Sync 구조 → Grafana/EFK 계측 근거 아키텍처 4회 전환 | **VU 1,000 / 97.8%**, 69.4→99.8/100 |
 | **GEODE** | Research→Implement→Verify→Merge ×5/day, 래칫 기반 25일 스프린트 | **243 PR, 41K LOC, 2,636+ tests** |
 | **REODE** | DomainPort→PipelineTemplate Protocol 교체, 래칫+멀티에이전트 파이프라인 | **도메인 무관성 실증, 1,805 tests** |
 
@@ -197,6 +197,6 @@ mangowhoiscloud/
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
 ![Jaeger](https://img.shields.io/badge/Jaeger-66CFE3?style=flat-square&logo=jaeger&logoColor=black)
 ![OpenTelemetry](https://img.shields.io/badge/OTel-7B5EA7?style=flat-square&logo=opentelemetry&logoColor=white)
-![ELK](https://img.shields.io/badge/ELK-005571?style=flat-square&logo=elastic&logoColor=white)
+![EFK](https://img.shields.io/badge/EFK-005571?style=flat-square&logo=elastic&logoColor=white)
 
 ---
