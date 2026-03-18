@@ -2,7 +2,7 @@
 
 <p align="center">
   Harness Engineering<br/>
-  LLM이 올바른 방향으로 작동하도록 구조를 설계하는 엔지니어링.
+  LLM이 올바른 방향으로 작동하도록 구조를 설계하는 엔지니어링
 </p>
 
 <p align="center">
