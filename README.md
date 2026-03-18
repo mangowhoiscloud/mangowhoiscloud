@@ -52,9 +52,9 @@ Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop 설계. 25일간 *
 - **Sub-Agent.** 부모의 tools/MCP/skills/memory 전체 상속. MAX_CONCURRENT=5, DAG scheduling, **4096-token guard**로 컨텍스트 폭발 방지. CoalescingQueue 250ms dedup.
 - **Prompt Engineering.** 5-Phase Assembly(template → override → skill → memory → bootstrap) + SHA-256 hash pinning. `cache_control: ephemeral`로 **40-60% 비용 절감**.
 - **Memory.** 4.5-Tier 계층(SOUL → User Profile → Organization → Project → Session). ContextAssembler가 280c `_llm_summary`로 압축, 비율 배분(SOUL 10% / Org 25% / Proj 25% / Session 40%).
-- **MCP Ecosystem.** 42 catalog 서버 auto-discovery + install. GEODE 자체를 MCP Server로 노출(6 tools, 2 resources). Gateway Inbound(Slack/Discord/Telegram → Lane Queue).
+- **Tool Execution.** 3-Layer 호출 체계 — ToolRegistry(46 built-in, 8 category × 3 cost_tier) + MCP(42 catalog auto-discovery, GEODE 자체도 MCP Server로 노출) + Bash(41 safe prefixes, 9 blocked patterns). 4-Tier HITL(SAFE/STANDARD/WRITE/DANGEROUS)과 PolicyChain이 전 계층 관통. Error Recovery Chain이 실패 시 같은 카테고리 대체 도구로 자동 전환.
 - **Verification.** 5-Layer(G1-G4 Schema/Range/Grounding/Consistency + BiasBuster + Cross-LLM Krippendorff α≥0.67). Dynamic Graph로 confidence 기반 node skipping.
-- **Safety.** 4-Tier HITL(SAFE/STANDARD/WRITE/DANGEROUS). Bash Safety(41 safe prefixes, 9 blocked patterns). Graceful Degradation(API key 없으면 dry-run, MCP 불가 시 fixture fallback).
+- **Integration.** Gateway Inbound(Slack/Discord/Telegram → Lane Queue). Calendar Sync(Google Calendar/CalDAV). Graceful Degradation(API key 없으면 dry-run, MCP 불가 시 fixture fallback, 항상 운영 가능).
 
 **REODE** 
 GEODE v0.12.0 fork. 
