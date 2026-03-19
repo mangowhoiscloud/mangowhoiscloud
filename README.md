@@ -150,7 +150,7 @@ mangowhoiscloud/
 | Date | Project | Role | Link |
 |------|---------|------|------|
 | 2026.03 | **harness-for-real**:랄프톤 & AI 에이전트 해커톤용 자율 수행 하네스, 4-Phase FSM(Socratic→Plan→Build→Verify), Opus/Sonnet 라우팅, Bash only | Solo | [mangowhoiscloud/harness-for-real](https://github.com/mangowhoiscloud/harness-for-real) |
-| 2026.03 - 2026.05 | **REODE**:Migration & Coding Agent @ Pinx Lab | AI R&D(Harness) Freelance | Pinx Lab |
+| 2026.03 - 2026.05 | **REODE**:Migration & Coding Agent @ Pinx Lab | AI R&D(Harness) Freelance | pinxlab |
 | 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 실행 에이전트, 41K LOC, 2,636+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 - 2026.02 | **LLMART(AD ONLY)**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 2025 AI 새싹톤 4th/181 | MVP: Backend & Infra -> E2E: Harness Engineering | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
