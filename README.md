@@ -149,10 +149,10 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.03 - 2026.05 | **REODE**:Migration & Coding Agent @ Pinx Lab | AI R&D Freelance | Pinx Lab |
+| 2026.03 - 2026.05 | **REODE**:Migration & Coding Agent @ Pinx Lab | AI R&D(Harness) Freelance | Pinx Lab |
 | 2026.02 - 2026.03 | **GEODE**:게임 도메인 IP 탐색 에이전트 -> 범용 자율 실행 에이전트, 41K LOC, 2,636+ tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 - 2026.02 | **LLMART(AD ONLY)**:CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
-| 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 2025 AI 새싹톤 4th/181 | MVP: Backend & Infra, E2E: Product Engineer | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025.10.31 - 2026.02 | **Eco²**:AI 재활용 Multi-Agent, 24-Node K8s, 2025 AI 새싹톤 4th/181 | MVP: Backend & Infra -> E2E: Harness Engineering | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2025.03 - 2025.06 | **Rakuten OStore v1.0.0**:PB급 오브젝트 스토리지 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024.12.09 - 2025.08.31 | **Rakuten Robin Storage v5.5.0**:분산 스토리지, 2천만 유저 통신망 | Jr. Cloud Storage Dev | Rakuten Symphony |
 | 2024 | **Aimo**:LLM 기반 갈등 중재 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |
