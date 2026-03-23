@@ -25,14 +25,15 @@
 ### Harness Engineering
 
 LLM은 확률적 시스템입니다. 제어 평면(control plane) 없이 장시간 자율 실행하면 발산합니다.
-하네스는 이 발산을 구조로 수렴시키는 네 가지 축입니다.
+하네스는 이 발산을 구조로 수렴시키는 다섯 가지 축입니다.
 
 | 축 | 역할 | 실천 사례 |
 |---|---|---|
 | **컨텍스트 제어** | 입력의 정밀도가 출력의 상한을 결정 | GEODE 5-Layer Context Hub(C0-C4), PromptAssembler 6-Phase, SHA-256 pinning(비용 40-60% 절감) |
 | **실행 루프** | LLM 출력을 받아 다음 행동을 결정하는 오케스트레이션 | AgenticLoop `while(tool_use)`, 46 tools, Sub-Agent(MAX_CONCURRENT=5, DAG, Token Guard) |
 | **검증 파이프라인** | 비결정론적 출력을 신뢰 가능한 수준으로 수렴 | Eco² Swiss Cheese 3-Layer(69.4 → 99.8%), GEODE 5-Layer Verification + Cross-LLM |
-| **관측** | 위 세 축이 실제로 작동하는지 계측 | 36-Event Hook Observer, LangSmith Tracing, CUSUM Drift Detection |
+| **관측** | 위 네 축이 실제로 작동하는지 계측 | 36-Event Hook Observer, LangSmith Tracing, CUSUM Drift Detection |
+| **외부 하네스 구축** | 하네스 자체를 설계·납품하고 도메인 간 이식하는 메타 역량 | Claude Code(.claude/ Skills·Hooks·CLAUDE.md)로 GEODE를 생산, harness-for-real(해커톤 4-Phase FSM), GEODE→REODE 2-Protocol 재설계로 클라이언트 납품 |
 
 프론티어 모델(Claude, GPT)뿐 아니라 GLM 등 다양한 모델을 직접 운영하며 각 모델의 강점과 한계를 파악하고, 어떤 프로바이더가 장애를 겪더라도 서비스가 지속되는 Resilience를 설계합니다.
 
