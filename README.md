@@ -52,7 +52,7 @@ MVP(1개월): 5인 팀에서 백엔드·인프라 단독 담당 → E2E(3개월)
 **GEODE** — 범용 자율 실행 에이전트 하네스 (CLI + Slack Daemon)
 "도메인이 바뀌어도 동작하는 하네스를 만들 수 있는가?" — 게임 IP 전용 파이프라인에서 출발, 범용 하네스로 피봇.
 
-- **도메인 독립성**: DomainPort Protocol로 분석 DAG를 플러그인화 → REODE(코드 마이그레이션)에 AgenticLoop 수정 0줄로 이식, 프리랜스 계약으로 검증
+- **도메인 독립성**: DomainPort Protocol로 분석 DAG를 플러그인화 → REODE로 코드 마이그레이션 도메인에 피봇, AgenticLoop 수정 0줄로 이식하여 프리랜스 계약으로 발전
 - **자율 실행**: `while(tool_use)` 루프로 46 tools 중 LLM이 자율 선택. Sub-Agent 병렬 위임(MAX 5)으로 복합 태스크 분해
 - **Slack 데몬 운영**: `geode serve` 헤드리스 — 채널별 세션 격리, Echo Prevention 3중 방어, CLI 없이도 Slack에서 에이전트 운용
 - **컨텍스트 제어**: 5-Layer Context Hub(C0-C4)로 입력 정밀도 관리, 80% 임계 시 Haiku 자동 압축으로 장시간 세션 유지
@@ -60,7 +60,7 @@ MVP(1개월): 5인 팀에서 백엔드·인프라 단독 담당 → E2E(3개월)
 - **3사 Resilience**: Anthropic/OpenAI/GLM 프로바이더 장애 시 자동 failover, 노드별 모델 라우팅으로 비용 최적화
 
 **REODE** — Autonomous Code Migration Agent @ pinxlab (Freelance)
-"확률적 시스템이 코드를 수정할 때, 어떻게 품질을 보장하는가?" — GEODE 하네스를 재설계하여 코드 마이그레이션에 적용.
+"확률적 시스템이 코드를 수정할 때, 어떻게 품질을 보장하는가?" — GEODE 하네스를 재설계하여 실제 산업 현장의 레거시 Java 마이그레이션에 도입 운영 중.
 
 - **결정적/확률적 분리**: 기계적 변환(javax→jakarta 등)은 OpenRewrite recipe(70%), 비즈니스 로직 의존 변환만 LLM(30%) — 확률적 시스템 개입 범위를 최소화
 - **장애 경로 설계**: VALIDATE 실패 시 Fix Node가 에러를 분석하고 자동 재시도(max 3), 동일 에러 3회 수렴 감지 → 모델 에스컬레이션. 빌드/테스트 미통과 코드는 머지 불가(Ratchet)
@@ -144,7 +144,7 @@ Parent AgenticLoop
 | Project | Loop | Result (루프가 만든 변화) |
 |---------|------|------------------------|
 | **Eco²** | 완료율 0% Sync → EDA Event Bus, 계측 근거 아키텍처 4회 전환 | 동시접속 0→**1,000VU 97.8%**, 평가 품질 69.4→**99.8%**, 새싹톤 **4th/181** |
-| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 전용 → **범용 하네스 피봇**, DomainPort Protocol로 도메인 분리, **REODE 이식 + 프리랜스 계약** |
+| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 전용 → **범용 하네스 피봇**, REODE로 코드 마이그레이션 도메인에 피봇 → **프리랜스 계약으로 발전** |
 | **REODE** | DomainPort 삭제 → 2-Protocol 재설계, Ratchet + Anti-Deception | OpenRewrite 70%로 **확률적 시스템 개입 최소화**, 5-Gate Scorecard로 **Reward Hacking 구조적 차단** |
 | **harness-for-real** | 랄프톤 우승팀 전략 분석 → 4-Phase FSM 하네스화 | Backpressure hooks + LEARNINGS.md로 **장시간 자율 실행 안정성 확보** |
 
