@@ -60,15 +60,19 @@ Claude Code `while(tool_use)` 패턴을 참고한 AgenticLoop. DomainPort Protoc
 - 5-Layer Verification + Cross-LLM(Krippendorff α ≥ 0.67) + Confidence Gate
 - Security: Secret Redaction 8패턴, Bash 3-Layer Sandbox, PolicyChain 6-layer
 
-**REODE** — Autonomous Code Migration Agent @ Pinkx Lab (Freelance)
+**REODE** — Autonomous Code Migration Agent @ pinxlab (Freelance)
 GEODE를 코드 마이그레이션 도메인에 이식하면서, DomainPort를 단순 교체하지 않고 **삭제 후 2-Protocol 직교 분리로 재설계**.
 
+- **185 modules · 2,979 tests · 36 tools · 23 skills · 6 LLM providers**
 - L1 **PipelineTemplate**(워크플로우 토폴로지) + L2 **LanguageAdapter**(언어별 빌드/테스트/스킬) — DI 3점 분리
-- MigrationPipeline 6노드(ASSESS→PLAN→TRANSFORM→VALIDATE⟲FIX→MEASURE) + PortingPipeline 4노드
+- 4 Pipelines: Migration(6노드) + Porting(4노드) + SpringMigration + JavaVerify
+- 3 Language Adapters: Java(8-22, Spring, MyBatis) · Go(1.22) · Python(3.12)
 - OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드 — 확률적 시스템 개입 범위 최소화
-- Migration Scorecard 3-Tier: 5 Gate(Reward Hacking 방지) + 4등급 + Insight
-- AgentRole 4종(ARCHITECT/ENGINEER/REVIEWER/SCOUT) 노드별 비용 라우팅
-- L0 인프라(AgenticLoop, HookSystem, Memory, PromptAssembler) 수정 없이 재사용
+- Fix Node: Explore→Reason→Act 재귀 수정, 수렴 감지(동일 에러 3회 → 에스컬레이션), Cross-Provider 자동 failover
+- Migration Scorecard 3-Tier: 5 Gate(Reward Hacking 방지) + S/A/B/C 4등급 + Insight
+- Sandbox: macOS Seatbelt + PipelineBashTool 34패턴 deny-list + 3-Level Permission(deny→ask→allow)
+- E2E Smoke Test: JavaAppStart → HTTP 검증 → Graceful Shutdown
+- 7 Anti-Deception 가드레일: 테스트 삭제, skipTests, JDK 다운그레이드, @SuppressWarnings 구조적 차단
 
 **harness-for-real** — AI 에이전트 해커톤용 자율 수행 하네스
 랄프톤(한국 최초 AI 코딩 해커톤) 우승팀 전략을 분석하고, 재현 가능한 하네스로 구조화.
@@ -143,12 +147,12 @@ Parent AgenticLoop
 
 #### Loop in Action
 
-| Project | Loop | Result |
-|---------|------|--------|
-| **Eco²** | 완료율 0% Sync → EDA Event Bus, 계측 근거 아키텍처 4회 전환 | **VU 1,000 / 97.8%**, 69.4→99.8% |
-| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | **184 modules, 3,055 tests, 364+ PR** |
-| **REODE** | DomainPort 삭제 → 2-Protocol 재설계, Scorecard 3-Tier | **5-Gate quality, 4-Role Agent Team, Freelance 계약** |
-| **harness-for-real** | 랄프톤 우승 전략 분석 → 4-Phase FSM 하네스화 | **Socratic→Plan→Build→3-Agent Verify** |
+| Project | Loop | Result (루프가 만든 변화) |
+|---------|------|------------------------|
+| **Eco²** | 완료율 0% Sync → EDA Event Bus, 계측 근거 아키텍처 4회 전환 | 동시접속 0→**1,000VU 97.8%**, 평가 품질 69.4→**99.8%**, 새싹톤 **4th/181** |
+| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 전용 → **범용 하네스 피봇**, DomainPort Protocol로 도메인 분리, **REODE 이식 + 프리랜스 계약** |
+| **REODE** | DomainPort 삭제 → 2-Protocol 재설계, Ratchet + Anti-Deception | OpenRewrite 70%로 **확률적 시스템 개입 최소화**, 5-Gate Scorecard로 **Reward Hacking 구조적 차단** |
+| **harness-for-real** | 랄프톤 우승팀 전략 분석 → 4-Phase FSM 하네스화 | Backpressure hooks + LEARNINGS.md로 **장시간 자율 실행 안정성 확보** |
 
 ---
 
@@ -171,7 +175,7 @@ mangowhoiscloud/
 ├── 2026.01.31-present/  GEODE (Solo)
 │   └── 범용 자율 실행 에이전트 하네스(CLI+Slack), 184 modules, 3,055 tests
 │
-└── 2026.03-2026.05/  REODE @ Pinkx Lab (Freelance)
+└── 2026.03-2026.05/  REODE @ pinxlab (Freelance)
     └── DomainPort 삭제 → 2-Protocol 재설계, Migration/Porting/Coding Agent
 ```
 
@@ -182,7 +186,7 @@ mangowhoiscloud/
 | Date | Project | Role | Link |
 |------|---------|------|------|
 | 2026.03 | **harness-for-real**: 랄프톤 & AI 해커톤용 자율 하네스, 4-Phase FSM | Solo | [mangowhoiscloud/harness-for-real](https://github.com/mangowhoiscloud/harness-for-real) |
-| 2026.03-2026.05 | **REODE**: Migration & Coding Agent @ Pinkx Lab | Freelance | pinxlab |
+| 2026.03-2026.05 | **REODE**: Migration & Coding Agent @ pinxlab | Freelance | pinxlab |
 | 2026.01.31-Present | **GEODE**: 범용 자율 실행 에이전트 하네스, 184 modules, 3,055 tests | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 | **LLMART**: CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10.31-2026.02 | **Eco²**: AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
@@ -259,13 +263,13 @@ mangowhoiscloud/
 
 글로벌 팀(인도·일본·한국 22-40명) 영어 기반 코드 리뷰·아키텍처 논의·장애 분석, Jira·GitOps 기반 개발
 
-**Pinkx Lab** · AI R&D · Harness Engineer (Freelance) `2026.03 — 2026.05`
+**pinxlab** · AI R&D · Harness Engineer (Freelance) `2026.03 — 2026.05`
 
 | Product | Stack | Description |
 |---------|-------|-------------|
-| **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트. GEODE에서 DomainPort 삭제 → PipelineTemplate + LanguageAdapter 2-Protocol 직교 재설계 |
+| **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트(185 modules, 2,979 tests). GEODE 3-Layer Hybrid 재설계 |
 
-Java 8→22, Spring Boot 2→3 마이그레이션 파이프라인. OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드, Migration Scorecard 3-Tier 품질 프레임워크
+Java 8→22, Spring Boot 2→3 마이그레이션. OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드, Ratchet Loop(빌드/테스트 실패 = 자동 롤백), Migration Scorecard 3-Tier(5 Gate + S/A/B/C 등급), macOS Seatbelt Sandbox + 34패턴 deny-list, 7 Anti-Deception 가드레일
 
 ---
 
