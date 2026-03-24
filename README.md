@@ -246,10 +246,28 @@ mangowhoiscloud/
 ![OpenTelemetry](https://img.shields.io/badge/OTel-7B5EA7?style=flat-square&logo=opentelemetry&logoColor=white)
 ![EFK](https://img.shields.io/badge/EFK-005571?style=flat-square&logo=elastic&logoColor=white)
 
-**Experience** &nbsp;
-Rakuten Symphony Korea, Cloud BU, Cloud Engineer (2024.12-2025.08) — PB급 분산 스토리지(C/RPC) 개발. CNP Storage: 2,000만 유저 통신망, SEGMENT_LOCK 읽기 병렬성 확보. Object Storage: Eventual Consistency 기반 분산 게이트웨이 캐시 정합성 설계. 글로벌 팀(인도·일본·한국 22-40명) 영어 기반 협업.
+---
 
-**Education & Certifications** &nbsp;
-부산대학교 정보컴퓨터공학부 학사 (2017-2023) · 카카오테크 부트캠프 Backend (2024) · 정보처리기사 (2024) · OPIc IH (2024) · 2025 AI 새싹톤 우수상 4th/181 (서울특별시)
+### Experience
+
+**Rakuten Symphony Korea** · Cloud BU · Cloud Engineer (Full-time) `2024.12 — 2025.08`
+
+| Product | Stack | Description |
+|---------|-------|-------------|
+| **CNP Storage** | C / RPC | 2,000만 유저 통신망 PB급 분산 스토리지. SEGMENT_LOCK down_write→down_read 전환으로 읽기 병렬성 확보 |
+| **Object Storage** | C | Eventual Consistency 기반 분산 게이트웨이 캐시 정합성 설계, CM→Gateway 브로드캐스트 동기화 |
+
+글로벌 팀(인도·일본·한국 22-40명) 영어 기반 코드 리뷰·아키텍처 논의·장애 분석, 주 3회 화상회의
+
+---
+
+### Education & Certifications
+
+| 구분 | 내용 | 기간 |
+|------|------|------|
+| **학사** | 부산대학교 정보컴퓨터공학부 | 2017 — 2023 |
+| **부트캠프** | 카카오테크 부트캠프 Backend | 2024 |
+| **자격** | 정보처리기사 (HRD Korea) · OPIc IH (ACTFL) | 2024 |
+| **수상** | 2025 AI 새싹톤 우수상 4th/181 (서울특별시) | 2025 |
 
 ---
