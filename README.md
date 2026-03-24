@@ -246,7 +246,7 @@ mangowhoiscloud/
 
 ---
 
-### Experience
+### Professional Experience
 
 **Rakuten Symphony Korea** · Cloud BU · Cloud Engineer (Full-time) `2024.12 — 2025.08`
 
