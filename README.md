@@ -246,7 +246,10 @@ mangowhoiscloud/
 ![OpenTelemetry](https://img.shields.io/badge/OTel-7B5EA7?style=flat-square&logo=opentelemetry&logoColor=white)
 ![EFK](https://img.shields.io/badge/EFK-005571?style=flat-square&logo=elastic&logoColor=white)
 
+**Experience** &nbsp;
+Rakuten Symphony Korea, Cloud BU, Cloud Engineer (2024.12-2025.08) — PB급 분산 스토리지(C/RPC) 개발. CNP Storage: 2,000만 유저 통신망, SEGMENT_LOCK 읽기 병렬성 확보. Object Storage: Eventual Consistency 기반 분산 게이트웨이 캐시 정합성 설계. 글로벌 팀(인도·일본·한국 22-40명) 영어 기반 협업.
+
 **Education & Certifications** &nbsp;
-부산대학교 정보컴퓨터공학부 학사 (2017-2023) · 카카오테크 부트캠프 Backend (2024) · 정보처리기사 (2024) · OPIc IH (2024)
+부산대학교 정보컴퓨터공학부 학사 (2017-2023) · 카카오테크 부트캠프 Backend (2024) · 정보처리기사 (2024) · OPIc IH (2024) · 2025 AI 새싹톤 우수상 4th/181 (서울특별시)
 
 ---
