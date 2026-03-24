@@ -259,6 +259,14 @@ mangowhoiscloud/
 
 글로벌 팀(인도·일본·한국 22-40명) 영어 기반 코드 리뷰·아키텍처 논의·장애 분석, Jira·GitOps 기반 개발
 
+**Pinkx Lab** · AI R&D · Harness Engineer (Freelance) `2026.03 — 2026.05`
+
+| Product | Stack | Description |
+|---------|-------|-------------|
+| **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트. GEODE에서 DomainPort 삭제 → PipelineTemplate + LanguageAdapter 2-Protocol 직교 재설계 |
+
+Java 8→22, Spring Boot 2→3 마이그레이션 파이프라인. OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드, Migration Scorecard 3-Tier 품질 프레임워크
+
 ---
 
 ### Education & Certifications
