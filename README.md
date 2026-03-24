@@ -88,7 +88,7 @@ Plan → Build → Observe → Break → Rebuild → Share → (repeat)
 
 #### Implementation Loop
 
-Ratchet 패턴 — 빌드+테스트를 통과한 변경만 커밋, 실패 시 롤백 후 재시도.
+Ratchet 패턴 — 빌드+테스트를 통과한 변경만 커밋, 실패 시 롤백 후 재시도.<br>
 Beck: "테스트 없는 코드는 레거시 코드다."
 
 ```
