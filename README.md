@@ -269,7 +269,7 @@ mangowhoiscloud/
 |---------|-------|-------------|
 | **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트(185 modules, 2,979 tests). GEODE 3-Layer Hybrid 재설계 |
 
-Java 8→22, Spring Boot 2→3 마이그레이션. OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드, Ratchet Loop(빌드/테스트 실패 = 자동 롤백), Migration Scorecard 3-Tier(5 Gate + S/A/B/C 등급), macOS Seatbelt Sandbox + 34패턴 deny-list, 7 Anti-Deception 가드레일
+Java 8→22, Spring Boot 2→3 마이그레이션 · OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드 · Ratchet Loop(빌드/테스트 실패 = 자동 롤백) · Migration Scorecard 3-Tier(5 Gate + S/A/B/C 등급) · macOS Seatbelt Sandbox + 34패턴 deny-list · 7 Anti-Deception 가드레일
 
 ---
 
