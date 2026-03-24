@@ -169,7 +169,7 @@ mangowhoiscloud/
 ├── 2024.12-2025.08/  Rakuten Symphony Korea, Cloud Engineer, Full-time
 │   └── PB급 분산 스토리지 개발, 글로벌 팀 22-40명, 영어 기반
 │
-├── 2025.10-2026.02/  Eco² (MVP 1mo: Solo Backend/Infra, E2E 3mo: Full-stack)
+├── 2025.10-2026.02/  Eco² (MVP 1mo: Solo Backend/Infra, E2E 3mo: FE/BE/Infra/Chat-based Harness(LLM))
 │   └── AI Multi-Agent, 24-Node K8s, 2025 AI 새싹톤 우수상 4th/181
 │
 ├── 2026.01.31-present/  GEODE (Solo)
