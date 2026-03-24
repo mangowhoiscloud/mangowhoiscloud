@@ -261,7 +261,7 @@ mangowhoiscloud/
 | **CNP Storage** | C / RPC | 2,000만 유저 통신망 PB급 분산 스토리지. SEGMENT_LOCK down_write→down_read 전환으로 읽기 병렬성 확보 |
 | **Object Storage** | C | Eventual Consistency 기반 분산 게이트웨이 캐시 정합성 설계, CM→Gateway 브로드캐스트 동기화 |
 
-글로벌 팀(인도·일본·한국 22-40명) 영어 기반 코드 리뷰·아키텍처 논의·장애 분석, Jira·GitOps 기반 개발
+글로벌 팀(인도·일본·한국 22-40명) 영어 기반 코드 리뷰·아키텍처 논의·장애 분석·Jira·GitOps 기반 개발
 
 **pinxlab** · AI R&D · 하네스 개발 (Freelance) `2026.03 — 2026.05`
 
