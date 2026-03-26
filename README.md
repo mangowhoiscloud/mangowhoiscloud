@@ -52,9 +52,69 @@ Layer ①  Claude Opus 4.6 (Foundation Model)        ← 확률적 시스템 그
 GEODE는 이 구조를 실증하는 과정에서 **Producer-Product Inversion**을 만들었습니다 — Claude Code(Assisted 하네스)가 GEODE(Autonomous 하네스)를 생산하는 역전 구조.
 도구 선택부터 실행, 검증, 자기 개선까지 자율적으로 수행하며, 4단계 Guardrails와 Cross-LLM 교차 검증으로 출력을 수렴시킵니다.
 
+#### Harness Landscape — 4-Quadrant Positioning
+
+제가 만든 하네스들이 이 지형도 위에 어떻게 분포하는지 보여드립니다.
+
+```
+                          Autonomous
+                              ▲
+                              │
+           Q2                 │                Q1
+      Minimal+Autonomous      │       Comprehensive+Autonomous
+                              │
+      · SWE-agent             │         ★ GEODE (L4 Meta)
+      · Codex CLI             │         · Devin
+      · AutoGen               │         · Manus
+                              │         · OpenHands
+                              │
+  ◄───────────────────────────┼───────────────────────────────►
+      Minimal                 │              Comprehensive
+                              │
+           Q3                 │                Q4
+      Minimal+Assisted        │        Comprehensive+Assisted
+                              │
+      · Aider                 │         · Claude Code ← 생산 도구
+      · Gemini CLI            │         · Cursor
+      · CrewAI                │         · Copilot
+                              │         · Kiro
+                              │
+                              ▼
+                           Assisted
+```
+
+**Producer-Product Inversion**: Q4의 Claude Code가 Q1의 GEODE를 생산합니다.
+Assisted 하네스가 Autonomous 하네스를 만드는 역전 — Layer ③(Scaffolding)이 이 전환을 가능하게 합니다.
+
+#### Scaffolding — 생산 하네스의 제어 지점
+
+스캐폴딩은 에이전트를 생산하는 하네스의 구성 레이어입니다. 코드가 아니라 **제약의 설계**가 품질을 결정합니다.
+
+| 구성 요소 | 비중 | 역할 | GEODE 실측 |
+|----------|------|------|-----------|
+| **Instruction (CLAUDE.md)** | Soft 78% | 행동 규칙, CANNOT/CAN 프레임워크 | 428줄, 20 CANNOT 규칙 |
+| **Skills** | 지식 인코딩 | 도메인별 재사용 가능한 프롬프트 | 25개, 3,468 LoC |
+| **Hooks** | Hard 16% | 이벤트 기반 자동 제어 | 36 이벤트 중 1개 활성 (확장 여지) |
+| **CI/CD Gates** | Ratchet 3% | 자동 롤백 게이트 | 5 CI jobs, test ≥ 3181 |
+| **Memory** | 세션 간 학습 | 패턴 축적 → 다음 세션 자동 주입 | 19 메모리 파일 |
+
+핵심 발견: 제약의 **78%가 LLM 자기 규율(soft)**에 의존합니다. 이 비율이 하네스 성숙도를 결정합니다.
+
+> 상세 분석: [Scaffolding 실측](https://rooftopsnow.tistory.com/354) · [Landscape 리포트](https://rooftopsnow.tistory.com/353)
+
 ---
 
 ### Projects
+
+제 프로젝트들의 4사분면 포지셔닝:
+
+| Project | Quadrant | 포지션 | 핵심 역할 |
+|---------|----------|--------|----------|
+| **GEODE** | Q1 (Comprehensive + Autonomous) | L4 Meta-Harness | 범용 자율 실행 — 도메인 교체 가능 |
+| **REODE** | Q1 → Q2 경계 | Domain-specific Autonomous | 코드 마이그레이션 특화 자율 에이전트 |
+| **Eco²** | Q4 (Comprehensive + Assisted) | Multi-Agent Service | 사용자 주도 + AI 병렬 평가 |
+| **harness-for-real** | Q2 (Minimal + Autonomous) | Hackathon Harness | 4-Phase FSM, 최소 구성 자율 실행 |
+| Claude Code (생산 도구) | Q4 | Platform Harness | GEODE/REODE를 생산하는 도구 |
 
 **Eco²** — Multi-Agent AI Service
 MVP 1mon: 5인 팀에서 백엔드·인프라 단독 담당 → E2E 3mon: FE/BE/INFRA/HARNESS/LLM 전체 단독 설계·개발·운영.
