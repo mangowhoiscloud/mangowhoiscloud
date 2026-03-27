@@ -204,13 +204,14 @@ Parent AgenticLoop
 
 이전 프로젝트에서 검증된 패턴이 다음 프로젝트의 인프라로 전이됩니다.
 
-| 패턴 | Eco² (origin) | GEODE (진화) | REODE (재설계) |
-|------|---------------|--------------|----------------|
+| 패턴 | Eco² (origin) | GEODE (진화) | REODE (피봇) |
+|------|---------------|--------------|-------------|
+| **Scaffold** | Prompt Template 수동 관리 | CLAUDE.md(428줄) + 25 Skills + CI Hooks | REODE.md + 8 Skills + Seatbelt Sandbox |
+| **Autonomous** | 사용자 주도 Chat-based | 37 Hook Events + TaskGraph DAG + LaneQueue | 36 Hook Events + fix_node Architect/Editor 분리 |
 | **메모리** | ReadThroughCheckpointer | 3-Tier Memory + HybridSessionStore | 수정 없이 재사용 |
-| **평가** | Swiss Cheese 3-Layer (69.4→99.8%) | 5-Layer Verification + Cross-LLM | Migration Scorecard 3-Tier |
+| **평가** | Swiss Cheese 3-Layer (69.4→99.8%) | 5-Layer Verification + Cross-LLM | Scorecard 3-Tier + Anti-Deception 7 Guard |
 | **컨텍스트** | Intent Confidence Scoring | PromptAssembler 6-Phase + Token Budget | 수정 없이 재사용 |
-| **Resilience** | Provider Registry (OpenAI/Gemini) | Port/Adapter DI (20+ Ports) + 3사 Failover | Cross-Provider 에스컬레이션 |
-| **루프 제어** | Celery→KEDA→Event Bus 4회 전환 | Worktree→Socratic Gate→CI Ratchet | Ratchet + Anti-Deception 7 Guard |
+| **루프 제어** | Celery→KEDA→Event Bus 4회 전환 | Worktree→Socratic Gate→CI Ratchet | Ratchet + FixEventLog 자동 학습 |
 
 #### Loop in Action
 
@@ -218,7 +219,7 @@ Parent AgenticLoop
 |---------|------|------------------------|
 | **Eco²** | 완료율 0% Sync → EDA Event Bus, 계측 근거 아키텍처 4회 전환 | 동시접속 0→**1,000VU 97.8%**, 평가 품질 69.4→**99.8%**, 새싹톤 **4th/181** |
 | **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 전용 → **범용 하네스 피봇**, REODE로 코드 마이그레이션 도메인에 피봇 → **프리랜스 계약으로 발전** |
-| **REODE** | DomainPort 삭제 → 2-Protocol 재설계, Ratchet + Anti-Deception | OpenRewrite 70%로 **확률적 시스템 개입 최소화**, 5-Gate Scorecard로 **Reward Hacking 구조적 차단** |
+| **REODE** | GEODE 하네스 피봇 → 2-Protocol 분리, Ratchet + Anti-Deception | OpenRewrite 70%로 **확률적 시스템 개입 최소화**, 5-Gate Scorecard로 **Reward Hacking 구조적 차단** |
 | **harness-for-real** | 랄프톤 우승팀 전략 분석 → 4-Phase FSM 하네스화 | Backpressure hooks + LEARNINGS.md로 **장시간 자율 실행 안정성 확보** |
 
 ---
