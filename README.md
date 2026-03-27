@@ -139,6 +139,7 @@ MVP 1mon: 5인 팀에서 백엔드·인프라 단독 담당 → E2E 3mon: FE/BE/
 - **Reward Hacking 방지**: Migration Scorecard 5 Gate — 테스트 삭제, skipTests 플래그, JDK 다운그레이드, @SuppressWarnings 삽입을 구조적으로 차단
 - **하네스 재설계**: GEODE의 DomainPort(1 DI)를 삭제하고 PipelineTemplate(L1) + LanguageAdapter(L2) 2-Protocol 직교 분리. L0 인프라 수정 없이 재사용
 - **Sandbox 격리**: macOS Seatbelt + 34패턴 deny-list + 3-Level Permission(deny→ask→allow)으로 에이전트의 시스템 접근 제어
+- **실측 마이그레이션**: Java 8→22 + Spring 4→6 레거시 프로젝트(241 소스, 103K LoC) — 33 세션 / 1,133 LLM 라운드 / 5시간 48분. `mvn compile` + `mvn test` 83/83 통과, javax→jakarta 전환 + Security 재구성 완료
 
 **harness-for-real** — AI 에이전트 해커톤용 자율 수행 하네스
 "키보드에 손이 닿는 순간 하네스의 실패다" — 랄프톤(한국 최초 AI 코딩 해커톤) 우승팀 전략을 분석하고, 재현 가능한 하네스로 구조화.
