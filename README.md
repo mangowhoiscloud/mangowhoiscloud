@@ -125,7 +125,7 @@ MVP 1mon: 5인 팀에서 백엔드·인프라 단독 담당 → E2E 3mon: FE/BE/
 "도메인이 바뀌어도 동작하는 하네스를 만들 수 있는가?" — 게임 IP 전용 파이프라인에서 출발, 범용 하네스로 피봇. 32일간 32번 릴리스, regression 0건.
 
 - **도메인 독립성**: DomainPort Protocol로 분석 DAG를 플러그인화 → REODE로 코드 마이그레이션 도메인에 이식, AgenticLoop 수정 0줄. 이 이식이 프리랜스 계약으로 발전
-- **자율 실행**: `while(tool_use)` 루프로 47 tools + 44 MCP 중 LLM이 자율 선택. Sub-Agent 병렬 위임(MAX 5, DAG, Token Guard)으로 복합 태스크 분해
+- **자율 실행**: `while(tool_use)` 루프로 54 tools + 44 MCP 중 LLM이 자율 선택 — bash 실행, 서브에이전트 위임, 스케줄 등록, MCP 외부 연동 포함. Sub-Agent 병렬 위임(MAX 5, DAG, Token Guard)으로 복합 태스크 분해
 - **3사 Resilience**: Anthropic/OpenAI/GLM 3-provider failover chain + per-provider circuit breaker. 파이프라인 노드별 모델 고정(Opus 4.6)으로 REPL 모델과 분리
 - **컨텍스트 제어**: 5-Layer Context Hub(C0-C4) + per-turn status line(세션 누적이 아닌 턴 단위 메트릭). 80% 임계 시 Haiku 자동 압축
 - **검증 수렴**: 5-Layer Verification + Cross-LLM(Krippendorff α ≥ 0.67). 비결정론적 출력을 신뢰 가능 수준으로 수렴
