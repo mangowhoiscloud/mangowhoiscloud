@@ -98,7 +98,7 @@ Assisted 하네스가 Autonomous 하네스를 만드는 역전 — Layer ③(Sca
 | **CI/CD Gates** | Ratchet 3% | 자동 롤백 게이트 | 5 CI jobs, test ≥ 3181 |
 | **Memory** | 세션 간 학습 | 패턴 축적 → 다음 세션 자동 주입 | 19 메모리 파일 |
 
-핵심 발견: 제약의 **78%가 LLM 자기 규율(soft)**에 의존합니다. 이 비율이 하네스 성숙도를 결정합니다.
+핵심 발견: 제약의 78%가 LLM 자기 규율(soft)에 의존합니다. 이 비율이 하네스 성숙도를 결정합니다.
 
 > 상세 분석: [Scaffolding 실측](https://rooftopsnow.tistory.com/354) · [Landscape 리포트](https://rooftopsnow.tistory.com/353)
 
