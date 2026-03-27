@@ -346,8 +346,9 @@ mangowhoiscloud/
 
 | Product | Stack | Description |
 |---------|-------|-------------|
-| **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트(185 modules, 2,979 tests). GEODE 3-Layer Hybrid 재설계 |
+| **REODE** | Python / LangGraph | 자율 코드 마이그레이션 에이전트(185 modules, 2,979 tests). GEODE 3-Layer Hybrid 피봇 |
 
+Scaffold: CLAUDE.md(109줄) + REODE.md(55줄) + 23 Skills(java-migration, spring-expert, mybatis-expert, scorecard, ratchet-loop 등)<br/>
 Java 8→22, Spring Boot 2→3 마이그레이션<br/>
 · OpenRewrite(결정적 70%) + LLM(확률적 30%) 하이브리드<br/>
 · Ratchet Loop(빌드/테스트 실패 = 자동 롤백)<br/>
