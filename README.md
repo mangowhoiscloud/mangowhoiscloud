@@ -208,10 +208,10 @@ Parent AgenticLoop
 |------|---------------|--------------|-------------|
 | **Scaffold** | Prompt Template 수동 관리 | CLAUDE.md(428줄) + 25 Skills + CI Hooks | REODE.md + 8 Skills + Seatbelt Sandbox |
 | **Autonomous** | 사용자 주도 Chat-based | 37 Hook Events + TaskGraph DAG + LaneQueue | 36 Hook Events + fix_node Architect/Editor 분리 |
-| **메모리** | ReadThroughCheckpointer | 3-Tier Memory + HybridSessionStore | 수정 없이 재사용 |
+| **메모리** | ReadThroughCheckpointer | .geode/ 4-Tier 컨텍스트 영속(SOUL→User→Org→Project→Session) + ~/.geode/ 글로벌 | .reode/ 로컬 + ~/.reode/ 글로벌 영속 (수정 없이 재사용) |
 | **평가** | Swiss Cheese 3-Layer (69.4→99.8%) | 5-Layer Verification + Cross-LLM | Scorecard 3-Tier + Anti-Deception 7 Guard |
-| **컨텍스트** | Intent Confidence Scoring | PromptAssembler 6-Phase + Token Budget | 수정 없이 재사용 |
-| **루프 제어** | Celery→KEDA→Event Bus 4회 전환 | Worktree→Socratic Gate→CI Ratchet | Ratchet + FixEventLog 자동 학습 |
+| **컨텍스트** | Intent Confidence Scoring | PromptAssembler 6-Phase + Journal/Vault 결정론적 영속 | 수정 없이 재사용 |
+| **루프 제어** | 앱 내 작은 피드백 루프 (Retry+Fallback) | `while(tool_use)` AgenticLoop 내부 고도화 → Sub-Agent DAG | AgenticLoop 계승 + Ratchet + FixEventLog 자동 학습 |
 
 #### Loop in Action
 
