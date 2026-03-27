@@ -218,7 +218,7 @@ Parent AgenticLoop
 | Project | Loop | Result (루프가 만든 변화) |
 |---------|------|------------------------|
 | **Eco²** | 완료율 0% Sync → EDA Event Bus, 계측 근거 아키텍처 4회 전환 | 동시접속 0→**1,000VU 97.8%**, 평가 품질 69.4→**99.8%**, 새싹톤 **4th/181** |
-| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 전용 → **범용 하네스 피봇**, REODE로 코드 마이그레이션 도메인에 피봇 → **프리랜스 계약으로 발전** |
+| **GEODE** | Worktree→GAP Audit→Socratic Gate→CI Ratchet→PR | 게임 IP 가치추론 DAG → **범용 자율 수행 하네스로 디벨롭**, Domain DAG 플러그인화 → **마이그레이션 도메인으로 피봇** (프리랜스 계약) |
 | **REODE** | GEODE 하네스 피봇 → 2-Protocol 분리, Ratchet + Anti-Deception | OpenRewrite 70%로 **확률적 시스템 개입 최소화**, 5-Gate Scorecard로 **Reward Hacking 구조적 차단** |
 | **harness-for-real** | 랄프톤 우승팀 전략 분석 → 4-Phase FSM 하네스화 | Backpressure hooks + LEARNINGS.md로 **장시간 자율 실행 안정성 확보** |
 
