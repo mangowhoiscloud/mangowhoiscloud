@@ -206,12 +206,12 @@ Parent AgenticLoop
 
 | 패턴 | Eco² (origin) | GEODE (진화) | REODE (피봇) |
 |------|---------------|--------------|-------------|
-| **Scaffold** | Prompt Template 수동 관리 | CLAUDE.md(428줄) + 25 Skills + CI Hooks | REODE.md + 8 Skills + Seatbelt Sandbox |
-| **Autonomous** | 사용자 주도 Chat-based | 37 Hook Events + TaskGraph DAG + LaneQueue | 36 Hook Events + fix_node Architect/Editor 분리 |
+| **Scaffold** | 관측 포함 닫힌 루프 (재귀개선 + Retry/Fallback) | CLAUDE.md(428줄) + 25 Skills + CI Hooks | REODE.md + 23 Skills + Seatbelt Sandbox |
+| **Autonomous** | 사용자 주도 Chat-based | 37 Hook Events + TaskGraph + LaneQueue | 36 Hook Events + fix_node Architect/Editor 분리 |
 | **메모리** | ReadThroughCheckpointer | .geode/ 4-Tier 컨텍스트 영속(SOUL→User→Org→Project→Session) + ~/.geode/ 글로벌 | .reode/ 로컬 + ~/.reode/ 글로벌 영속 (수정 없이 재사용) |
 | **평가** | Swiss Cheese 3-Layer (69.4→99.8%) | 5-Layer Verification + Cross-LLM | Scorecard 3-Tier + Anti-Deception 7 Guard |
 | **컨텍스트** | Intent Confidence Scoring | PromptAssembler 6-Phase + Journal/Vault 결정론적 영속 | 수정 없이 재사용 |
-| **루프 제어** | 앱 내 작은 피드백 루프 (Retry+Fallback) | `while(tool_use)` AgenticLoop 내부 고도화 → Sub-Agent DAG | AgenticLoop 계승 + Ratchet + FixEventLog 자동 학습 |
+| **루프 제어** | 앱 내 닫힌 피드백 루프 (관측→재귀개선) | `while(tool_use)` AgenticLoop 고도화 — tool/bash/MCP/DAG를 LLM이 자율 선택. Sub-Agent는 부모 루프 상속 | AgenticLoop 계승 + Ratchet + FixEventLog 자동 학습 |
 
 #### Loop in Action
 
