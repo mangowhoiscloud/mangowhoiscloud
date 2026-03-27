@@ -271,7 +271,6 @@ mangowhoiscloud/
 
 | Title | Topic | Key Insight |
 |-------|-------|-------------|
-| [GEODE 회고: 32일, 32릴리스, 47K LoC](https://rooftopsnow.tistory.com/355) | DAG → 자율 하네스 진화 과정 | 래칫이 32번의 릴리스에서 regression 0건을 지켜낸 방법 |
 | [Scaffolding: 하네스 구성 레이어 실측](https://rooftopsnow.tistory.com/354) | Claude Code 제약 분포 분석 | 78% soft / 16% hard / 3% ratchet — 제약의 종류가 품질을 결정 |
 | [GEODE 랜드스케이프: 3중 하네스 발견](https://rooftopsnow.tistory.com/353) | L4 Meta-Harness 포지셔닝 | 동일 모델, 다른 scaffold → SWE-bench 11.6%p 차이 |
 
