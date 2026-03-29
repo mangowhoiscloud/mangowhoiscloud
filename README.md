@@ -1,3 +1,7 @@
+<p align="right">
+  <strong>🇰🇷 한국어</strong> · <a href="README_EN.md">🇺🇸 English</a>
+</p>
+
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
