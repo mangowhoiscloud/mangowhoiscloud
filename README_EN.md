@@ -145,6 +145,18 @@ MVP 1mon: Solo Backend/Infra in a 5-person team → E2E 3mon: Solo design, devel
 - **Sandbox isolation**: macOS Seatbelt + 34-pattern deny-list + 3-Level Permission (deny→ask→allow) for agent system access control
 - **Measured migration**: Java 8→22 + Spring 4→6 legacy project (241 sources, 103K LoC). 33 sessions / 1,133 LLM rounds / 5 hours 48 minutes. `mvn compile` + `mvn test` 83/83 passed, javax→jakarta transition + Security reconfiguration complete
 
+  **Real-World Result (Completed 2026.03.28)**
+
+  | Metric | Value |
+  |--------|-------|
+  | Codebase | 5,523 files (241 Java + 355 JSP + 47 XML) |
+  | Migration | Java 1.8 → 22, Spring 4 → 6 |
+  | Result | 83/83 tests + FE/BE E2E verified |
+  | Cost | ~$388 (33 sessions, 1,133 LLM rounds) |
+  | Time | 5h 48m (autonomous, zero human intervention) |
+
+  > Client feedback: *"Exceeded expectations."*
+
 **harness-for-real**, Autonomous Execution Harness for AI Agent Hackathons
 "The moment your hands touch the keyboard, the harness has failed." Analyzed the winning team's strategy from Ralph-thon (Korea's first AI coding hackathon) and structured it into a reproducible harness.
 
