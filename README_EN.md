@@ -269,7 +269,6 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.03 | **harness-for-real**: Autonomous harness for Ralph-thon & AI hackathons, 4-Phase FSM | Solo | [mangowhoiscloud/harness-for-real](https://github.com/mangowhoiscloud/harness-for-real) |
 | 2026.03-2026.05 | **REODE**: Migration & Coding Agent @ pinxlab | Freelance | pinxlab |
 | 2026.01.31-Present | **GEODE**: General-purpose autonomous execution agent harness, 221 modules, 3,181 tests, v0.28.1 | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 | **LLMART**: CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
