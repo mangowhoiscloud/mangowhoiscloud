@@ -269,8 +269,8 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.03–2026.05 | **KIKI**: Production Automation Company, Built a harness-based agent org orchestration system across Slack, Claude Code, and Paperclip | Freelance | pinxlab |
-| 2026.03-2026.05 | **REODE**: Migration & Coding Agent | Freelance | pinxlab |
+| 2026.04–2026.05 | **KIKI**: Production Automation Company, Built a harness-based agent org orchestration system | Freelance | pinxlab |
+| 2026.03-2026.04 | **REODE**: Migration & Coding Agent, forked from @GEODE | Freelance | pinxlab |
 | 2026.01.31-Present | **GEODE**: 범용 자율 실행 에이전트 하네스, 221 modules, 3,181 tests, v0.28.1 | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 | **LLMART**: CLI-based LLM-as-Judge Evaluation System | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10.31-2026.02 | **Eco²**: AI Multi-Agent, 24-Node K8s, 새싹톤 4th/181 | MVP: BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
