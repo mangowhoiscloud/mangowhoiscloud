@@ -5,7 +5,7 @@
 <h1 align="center">류지환 (Jihwan Ryu)</h1>
 
 <p align="center">
-  <strong>모든 것을 루프로 만듭니다. 행동도, 검증도, 개선도.</strong><br/>
+  <strong> 계획, 수집, 구현, 행동, 검증, 개선은 결국 닫힌 루프로 수렴합니다.</strong><br/>
   확률적 시스템(LLM)은 제어 없이 발산합니다. 발산을 루프로 수렴시키는 하네스를 만듭니다.
 </p>
 
