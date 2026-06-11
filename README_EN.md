@@ -61,7 +61,7 @@ the deterministic territory (70%) was drawn first; LLMs were stationed only in t
 |---|---|---|
 | **Orchestration** | Decide the next action from LLM output | AgenticLoop `while(tool_use)`, SubGoal DAG, parallel sub-agent delegation, lane queues |
 | **Context & Memory** | Layer, compress, recover long-session context | 5-Tier Memory, 2-Phase compaction, 200K absolute guard: zero overflow across long sessions, ~80% multi-turn input token cut via prompt-cache alignment |
-| **Gateway** | One control point over multiple providers | Single interface over Anthropic·OpenAI·GLM, 4-stage failover, circuit breakers, cross-provider dispatch, per-token cost tracking |
+| **Gateway** | One control point over multiple providers | Single interface over Anthropic·OpenAI·Zhipu, 4-stage failover, circuit breakers, cross-provider dispatch, per-token cost tracking |
 | **Verify** | Converge nondeterministic output to trustable levels | Deterministic gates + LLM judges + drift detection in orthogonal layers, cross-LLM agreement (Krippendorff's α) |
 | **Observe & Improve** | Measure everything; adopt improvement only by measurement | Hook event bus, per-run transcripts, Petri behavioral audits + measurement gate (Self-Improving Loop) |
 

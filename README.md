@@ -57,7 +57,7 @@
 |---|---|---|
 | **Orchestration** | LLM 출력을 받아 다음 행동을 결정 | AgenticLoop `while(tool_use)`, SubGoal DAG, Sub-Agent 병렬 위임, Lane Queue |
 | **Context & Memory** | 장기 세션의 컨텍스트를 계층·압축·복구 | 5-Tier Memory, 2-Phase Compaction, 200K Absolute Guard: 장기 세션 오버플로우 0회, Prompt Cache 정렬로 멀티턴 입력 토큰 ~80% 절감 |
-| **Gateway** | 멀티 프로바이더를 단일 통제점으로 | Anthropic·OpenAI·GLM 단일 인터페이스, 4-Stage Failover, Circuit Breaker, Cross-Provider Dispatch, 토큰 단위 비용 추적 |
+| **Gateway** | 멀티 프로바이더를 단일 통제점으로 | Anthropic·OpenAI·Zhipu 단일 인터페이스, 4-Stage Failover, Circuit Breaker, Cross-Provider Dispatch, 토큰 단위 비용 추적 |
 | **Verify** | 비결정론적 출력을 신뢰 수준으로 수렴 | 결정론 게이트 + LLM Judge + 드리프트 감지의 직교 다층, Cross-LLM 합의(Krippendorff α 기준) |
 | **Observe & Improve** | 작동을 계측하고 개선을 측정으로 채택 | Hook 이벤트 버스, per-run transcript, Petri 행동 감사 + 측정 게이트(Self-Improving Loop) |
 
