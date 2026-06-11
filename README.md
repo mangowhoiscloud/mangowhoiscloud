@@ -126,9 +126,6 @@ CTO·PO·Lead·Dev·QA 계층 self-team이 실 운영 레거시를 자율 분석
 Claude Code·Codex·Gemini CLI를 공통 인터페이스로 추상화한 3-day spike. transcript.jsonl 단일 진실원 + pure reducer로
 replay-deterministic 확보, 동일 프로바이더 평가 인플레이션을 cross-provider 배치로 차단.
 
-🧵 **Cotton** · 분기 대화 그래프 번역 SaaS (설계 단계)
-게임 대화를 노드-간선 그래프로 다루는 번역 관리 도구. ADR 30편의 결정 우선 설계, 5계층 테넌트 격리, LLM dispatch 어댑터.
-
 ---
 
 ### 🗓️ Timeline
