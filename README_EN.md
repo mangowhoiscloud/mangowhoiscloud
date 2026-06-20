@@ -5,8 +5,8 @@
 <h1 align="center">Jihwan Ryu (류지환)</h1>
 
 <p align="center">
-  <strong>I build everything as a loop: action, verification, improvement.</strong><br/>
-  Probabilistic systems (LLMs) diverge without control. I build harnesses that converge that divergence through loops.
+  <strong>I build action, verification, and improvement as loops.</strong><br/>
+  LLMs diverge without control. I build harnesses that converge that divergence through loops.
 </p>
 
 <p align="center">
@@ -19,11 +19,10 @@
 
 ---
 
-### 🔁 Loops All the Way Down
+### Loops All the Way Down
 
-The loop is my engineering identity. From a single agent turn to my own growth as an engineer,
-every layer runs the same shape: the outer loop measures what the inner loop produced,
-and that measurement becomes the premise of the next inner cycle.
+From a single agent turn to shipping to self-improvement, every layer runs as the same loop.
+The outer loop measures what the inner one produced, and that measurement becomes the next loop's input.
 
 ```
 ┌─ ⑤ Feedback Loop          market · users · hiring challenges → input to the next build
@@ -33,29 +32,13 @@ and that measurement becomes the premise of the next inner cycle.
 │  │  │  │  ┌─ ① Agentic Loop   while(tool_use): reason → act → observe
 ```
 
-- **① Agentic Loop**: started from a single `while(tool_use)` line, grown through ReAct and Plan-and-Execute into a Cognitive Loop with a Reflexion step. Convergence detection and context recovery keep long sessions alive
-- **② Verify Loop**: deterministic rule-based checks run at every turn boundary; on failure, a verbal-RL hint is injected into the next round
-- **③ Production Loop**: only changes that pass build, test, and security move forward (ratchet); failures roll back and retry. Recurring patterns get promoted into skills and hooks, becoming the next session's defaults
-- **④ Self-Improving Loop**: adversarial scenario generation → Anthropic Petri behavioral audit → only mutations that clear the noise band set by no-mutation control arms get adopted. Improvement as measurement, not as claim
-- **⑤ Feedback Loop**: every step is shared via YouTube, blog, and public audit bundles (build-prove-share); the market's response feeds the next loop
+### How I Work
 
-### 🧠 Philosophy
+- **I treat the agent as a process whose search space is computing, and build the system around it**: hands that call tools, a queue that schedules calls, memory that layers context, a permission gate in front of dangerous calls
+- **Verification in deterministic code outside the agent**: no trust in self-reports, generation and evaluation split across providers (cross-provider judge), noise bands and control arms before any improvement curve
+- **Each evaluation layer before the autonomy it allows**: one tool call, one new evaluation layer; code migration drew the deterministic 70% first, LLMs only in the ambiguous 30%
 
-**LLMs are the computing of this era.** The unit of computation has moved from instructions to tokens,
-and an inference call is a new kind of process. When processes multiply, an OS becomes necessary: as it always has.
-So I treat agents not as chatbots but as operating systems: hands that call tools, a scheduler that manages processes,
-memory that layers context, and a permission gate that stands in front of dangerous calls.
-
-**Trust is architecture, not sentiment.** I don't trust an agent's self-report, so verification lives in deterministic
-code outside the agent. I don't trust evaluators either, so generation and evaluation are split across model families
-(cross-family judge), and no single evaluation layer is trusted alone: orthogonal layers (Swiss Cheese) stack instead.
-I don't even trust measurement itself: noise bands and control arms come before any improvement curve.
-
-**Autonomy grows only as fast as evaluation can catch up.** A chatbot that began as a strict rule-based router at
-temperature 0.1 gained one tool call at a time, each paired with a new evaluation layer. In code migration,
-the deterministic territory (70%) was drawn first; LLMs were stationed only in the ambiguous 30%.
-
-### 🛠️ Harness Engineering
+### Harness Engineering
 
 | Axis | Role | Practice |
 |---|---|---|
@@ -65,7 +48,7 @@ the deterministic territory (70%) was drawn first; LLMs were stationed only in t
 | **Verify** | Converge nondeterministic output to trustable levels | Deterministic gates + LLM judges + drift detection in orthogonal layers, cross-LLM agreement (Krippendorff's α) |
 | **Observe & Improve** | Measure everything; adopt improvement only by measurement | Hook event bus, per-run transcripts, Petri behavioral audits + measurement gate (Self-Improving Loop) |
 
-#### 🗺️ Harness Landscape · 4-Quadrant Positioning
+#### Harness Landscape · 4-Quadrant Positioning
 
 ```
                           Autonomous
@@ -95,20 +78,20 @@ the deterministic territory (70%) was drawn first; LLMs were stationed only in t
 
 ---
 
-### 🚀 Projects
+### Projects
 
-⚙️ **GEODE** · agentic-loop-based autonomous agent harness · [repo](https://github.com/mangowhoiscloud/geode) · [portfolio](https://mangowhoiscloud.github.io/portfolio/geode)
+**GEODE** · agentic-loop-based autonomous agent harness · [repo](https://github.com/mangowhoiscloud/geode) · [portfolio](https://mangowhoiscloud.github.io/portfolio/geode)
 A long-running system specialized in exploration, research, and signal collection. Multi-provider gateway,
 5-tier memory, 4-layer tool dispatch, and HITL permission gates, built solo from the SDK runtime up.
 Runs my daily work autonomously.
 
-📈 **GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [petri bundle](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
+**GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [petri bundle](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
 Adversarial scenario generation (co-scientist topology) → Petri multi-dimensional behavioral audit → only mutations
 clearing the no-mutation control arms' noise band get adopted. Running real measurements surfaced silent defects
 (mutations that never fired, a lucky frozen baseline), published and corrected openly. The floor of trustworthy
 measurement came before any improvement curve. The full audit archive ships as a public static bundle.
 
-🔧 **REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
+**REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
 GEODE's harness redesigned into a coding-agent product, delivering a live service's Java 8→22 and
 Spring Boot 2→3 migration. Deterministic OpenRewrite (70%) split from LLM territory (30%); agent deception
 (weakening tests to pass builds) blocked by a 5-gate scorecard; a 40-repeat stuck-fix incident resolved by
@@ -120,27 +103,23 @@ mandating explore-before-fix.
 | Outcome | 83/83 tests + FE/BE E2E verification passed |
 | Run | 33 autonomous sessions · 1,133 agentic rounds · 5h 48m (zero human intervention) |
 
-♻️ **Eco²** · AI multi-agent recycling service · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · SeSACTHON Excellence Award, 4th/181
+**Eco²** · AI multi-agent recycling service · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · SeSACTHON Excellence Award, 4th/181
 Started on 14 EC2 nodes, provisioned as code with Terraform·Ansible, run declaratively via ArgoCD on a 24-node K8s cluster, all solo.
 A strict temperature-0.1 chatbot grown into a production-level multi-agent system through tool calling,
 parallel LangGraph dispatch, SSE streaming, and Agent SDK. Concurrency 0→1,000 VU at 97.8%,
 evaluation quality 69.4→99.8/100 (Swiss Cheese 3-layer), auth handler 48→1,500 RPS.
 
-💬 **Kiki** · Slack-native multi-agent governance @ pinxlab
+**Kiki** · Slack-native multi-agent governance @ pinxlab
 A CTO·PO·Lead·Dev·QA self-team autonomously analyzes, implements, and reviews a live legacy codebase;
 the manager directs and approves through Slack alone. A 2-stage gate blocks "conservative PASS" at the system level.
 
-🎮 **Crumb & Crumb Studio** · multi-host agent game studio · [repo](https://github.com/mangowhoiscloud/crumb)
+**Crumb & Crumb Studio** · multi-host agent game studio · [repo](https://github.com/mangowhoiscloud/crumb)
 A 3-day spike abstracting Claude Code, Codex, and Gemini CLI behind one interface. Replay-deterministic state via a
 transcript.jsonl single source of truth + pure reducers; same-provider evaluation inflation blocked by cross-provider placement.
 
-🧵 **Cotton** · branching-dialogue-graph translation SaaS (design phase)
-A translation tool that treats game dialogue as a node-edge graph. Decision-first design across 30 ADRs,
-5-layer tenant isolation, an LLM dispatch adapter pattern.
-
 ---
 
-### 🗓️ Timeline
+### Timeline
 
 ```
 mangowhoiscloud/
@@ -156,7 +135,7 @@ mangowhoiscloud/
 
 ---
 
-### 🔗 Project Links
+### Project Links
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
