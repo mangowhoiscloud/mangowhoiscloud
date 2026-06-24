@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>행동도, 검증도, 개선도 루프로 만듭니다.</strong><br/>
-  LLM은 통제 없이 발산합니다. 발산을 루프로 수렴시키는 하네스를 만듭니다.
+  통제 없는 LLM은 발산합니다. 하네스가 루프를 닫아 수렴시킵니다.
 </p>
 
 <p align="center">
@@ -34,8 +34,8 @@
 
 ### How I Work
 
-- **에이전트를 컴퓨팅을 탐색 공간으로 삼는 프로세스로 두고 시스템을 구성합니다**: 도구를 부르는 손, 호출을 스케줄링하는 큐, 컨텍스트를 계층화하는 메모리, 위험한 호출 앞에 서는 권한 게이트
-- **검증은 에이전트 바깥의 결정론 코드에 둡니다**: 자기 보고를 믿지 않고, 생성·평가를 다른 프로바이더로 가르고(cross-provider judge), 개선 곡선보다 노이즈 밴드·대조군을 먼저
+- **에이전트를 컴퓨팅 위의 탐색 프로세스로 두고, 시스템으로 감쌉니다**: 도구를 부르는 손, 호출을 스케줄링하는 큐, 컨텍스트를 계층화하는 메모리, 위험한 호출 앞에 서는 권한 게이트
+- **검증은 에이전트 바깥의 결정론 코드에 둡니다**: 자기 보고는 불신, 생성·평가는 다른 프로바이더로 분리(cross-provider judge), 개선 곡선보다 노이즈 밴드·대조군이 먼저
 - **평가 층을 먼저 깔고 자율성을 엽니다**: 도구 호출 하나에 평가 층 하나, 코드 마이그레이션은 결정론 70%를 먼저 긋고 LLM을 모호한 30%에만
 
 ### Harness Engineering
@@ -86,7 +86,7 @@
 
 **GEODE Self-Improving Loop** · 측정 게이트 기반 자기개선 폐회로 · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [petri bundle](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
 적대 시나리오 생성(co-scientist 토폴로지) → Petri 다차원 행동 감사 → 무변이 대조군의 노이즈 밴드를 넘는 변이만 채택.
-측정을 처음 돌리자 조용한 결함이 드러났습니다(미발생 변이, 운 좋은 기준선). 공개·정정하고, 개선 곡선보다 측정의 바닥을 먼저 세웠습니다.
+측정을 처음 돌리자 조용한 결함(미발생 변이·운 좋은 기준선)이 드러남. 개선 곡선보다 측정의 바닥이 먼저, 결함은 공개·정정.
 감사 결과 전체를 외부 열람 가능한 정적 번들로 공개.
 
 **REODE** · 코드 마이그레이션 자율 에이전트 @ pinxlab (프리랜스 납품)
@@ -102,12 +102,16 @@ OpenRewrite 결정론 70% + LLM 30% 분리, 검증을 우회하는 기망 행위
 
 **Eco²** · AI 멀티에이전트 재활용 서비스 · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · 새싹톤 우수상 4th/181
 EC2 14노드에서 시작해 Terraform·Ansible IaC와 ArgoCD 선언형으로 24-Node K8s를 단독 운영.
-temperature 0.1 strict 챗봇을 툴콜링·LangGraph 병렬·SSE·Agent SDK로 상용 레벨 멀티에이전트로 디벨롭.
+temperature 0.1 strict 챗봇을 툴콜링·LangGraph 병렬·SSE·Agent SDK로 상용 멀티에이전트로 고도화.
 동시접속 0→1,000 VU 97.8%, 평가 품질 69.4→99.8/100(Swiss Cheese 3-Layer), 인증 핸들러 48→1,500 RPS.
 
 **Kiki** · Slack 행동 관측 기반 멀티 에이전트 거버넌스 @ pinxlab
 CTO·PO·Lead·Dev·QA 계층 self-team이 실 운영 레거시를 자율 분석·구현·리뷰. 관리자는 Slack 대화만으로 지시·승인.
-"보수적 PASS"를 2-stage gate가 시스템 레벨에서 차단.
+"보수적 PASS"를 2-stage gate가 시스템 차원에서 차단.
+
+**Cotton** · RPG 게임 스크립트 번역 단일 테넌트 SaaS @ pinxlab
+기존 번역 도구(Crowdin·Lokalise)는 게임 대화를 키-값 문자열로 취급. 분기·조건·캐릭터 voice·자막 길이 예산을 지닌 대화 그래프를 데이터 모델 1급 시민으로 모델링.
+LLM CLI 어댑터(Codex·Claude Code)와 cross-provider judge로 번역 품질 수렴.
 
 **Crumb & Crumb Studio** · 멀티 호스트 에이전트 게임 제작 스튜디오 · [repo](https://github.com/mangowhoiscloud/crumb)
 Claude Code·Codex·Gemini CLI를 공통 인터페이스로 추상화한 3-day spike. transcript.jsonl 단일 진실원 + pure reducer로
@@ -124,9 +128,8 @@ mangowhoiscloud/
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · Cloud Engineer (페타바이트 분산 스토리지, 글로벌 팀)
 ├── 2025.10-2026.02/  Eco² · MVP 5인 BE/Infra → E2E 단독 (24-Node K8s, 새싹톤 4th/181)
 ├── 2026.02-present/  GEODE · 자율 에이전트 하네스 (Solo)
-├── 2026.03-2026.05/  REODE · Kiki @ pinxlab · 프리랜스 납품
-├── 2026.05-present/  GEODE Self-Improving Loop · 측정 게이트 자기개선
-└── 2026.05-present/  Crumb (3-day spike) · Cotton (설계)
+├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · 프리랜스 납품
+└── 2026.05-2026.06/  GEODE Self-Improving Loop · 측정 게이트 자기개선
 ```
 
 ---
@@ -135,8 +138,9 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.05-present | **Self-Improving Loop**: Petri 감사 × 측정 게이트 | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
+| 2026.05-2026.06 | **Self-Improving Loop**: Petri 감사 × 측정 게이트 | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
 | 2026.05 | **Crumb**: 멀티 호스트 에이전트 스튜디오 | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
+| 2026.05 | **Cotton**: RPG 게임 스크립트 번역 SaaS · 분기 대화 그래프 데이터 모델 | Freelance | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack 행동 관측 기반 에이전트 조직 오케스트레이션 | Freelance | pinxlab |
 | 2026.03-2026.04 | **REODE**: Migration & Coding Agent, forked from GEODE | Freelance | pinxlab |
 | 2026.02-present | **GEODE**: 자율 에이전트 하네스 | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |

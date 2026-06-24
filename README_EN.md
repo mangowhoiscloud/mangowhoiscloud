@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>I build action, verification, and improvement as loops.</strong><br/>
-  LLMs diverge without control. I build harnesses that converge that divergence through loops.
+  LLMs diverge without control. My harness closes the loop until they converge.
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@ The outer loop measures what the inner one produced, and that measurement become
 
 ### How I Work
 
-- **I treat the agent as a process whose search space is computing, and build the system around it**: hands that call tools, a queue that schedules calls, memory that layers context, a permission gate in front of dangerous calls
+- **I treat the agent as a search process over compute and wrap the system around it**: hands that call tools, a queue that schedules calls, memory that layers context, a permission gate in front of dangerous calls
 - **Verification in deterministic code outside the agent**: no trust in self-reports, generation and evaluation split across providers (cross-provider judge), noise bands and control arms before any improvement curve
 - **Each evaluation layer before the autonomy it allows**: one tool call, one new evaluation layer; code migration drew the deterministic 70% first, LLMs only in the ambiguous 30%
 
@@ -87,8 +87,8 @@ Runs my daily work autonomously.
 
 **GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [petri bundle](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
 Adversarial scenario generation (co-scientist topology) → Petri multi-dimensional behavioral audit → only mutations
-clearing the no-mutation control arms' noise band get adopted. Running real measurements surfaced silent defects
-(mutations that never fired, a lucky frozen baseline), published and corrected openly. The floor of trustworthy
+clearing the no-mutation control arms' noise band get adopted. The first real measurements surfaced silent defects
+(mutations that never fired, a lucky frozen baseline), which I published and corrected openly. The floor of trustworthy
 measurement came before any improvement curve. The full audit archive ships as a public static bundle.
 
 **REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
@@ -113,6 +113,11 @@ evaluation quality 69.4→99.8/100 (Swiss Cheese 3-layer), auth handler 48→1,5
 A CTO·PO·Lead·Dev·QA self-team autonomously analyzes, implements, and reviews a live legacy codebase;
 the manager directs and approves through Slack alone. A 2-stage gate blocks "conservative PASS" at the system level.
 
+**Cotton** · single-tenant SaaS for RPG game-script translation @ pinxlab
+Existing tools (Crowdin·Lokalise) treat game dialogue as key-value strings. Cotton models the branching dialogue graph
+as a first-class data model: branches, conditions, character voice, subtitle-length budgets. LLM CLI adapters
+(Codex·Claude Code) and a cross-provider judge converge translation quality.
+
 **Crumb & Crumb Studio** · multi-host agent game studio · [repo](https://github.com/mangowhoiscloud/crumb)
 A 3-day spike abstracting Claude Code, Codex, and Gemini CLI behind one interface. Replay-deterministic state via a
 transcript.jsonl single source of truth + pure reducers; same-provider evaluation inflation blocked by cross-provider placement.
@@ -128,9 +133,8 @@ mangowhoiscloud/
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · Cloud Engineer (petabyte-scale distributed storage, global team)
 ├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, SeSACTHON 4th/181)
 ├── 2026.02-present/  GEODE · autonomous agent harness (solo)
-├── 2026.03-2026.05/  REODE · Kiki @ pinxlab · freelance delivery
-├── 2026.05-present/  GEODE Self-Improving Loop · measurement-gated self-improvement
-└── 2026.05-present/  Crumb (3-day spike) · Cotton (design)
+├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · freelance delivery
+└── 2026.05-2026.06/  GEODE Self-Improving Loop · measurement-gated self-improvement
 ```
 
 ---
@@ -139,9 +143,11 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.05-present | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
+| 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
 | 2026.05 | **Crumb**: multi-host agent studio | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
-| 2026.03-2026.05 | **REODE · Kiki**: migration agent · Slack governance | Freelance | pinxlab |
+| 2026.05 | **Cotton**: RPG game-script translation SaaS · branching-dialogue-graph data model | Freelance | pinxlab |
+| 2026.04-2026.05 | **Kiki**: Slack-native agent-org orchestration | Freelance | pinxlab |
+| 2026.03-2026.04 | **REODE**: migration & coding agent, forked from GEODE | Freelance | pinxlab |
 | 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
 | 2026.02 | **LLMART**: CLI-based LLM-as-judge evaluation | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
