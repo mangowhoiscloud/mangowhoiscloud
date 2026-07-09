@@ -1,8 +1,8 @@
 <p align="right">
-  <a href="README.md">🇰🇷 한국어</a> · <strong>🇺🇸 English</strong>
+  <a href="README.md">🇰🇷 Korean</a> · <strong>🇺🇸 English</strong>
 </p>
 
-<h1 align="center">Jihwan Ryu (류지환)</h1>
+<h1 align="center">Jihwan Ryu</h1>
 
 <p align="center">
   <strong>I build action, verification, and improvement as loops.</strong><br/>
