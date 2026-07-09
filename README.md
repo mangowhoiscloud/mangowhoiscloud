@@ -17,6 +17,10 @@
   <a href="https://mangowhoiscloud.github.io/geode/self-improving/"><img src="https://img.shields.io/badge/Self--Improving_Hub-6B4FBB?style=flat-square&logo=githubpages&logoColor=white" alt="Self-Improving Hub"></a>
 </p>
 
+<p align="center">
+  이전 GitHub 계정: <a href="https://github.com/mng990"><strong>@mng990</strong></a>
+</p>
+
 ---
 
 ### Loops All the Way Down
@@ -89,6 +93,12 @@
 측정을 처음 돌리자 조용한 결함(미발생 변이·운 좋은 기준선)이 드러남. 개선 곡선보다 측정의 바닥이 먼저, 결함은 공개·정정.
 감사 결과 전체를 외부 열람 가능한 정적 번들로 공개.
 
+**Crucible** · τ²-bench 기반 capability-axis 게이트 루프 · [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md)
+Petri/safety 자기개선 루프의 승격 규율(champion chain, paired verdict, frozen ruler)을 capability 평가로 옮김.
+짧고 싼 trace replay와 telecom workflow surrogate로 후보를 압축하고, 비싼 tau2 run은 최종 판정에만 사용.
+첫 사이클은 core production 승격이 아니라 gate qualification으로 재분류: false promotion을 막고,
+holdout·retention·shadow/canary 없이 benchmark 점수를 production 개선으로 주장하지 않는 규율을 남김.
+
 **REODE** · 코드 마이그레이션 자율 에이전트 @ pinxlab (프리랜스 납품)
 GEODE 하네스를 코딩 에이전트 제품으로 재설계해 라이브 서비스의 Java 8→22, Spring Boot 2→3 마이그레이션을 납품.
 OpenRewrite 결정론 70% + LLM 30% 분리, 검증을 우회하는 기망 행위를 5-Gate Scorecard로 차단,
@@ -129,7 +139,8 @@ mangowhoiscloud/
 ├── 2025.10-2026.02/  Eco² · MVP 5인 BE/Infra → E2E 단독 (24-Node K8s, 새싹톤 4th/181)
 ├── 2026.02-present/  GEODE · 자율 에이전트 하네스 (Solo)
 ├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · 프리랜스 납품
-└── 2026.05-2026.06/  GEODE Self-Improving Loop · 측정 게이트 자기개선
+├── 2026.05-2026.06/  GEODE Self-Improving Loop · 측정 게이트 자기개선
+└── 2026.07-present/  Crucible · tau2-bench capability-axis 자기진화 게이트 루프
 ```
 
 ---
@@ -138,13 +149,13 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
+| 2026.07-present | **Crucible**: τ²-bench capability-axis 게이트 루프 | Solo | [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) |
 | 2026.05-2026.06 | **Self-Improving Loop**: Petri 감사 × 측정 게이트 | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
 | 2026.05 | **Crumb**: 멀티 호스트 에이전트 스튜디오 | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG 게임 스크립트 번역 SaaS · 분기 대화 그래프 데이터 모델 | Freelance | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack 행동 관측 기반 에이전트 조직 오케스트레이션 | Freelance | pinxlab |
 | 2026.03-2026.04 | **REODE**: Migration & Coding Agent, forked from GEODE | Freelance | pinxlab |
 | 2026.02-present | **GEODE**: 자율 에이전트 하네스 | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
-| 2026.02 | **LLMART**: CLI 기반 LLM-as-Judge 평가 | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10-2026.02 | **Eco²**: AI Multi-Agent, 24-Node K8s | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: 분산 스토리지 | Cloud Engineer | Rakuten Symphony |
 | 2024 | **Aimo**: LLM 갈등 중재 앱 | Backend | [KTB16Team](https://github.com/KTB16Team) |

@@ -17,6 +17,10 @@
   <a href="https://mangowhoiscloud.github.io/geode/self-improving/"><img src="https://img.shields.io/badge/Self--Improving_Hub-6B4FBB?style=flat-square&logo=githubpages&logoColor=white" alt="Self-Improving Hub"></a>
 </p>
 
+<p align="center">
+  Previous GitHub account: <a href="https://github.com/mng990"><strong>@mng990</strong></a>
+</p>
+
 ---
 
 ### Loops All the Way Down
@@ -91,6 +95,12 @@ clearing the no-mutation control arms' noise band get adopted. The first real me
 (mutations that never fired, a lucky frozen baseline), which I published and corrected openly. The floor of trustworthy
 measurement came before any improvement curve. The full audit archive ships as a public static bundle.
 
+**Crucible** · τ²-bench capability-axis gate loop · [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md)
+Moves the promotion discipline from the Petri/safety loop (champion chain, paired verdict, frozen ruler) into capability evaluation.
+Cheap trace replay and telecom workflow surrogates compress candidates before expensive tau2 runs are spent as the final court.
+The first cycle is classified as gate qualification, not core-production promotion: the useful result is a false-promotion guardrail
+and a requirement for holdout, retention, shadow, and canary evidence before benchmark gains become production claims.
+
 **REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
 GEODE's harness redesigned into a coding-agent product, delivering a live service's Java 8→22 and
 Spring Boot 2→3 migration. Deterministic OpenRewrite (70%) split from LLM territory (30%); agent deception
@@ -134,7 +144,8 @@ mangowhoiscloud/
 ├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, SeSACTHON 4th/181)
 ├── 2026.02-present/  GEODE · autonomous agent harness (solo)
 ├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · freelance delivery
-└── 2026.05-2026.06/  GEODE Self-Improving Loop · measurement-gated self-improvement
+├── 2026.05-2026.06/  GEODE Self-Improving Loop · measurement-gated self-improvement
+└── 2026.07-present/  Crucible · tau2-bench capability-axis gate loop
 ```
 
 ---
@@ -143,13 +154,13 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
+| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) |
 | 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
 | 2026.05 | **Crumb**: multi-host agent studio | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG game-script translation SaaS · branching-dialogue-graph data model | Freelance | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack-native agent-org orchestration | Freelance | pinxlab |
 | 2026.03-2026.04 | **REODE**: migration & coding agent, forked from GEODE | Freelance | pinxlab |
 | 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
-| 2026.02 | **LLMART**: CLI-based LLM-as-judge evaluation | Solo | [mangowhoiscloud/llmart](https://github.com/mangowhoiscloud/llmart) |
 | 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: distributed storage | Cloud Engineer | Rakuten Symphony |
 | 2024 | **Aimo**: LLM conflict-mediation app | Backend | [KTB16Team](https://github.com/KTB16Team) |
