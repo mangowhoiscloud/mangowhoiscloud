@@ -92,7 +92,7 @@
 적대 시나리오 생성(co-scientist 토폴로지) → Petri 다차원 행동 감사 → 무변이 대조군의 노이즈 밴드를 넘는 변이만 채택.
 첫 측정이 조용한 결함(미발생 변이·운 좋은 기준선)을 드러냈고 결함은 공개·정정. Petri 감사 로그 408건 전량을 원본으로 공개.
 
-**Crucible** · τ²-bench 기반 능력 축 게이트 루프 · [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+**Crucible** · τ²-bench 기반 능력 축 게이트 루프 · [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 Petri 안전성 루프의 승격 규율(챔피언 체인·짝지은 판정·고정 판정자)을 능력 평가로 옮기고, 싼 대리 게이트로 후보를 압축해 비싼 tau2 실행은 최종 판정에만 사용.
 변이 시도 35건 중 core 승격 0건, 기각 사유는 전건 기계 기록. 거짓 승격을 막는 게이트 검증이 첫 사이클의 산출물.
 
@@ -147,7 +147,7 @@ mangowhoiscloud/
 
 | 기간 | 프로젝트 | 역할 | 링크 |
 |------|---------|------|------|
-| 2026.07-present | **Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.07-present | **Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05-2026.06 | **자기개선 루프**: Petri 감사 × 측정 게이트 | 단독 | [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [감사 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05 | **Crumb**: 멀티 호스트 에이전트 스튜디오 | 단독 | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG 게임 스크립트 번역 SaaS · 분기 대화 그래프 데이터 모델 | 프리랜스 | pinxlab |
