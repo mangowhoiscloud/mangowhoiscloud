@@ -94,7 +94,7 @@ Adversarial scenario generation (co-scientist topology) → Petri multi-dimensio
 clearing the no-mutation control arms' noise band get adopted. The first real measurements surfaced silent defects
 (mutations that never fired, a lucky frozen baseline), published and corrected openly. All 408 Petri audit logs ship as raw files.
 
-**Crucible** · τ²-bench capability-axis gate loop · [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+**Crucible** · τ²-bench capability-axis gate loop · [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 Moves the promotion discipline from the Petri/safety loop (champion chain, paired verdict, frozen judge) into capability
 evaluation; cheap surrogate gates compress candidates so expensive tau2 runs serve only as the final court.
 35 mutation attempts, zero core promotions, every rejection reason machine-recorded: the first cycle's product is a
@@ -154,7 +154,7 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [audit logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05 | **Crumb**: multi-host agent studio | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG game-script translation SaaS · branching-dialogue-graph data model | Freelance | pinxlab |
