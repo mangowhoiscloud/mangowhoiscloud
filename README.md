@@ -147,8 +147,8 @@ mangowhoiscloud/
 
 | 기간 | 프로젝트 | 역할 | 링크 |
 |------|---------|------|------|
-| 2026.07-present | **Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
-| 2026.05-2026.06 | **자기개선 루프**: Petri 감사 × 측정 게이트 | 단독 | [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [감사 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.07-present | **GEODE: Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.05-2026.06 | **GEODE: SIL**: Petri 감사 × 측정 게이트 | 단독 | [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [감사 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05 | **Crumb**: 멀티 호스트 에이전트 스튜디오 | 단독 | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG 게임 스크립트 번역 SaaS · 분기 대화 그래프 데이터 모델 | 프리랜스 | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack 행동 관측 기반 에이전트 조직 오케스트레이션 | 프리랜스 | pinxlab |
