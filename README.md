@@ -107,7 +107,7 @@ OpenRewrite 결정론 70% + LLM 30% 분리, 검증을 우회하는 기망 행위
 | 결과 | 83/83 테스트 + 프론트엔드/백엔드 종단 검증 통과 |
 | 실행 | 33 자율 세션 · 1,133 에이전트 라운드 · 5h 48m (사람 개입 0) |
 
-**Eco²** · AI 멀티에이전트 재활용 서비스 · [포트폴리오](https://mangowhoiscloud.github.io/portfolio/eco2) · 새싹톤 우수상 4th/181
+**Eco²** · AI 멀티에이전트 재활용 서비스 · [포트폴리오](https://mangowhoiscloud.github.io/portfolio/eco2) · 2025 AI 새싹톤 우수상 (4th/181)
 EC2 14노드에서 시작해 Terraform·Ansible IaC와 ArgoCD 선언형으로 24-Node K8s를 단독 운영.
 temperature 0.1 strict 챗봇을 툴콜링·LangGraph 병렬·SSE·Agent SDK로 상용 멀티에이전트로 고도화.
 동시접속 0→1,000 VU 97.8%, 평가 품질 69.4→99.8/100(Swiss Cheese 3-Layer), 인증 핸들러 48→1,500 RPS.
@@ -134,7 +134,7 @@ mangowhoiscloud/
 ├── 2024.07-2024.11/  카카오테크 부트캠프 · 백엔드 · 데브옵스 · LLM
 ├── 2024.09/          DREAM · 카카오테크 해커톤 · 생성형 AI 꿈 서사·이미지 · 백엔드·AI
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · 클라우드 엔지니어 (페타바이트 분산 스토리지, 글로벌 팀)
-├── 2025.10-2026.02/  Eco² · 5인 MVP 백엔드/인프라 → 전 과정 단독 (24노드 K8s, 새싹톤 4th/181)
+├── 2025.10-2026.02/  Eco² · 5인 MVP 백엔드/인프라 → 전 과정 단독 (24노드 K8s, 2025 AI 새싹톤 우수상)
 ├── 2026.02-present/  GEODE · 자율 에이전트 하네스 (단독)
 ├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · 프리랜스 납품
 ├── 2026.05-2026.06/  GEODE 자기개선 루프 · 측정 게이트 자기개선
@@ -154,7 +154,7 @@ mangowhoiscloud/
 | 2026.04-2026.05 | **Kiki**: Slack 행동 관측 기반 에이전트 조직 오케스트레이션 | 프리랜스 | pinxlab |
 | 2026.03-2026.04 | **REODE**: GEODE에서 파생한 마이그레이션·코딩 에이전트 | 프리랜스 | pinxlab |
 | 2026.02-present | **GEODE**: 자율 에이전트 하네스 | 단독 | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) |
-| 2025.10-2026.02 | **Eco²**: AI 멀티에이전트, 24노드 K8s | 백엔드/인프라 → 전 과정 | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025.10-2026.02 | **Eco²**: AI 멀티에이전트, 24노드 K8s, 2025 AI 새싹톤 우수상 | 백엔드/인프라 → 전 과정 | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: 분산 스토리지 | 클라우드 엔지니어 | Rakuten Symphony |
 | 2024.09 | **DREAM**: 노년층의 못 이룬 꿈을 생성형 AI(LLM·RAG·Diffusion)로 서사·이미지화하는 해커톤 서비스 | 백엔드·AI | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2024 | **Aimo**: LLM 갈등 중재 앱 | 백엔드 | [KTB16Team](https://github.com/KTB16Team) |

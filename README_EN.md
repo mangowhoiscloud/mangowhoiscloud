@@ -112,7 +112,7 @@ mandating explore-before-fix.
 | Outcome | 83/83 tests + FE/BE E2E verification passed |
 | Run | 33 autonomous sessions · 1,133 agentic rounds · 5h 48m (zero human intervention) |
 
-**Eco²** · AI multi-agent recycling service · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · SeSACTHON Excellence Award, 4th/181
+**Eco²** · AI multi-agent recycling service · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · 2025 AI SeSACTHON Excellence Award (4th/181)
 Started on 14 EC2 nodes, provisioned as code with Terraform·Ansible, run declaratively via ArgoCD on a 24-node K8s cluster, all solo.
 A strict temperature-0.1 chatbot grown into a production-level multi-agent system through tool calling,
 parallel LangGraph dispatch, SSE streaming, and Agent SDK. Concurrency 0→1,000 VU at 97.8%,
@@ -141,7 +141,7 @@ mangowhoiscloud/
 ├── 2024.07-2024.11/  Kakao Tech Bootcamp · Backend · DevOps · LLM
 ├── 2024.09/          DREAM · KakaoTech hackathon · generative-AI dream narratives and images · Backend/AI
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · Cloud Engineer (petabyte-scale distributed storage, global team)
-├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, SeSACTHON 4th/181)
+├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, 2025 AI SeSACTHON Excellence Award)
 ├── 2026.02-present/  GEODE · autonomous agent harness (solo)
 ├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · freelance delivery
 ├── 2026.05-2026.06/  GEODE Self-Improving Loop · measurement-gated self-improvement
@@ -161,7 +161,7 @@ mangowhoiscloud/
 | 2026.04-2026.05 | **Kiki**: Slack-native agent-org orchestration | Freelance | pinxlab |
 | 2026.03-2026.04 | **REODE**: migration & coding agent, forked from GEODE | Freelance | pinxlab |
 | 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [docs](https://mangowhoiscloud.github.io/geode/docs) |
-| 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s, 2025 AI SeSACTHON Excellence Award | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: distributed storage | Cloud Engineer | Rakuten Symphony |
 | 2024.09 | **DREAM**: hackathon service turning seniors' unrealized dreams into generative-AI narratives and images (LLM, RAG, Diffusion) | Backend/AI | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2024 | **Aimo**: LLM conflict-mediation app | Backend | [KTB16Team](https://github.com/KTB16Team) |
