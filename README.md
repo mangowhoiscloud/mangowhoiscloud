@@ -84,20 +84,17 @@
 
 ### 주요 프로젝트
 
-**GEODE** · 에이전트 루프 기반 자율 에이전트 하네스 · [저장소](https://github.com/mangowhoiscloud/geode) · [포트폴리오](https://mangowhoiscloud.github.io/portfolio/geode)
+**GEODE** · 에이전트 루프 기반 자율 에이전트 하네스 · [저장소](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [포트폴리오](https://mangowhoiscloud.github.io/portfolio/geode)
 탐색·리서치·시그널 수집에 특화한 장기 실행 시스템. 멀티 프로바이더 게이트웨이, 5-Tier 메모리,
 4계층 도구 디스패치, HITL 권한 게이트를 SDK 런타임부터 단독 구축. 일상 업무를 자율 수행 중.
 
-**GEODE 자기개선 루프** · 측정 게이트 기반 자기개선 폐회로 · [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [Petri 번들](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [영상](https://www.youtube.com/watch?v=TuEOGQrO9Us)
+**GEODE 자기개선 루프** · 측정 게이트 기반 자기개선 폐회로 · [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [감사 로그 원본](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [영상](https://www.youtube.com/watch?v=TuEOGQrO9Us)
 적대 시나리오 생성(co-scientist 토폴로지) → Petri 다차원 행동 감사 → 무변이 대조군의 노이즈 밴드를 넘는 변이만 채택.
-측정을 처음 돌리자 조용한 결함(미발생 변이·운 좋은 기준선)이 드러남. 개선 곡선보다 측정의 바닥이 먼저, 결함은 공개·정정.
-감사 결과 전체를 외부 열람 가능한 정적 번들로 공개.
+첫 측정이 조용한 결함(미발생 변이·운 좋은 기준선)을 드러냈고 결함은 공개·정정. Petri 감사 로그 408건 전량을 원본으로 공개.
 
-**Crucible** · τ²-bench 기반 능력 축 게이트 루프 · [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md)
-Petri 안전성 자기개선 루프의 승격 규율(챔피언 체인, 짝지은 판정, 고정 판정자)을 능력 평가로 옮김.
-짧고 싼 추적 재생과 통신 도메인 작업흐름 대리 게이트로 후보를 압축하고, 비싼 tau2 실행은 최종 판정에만 사용.
-첫 사이클은 핵심 제품 승격이 아니라 게이트 검증으로 재분류: 거짓 승격을 막고,
-미공개 검증셋·유지 검증셋·그림자 실행·카나리 없이 벤치마크 점수를 제품 개선으로 주장하지 않는 규율을 남김.
+**Crucible** · τ²-bench 기반 능력 축 게이트 루프 · [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+Petri 안전성 루프의 승격 규율(챔피언 체인·짝지은 판정·고정 판정자)을 능력 평가로 옮기고, 싼 대리 게이트로 후보를 압축해 비싼 tau2 실행은 최종 판정에만 사용.
+변이 시도 35건 중 core 승격 0건, 기각 사유는 전건 기계 기록. 거짓 승격을 막는 게이트 검증이 첫 사이클의 산출물.
 
 **REODE** · 코드 마이그레이션 자율 에이전트 @ pinxlab (프리랜스 납품)
 GEODE 하네스를 코딩 에이전트 제품으로 재설계해 라이브 서비스의 Java 8→22, Spring Boot 2→3 마이그레이션을 납품.
@@ -135,6 +132,7 @@ Claude Code·Codex·Gemini CLI를 공통 인터페이스로 추상화한 3일 �
 mangowhoiscloud/
 ├── 2017.03-2023.08/  부산대학교 정보컴퓨터공학부 · 학사
 ├── 2024.07-2024.11/  카카오테크 부트캠프 · 백엔드 · 데브옵스 · LLM
+├── 2024.09/          DREAM · 카카오테크 해커톤 · 생성형 AI 꿈 서사·이미지 · 백엔드·AI
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · 클라우드 엔지니어 (페타바이트 분산 스토리지, 글로벌 팀)
 ├── 2025.10-2026.02/  Eco² · 5인 MVP 백엔드/인프라 → 전 과정 단독 (24노드 K8s, 새싹톤 4th/181)
 ├── 2026.02-present/  GEODE · 자율 에이전트 하네스 (단독)
@@ -149,13 +147,14 @@ mangowhoiscloud/
 
 | 기간 | 프로젝트 | 역할 | 링크 |
 |------|---------|------|------|
-| 2026.07-present | **Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) |
-| 2026.05-2026.06 | **자기개선 루프**: Petri 감사 × 측정 게이트 | 단독 | [허브](https://mangowhoiscloud.github.io/geode/self-improving/) |
+| 2026.07-present | **Crucible**: τ²-bench 능력 축 게이트 루프 | 단독 | [설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [실측 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.05-2026.06 | **자기개선 루프**: Petri 감사 × 측정 게이트 | 단독 | [허브](https://mangowhoiscloud.github.io/geode/self-improving/) · [감사 로그](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05 | **Crumb**: 멀티 호스트 에이전트 스튜디오 | 단독 | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG 게임 스크립트 번역 SaaS · 분기 대화 그래프 데이터 모델 | 프리랜스 | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack 행동 관측 기반 에이전트 조직 오케스트레이션 | 프리랜스 | pinxlab |
 | 2026.03-2026.04 | **REODE**: GEODE에서 파생한 마이그레이션·코딩 에이전트 | 프리랜스 | pinxlab |
-| 2026.02-present | **GEODE**: 자율 에이전트 하네스 | 단독 | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026.02-present | **GEODE**: 자율 에이전트 하네스 | 단독 | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) |
 | 2025.10-2026.02 | **Eco²**: AI 멀티에이전트, 24노드 K8s | 백엔드/인프라 → 전 과정 | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: 분산 스토리지 | 클라우드 엔지니어 | Rakuten Symphony |
+| 2024.09 | **DREAM**: 노년층의 못 이룬 꿈을 생성형 AI(LLM·RAG·Diffusion)로 서사·이미지화하는 해커톤 서비스 | 백엔드·AI | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2024 | **Aimo**: LLM 갈등 중재 앱 | 백엔드 | [KTB16Team](https://github.com/KTB16Team) |

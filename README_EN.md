@@ -84,22 +84,21 @@ The outer loop measures what the inner one produced, and that measurement become
 
 ### Projects
 
-**GEODE** · agentic-loop-based autonomous agent harness · [repo](https://github.com/mangowhoiscloud/geode) · [portfolio](https://mangowhoiscloud.github.io/portfolio/geode)
+**GEODE** · agentic-loop-based autonomous agent harness · [repo](https://github.com/mangowhoiscloud/geode) · [docs](https://mangowhoiscloud.github.io/geode/docs) · [portfolio](https://mangowhoiscloud.github.io/portfolio/geode)
 A long-running system specialized in exploration, research, and signal collection. Multi-provider gateway,
 5-tier memory, 4-layer tool dispatch, and HITL permission gates, built solo from the SDK runtime up.
 Runs my daily work autonomously.
 
-**GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [petri bundle](https://mangowhoiscloud.github.io/geode/petri-bundle/) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
+**GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [raw audit logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
 Adversarial scenario generation (co-scientist topology) → Petri multi-dimensional behavioral audit → only mutations
 clearing the no-mutation control arms' noise band get adopted. The first real measurements surfaced silent defects
-(mutations that never fired, a lucky frozen baseline), which I published and corrected openly. The floor of trustworthy
-measurement came before any improvement curve. The full audit archive ships as a public static bundle.
+(mutations that never fired, a lucky frozen baseline), published and corrected openly. All 408 Petri audit logs ship as raw files.
 
-**Crucible** · τ²-bench capability-axis gate loop · [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md)
-Moves the promotion discipline from the Petri/safety loop (champion chain, paired verdict, frozen ruler) into capability evaluation.
-Cheap trace replay and telecom workflow surrogates compress candidates before expensive tau2 runs are spent as the final court.
-The first cycle is classified as gate qualification, not core-production promotion: the useful result is a false-promotion guardrail
-and a requirement for holdout, retention, shadow, and canary evidence before benchmark gains become production claims.
+**Crucible** · τ²-bench capability-axis gate loop · [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+Moves the promotion discipline from the Petri/safety loop (champion chain, paired verdict, frozen judge) into capability
+evaluation; cheap surrogate gates compress candidates so expensive tau2 runs serve only as the final court.
+35 mutation attempts, zero core promotions, every rejection reason machine-recorded: the first cycle's product is a
+false-promotion guardrail.
 
 **REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
 GEODE's harness redesigned into a coding-agent product, delivering a live service's Java 8→22 and
@@ -140,6 +139,7 @@ transcript.jsonl single source of truth + pure reducers; same-provider evaluatio
 mangowhoiscloud/
 ├── 2017.03-2023.08/  Pusan National University · B.S. Computer Science & Engineering
 ├── 2024.07-2024.11/  Kakao Tech Bootcamp · Backend · DevOps · LLM
+├── 2024.09/          DREAM · KakaoTech hackathon · generative-AI dream narratives and images · Backend/AI
 ├── 2024.12-2025.08/  Rakuten Symphony Korea · Cloud Engineer (petabyte-scale distributed storage, global team)
 ├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, SeSACTHON 4th/181)
 ├── 2026.02-present/  GEODE · autonomous agent harness (solo)
@@ -154,13 +154,14 @@ mangowhoiscloud/
 
 | Date | Project | Role | Link |
 |------|---------|------|------|
-| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) |
-| 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) |
+| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [audit logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
 | 2026.05 | **Crumb**: multi-host agent studio | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
 | 2026.05 | **Cotton**: RPG game-script translation SaaS · branching-dialogue-graph data model | Freelance | pinxlab |
 | 2026.04-2026.05 | **Kiki**: Slack-native agent-org orchestration | Freelance | pinxlab |
 | 2026.03-2026.04 | **REODE**: migration & coding agent, forked from GEODE | Freelance | pinxlab |
-| 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) |
+| 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [docs](https://mangowhoiscloud.github.io/geode/docs) |
 | 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
 | 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: distributed storage | Cloud Engineer | Rakuten Symphony |
+| 2024.09 | **DREAM**: hackathon service turning seniors' unrealized dreams into generative-AI narratives and images (LLM, RAG, Diffusion) | Backend/AI | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2024 | **Aimo**: LLM conflict-mediation app | Backend | [KTB16Team](https://github.com/KTB16Team) |
