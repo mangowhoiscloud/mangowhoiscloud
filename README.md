@@ -84,7 +84,7 @@
 
 ### 주요 프로젝트
 
-**GEODE** · 에이전트 루프 기반 자율 에이전트 하네스 · [저장소](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [포트폴리오](https://mangowhoiscloud.github.io/portfolio/geode)
+**GEODE** · 에이전트 루프 기반 자율 에이전트 하네스 · [저장소](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [포트폴리오](https://mangowhoiscloud.github.io/geode/)
 탐색·리서치·시그널 수집에 특화한 장기 실행 시스템. 멀티 프로바이더 게이트웨이, 5-Tier 메모리,
 4계층 도구 디스패치, HITL 권한 게이트를 SDK 런타임부터 단독 구축. 일상 업무를 자율 수행 중.
 
