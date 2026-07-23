@@ -153,6 +153,6 @@ mangowhoiscloud/
 | 2026.03-2026.04 | **REODE**: GEODE에서 파생한 마이그레이션·코딩 에이전트 | 프리랜스 | pinxlab |
 | 2026.02-present | **GEODE**: 자율 에이전트 하네스 | 단독 | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) |
 | 2025.10-2026.02 | **Eco²**: AI 멀티에이전트, 24노드 K8s, 2025 AI 새싹톤 우수상 | 백엔드/인프라 → 전 과정 | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
-| 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: 분산 스토리지 | 클라우드 엔지니어 | Rakuten Symphony |
+| 2024.12-2025.08 | **Rakuten Cloud Native Platform - Storage Server v5.5.0 · Rakuten Storage v1.0.0**: 분산 스토리지 서버 개발 | 클라우드 엔지니어(C, K8s) | Rakuten Symphony |
 | 2024.09 | **DREAM**: 노년층의 못 이룬 꿈을 생성형 AI(LLM·RAG·Diffusion)로 서사·이미지화하는 해커톤 서비스 | 인프라 | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
 | 2024 | **Aimo**: LLM 갈등 중재 앱 | 백엔드 | [KTB16Team](https://github.com/KTB16Team) |
