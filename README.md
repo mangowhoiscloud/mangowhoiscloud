@@ -133,7 +133,7 @@ mangowhoiscloud/
 ├── 2017.03-2023.08/  부산대학교 정보컴퓨터공학부 · 학사
 ├── 2024.07-2024.11/  카카오테크 부트캠프 · 백엔드 · 데브옵스 · LLM
 ├── 2024.09/          DREAM · 카카오테크 해커톤 · 생성형 AI 꿈 서사·이미지 · 백엔드·AI
-├── 2024.12-2025.08/  Rakuten Symphony Korea · 클라우드 엔지니어 (페타바이트 분산 스토리지, 글로벌 팀)
+├── 2024.12-2025.08/  Rakuten Symphony Korea · Jr. Cloud Engineer - Storage Developer (PB 분산 스토리지 개발, 정규직, 글로벌 팀)
 ├── 2025.10-2026.02/  Eco² · 5인 MVP 백엔드/인프라 → 전 과정 단독 (24노드 K8s, 2025 AI 새싹톤 우수상)
 ├── 2026.02-present/  GEODE · 자율 에이전트 하네스 (단독)
 ├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · 프리랜스 납품
