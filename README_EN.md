@@ -135,12 +135,6 @@ sequenceDiagram
 
 [Two loops](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops) · [Experiment loop](https://mangowhoiscloud.github.io/geode/docs/self-improving/loop-overview) · [Public evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
-### Compiler AX Lab
-
-Independent research on handing over **reviewable changes with cause, diff, and execution evidence**. Public CPU records dated 2026-09-16 include **46,080 matching output values**, **720 regular tests**, and **55 doctests**. Separate executions are not combined into one score; the A/B controls tied, and CPU checks do not establish NPU performance. The project is unaffiliated with FuriosaAI.
-
-[Code and verification boundaries](https://github.com/mangowhoiscloud/compiler-ax-lab) · [Retrospective report](https://mangowhoiscloud.github.io/compiler-ax-lab/report.pdf)
-
 ### REODE @ pinxlab
 
 A GEODE-derived code-migration harness combining OpenRewrite with LLM-based contextual repair. A **5,523-file** Java 1.8→22 and Spring 4→6 delivery passed **83/83 tests** plus frontend/backend end-to-end verification. The recorded run covered 33 autonomous sessions, 1,133 rounds, and 5h 48m with zero human intervention during that run, not zero preparation or review.
@@ -195,7 +189,6 @@ An **agent** uses tools to make progress. A **harness** manages tools, memory, p
 
 | Period | Experience |
 | --- | --- |
-| 2026.09 | **Compiler AX Lab** · CPU-test and workflow research |
 | 2026.02–present | **GEODE** · Solo development · SIL 2026.05–06 · Crucible 2026.07–present |
 | 2026.03–05 | **pinxlab** · Freelance · REODE, Kiki, Cotton |
 | 2025.10–2026.02 | **Eco²** · Backend/infrastructure to solo development and operation · 2025 AI SeSACTHON Excellence Award |
