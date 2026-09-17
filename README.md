@@ -135,12 +135,6 @@ sequenceDiagram
 
 [두 루프](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops) · [실험 루프](https://mangowhoiscloud.github.io/geode/docs/self-improving/loop-overview) · [공개 평가 기록](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
-### Compiler AX Lab
-
-AI가 만든 코드를 **원인, 변경, 실행 증거를 연결한 검토 가능한 수정안**으로 넘기는 방법을 연구합니다. 2026-09-16 공개 CPU 기록에는 **46,080개 출력값 일치**, **720개 일반 테스트**, **55개 doctest**가 남아 있습니다. 서로 다른 실행은 하나의 점수로 합치지 않고 A/B 대조 결과는 동률로 남겼습니다. CPU 검증은 NPU 성능을 뜻하지 않으며 FuriosaAI 소속 또는 승인 프로젝트가 아닙니다.
-
-[코드와 검증 범위](https://github.com/mangowhoiscloud/compiler-ax-lab) · [회고 보고서](https://mangowhoiscloud.github.io/compiler-ax-lab/report.pdf)
-
 ### REODE @ pinxlab
 
 GEODE에서 출발한 코드 마이그레이션 하네스입니다. OpenRewrite와 LLM 기반 문맥 수정을 결합했습니다. Java 1.8→22, Spring 4→6 대상 **5,523개 파일** 규모 서비스에서 **83/83 테스트와 프론트엔드, 백엔드 종단 검증**을 통과했습니다. 기록된 실행은 33개 자율 세션, 1,133라운드, 5시간 48분이며 해당 실행 중 사람 개입은 0회였습니다. 준비와 최종 검토가 없었다는 의미는 아닙니다.
@@ -182,9 +176,9 @@ sequenceDiagram
 <details>
 <summary><strong>그 밖의 작업</strong></summary>
 
-**Kiki @ pinxlab · 2026.04–05:** Slack 기반 다중 에이전트 분석, 구현, 리뷰와 2단계 게이트.  
-**Cotton @ pinxlab · 2026.05:** 대화를 그래프로 모델링한 RPG 번역 SaaS.  
-**[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb) · 2026.05:** replay 가능한 CLI 에이전트 게임 제작 실험.  
+**Kiki @ pinxlab · 2026.04–05:** Slack 기반 멀티에이전트 분석, 구현, 리뷰와 2단계 검증 게이트.  
+**Cotton @ pinxlab · 2026.05:** RPG 번역 SaaS. 대화를 그래프로 모델링.  
+**[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb) · 2026.05:** replay 가능한 CLI 에이전트 게임 스튜디오 실험.  
 **[DREAM](https://github.com/KakaoTech-Hackathon-Dream) · 2024.09:** 생성형 AI 서사와 이미지 서비스.  
 **[Aimo](https://github.com/KTB16Team) · 2024:** LLM 기반 갈등 중재 백엔드.
 
@@ -195,21 +189,20 @@ sequenceDiagram
 
 | 기간 | 경험 |
 | --- | --- |
-| 2026.09 | **Compiler AX Lab** · CPU 테스트와 개발 워크플로우 연구 |
 | 2026.02–현재 | **GEODE** · 단독 개발 · SIL 2026.05–06 · Crucible 2026.07–현재 |
-| 2026.03–05 | **pinxlab** · 프리랜스 · REODE, Kiki, Cotton |
-| 2025.10–2026.02 | **Eco²** · 백엔드와 인프라에서 단독 고도화와 운영으로 확장 · 2025 AI 새싹톤 우수상 |
-| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB 규모 분산 스토리지 |
-| 2024.07–11 | **카카오테크 부트캠프** · 백엔드, DevOps, LLM |
-| 2017.03–2023.08 | **부산대학교 정보컴퓨터공학부** · 학사 |
+| 2026.03–05 | **pinxlab** · 프리랜서 · REODE, Kiki, Cotton |
+| 2025.10–2026.02 | **Eco²** · 백엔드/인프라에서 단독 개발·운영까지 · 2025 AI 새싹톤 우수상 |
+| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB급 분산 스토리지 |
+| 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
+| 2017.03–2023.08 | **부산대학교** · 컴퓨터공학 학사 |
 
-Rakuten에서는 **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0** 경험을 쌓았습니다.
+Rakuten에서는 **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0**에 참여했습니다.
 
 <a id="more"></a>
 ## 기록
 
-구현과 실험 기록은 [블로그](https://rooftopsnow.tistory.com)와 [YouTube](https://www.youtube.com/@mango_fr)에 정리합니다. [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · 이전 GitHub 계정: [@mng990](https://github.com/mng990)
+구현 과정과 실험에서 얻은 내용은 [블로그](https://rooftopsnow.tistory.com)와 [YouTube](https://www.youtube.com/@mango_fr)에 남깁니다. [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · 이전 GitHub 계정: [@mng990](https://github.com/mng990)
 
-<sub>내용 검토: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">수치의 출처, 범위와 업데이트 원칙</a></sub>
+<sub>내용 검토: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">수치의 출처와 범위</a></sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
