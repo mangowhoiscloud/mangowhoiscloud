@@ -2,133 +2,214 @@
 
 # Jihwan Ryu
 
-**I build autonomous agents and cloud systems, then feed execution evidence back into the next search.**
+**I build verifiable systems, then feed their results back into the next search.**
 
-My path runs through distributed storage, backend engineering, and infrastructure. Today I work on AI agent runtimes and development methodology. I am less interested in tool calling by itself than in how long running work continues, how failures remain inspectable, how results are verified, and how those results become inputs to the next experiment.
-
-I do not freeze one successful method as the answer. Code, prompts, Skills, tool policies, evaluation design, role decomposition, and human intervention points can all become part of the search space. Individual runs are bounded. The methodological search space remains open.
+My background spans distributed storage, backend engineering, and cloud infrastructure. Today I work on **autonomous agent runtimes and RSI (Recursive Self-Improvement) methodology**. I care about observable, reproducible execution and about preserving results and failures as material for the next experiment.
 
 [GEODE](https://mangowhoiscloud.github.io/geode/) · [Technical blog](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
 
-`RSI / scaffold search` · `autonomous agents` · `cloud / Kubernetes` · [GEODE latest release](https://github.com/mangowhoiscloud/geode/releases/latest)
+[![GEODE release](https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&label=GEODE)](https://github.com/mangowhoiscloud/geode/releases/latest)
 
-[How I work](#how-i-work) · [Search loop](#search-loop) · [Selected work](#selected-work) · [Experience](#experience)
+`RSI / scaffold search` · `Autonomous agent runtime` · `Cloud / Kubernetes / IaC` · `Evidence / trajectories`
+
+[How I work](#how-i-work) · [Evolution](#evolution) · [Selected work](#selected-work) · [Verification and records](#evidence) · [Concepts](#concepts) · [Experience](#experience) · [Notes](#more)
 
 <a id="how-i-work"></a>
 ## How I work
 
-**Set the boundary first.** I find the failing input and actual call path, then separate what may change from what must remain intact. I prefer a small reproducing check before a large edit.
+**Bound the problem first.** I find the failing input and actual call path, define what may change, then construct the smallest reproducible condition.
 
-**Separate exploration from judgment.** I use models actively to form hypotheses and navigate unfamiliar code. Adoption depends on execution results, tests, original logs, and independent evaluation.
+**Use models for exploration and evidence for decisions.** AI helps form hypotheses and implementation candidates. Tests, original logs, execution records, and external verification decide whether a change holds.
 
-**Keep failures.** Successful changes are not the only useful outputs. Failed attempts, rejected hypotheses, and incomplete runs become data for generating the next candidate. This is why summaries do not replace original records.
+**Preserve results as data for the next search.** Successful changes, failed attempts, rejected hypotheses, trajectories, and evaluation results remain available. Causes become regression tests; repeatable investigations become Skills or procedures.
 
-**Treat methodology as a search space.** I do not only search for better code. Problem decomposition, context construction, tool selection, verification order, Skills, agent roles, and permission boundaries are candidates too. The aim is not to declare one procedure final, but to make the next experiment able to learn from the previous one.
+**Treat methodology itself as a search space.** Task decomposition, context, tool selection, verification order, Skills, agent roles, evaluator composition, and human intervention can all become candidate variables. Individual runs are bounded; the search space stays open.
 
-**Verify through deployment without exceeding the evidence.** A code change, CI, merge, installation, and deployment are separate checks. A tied experiment remains a tie. A CPU result does not become a device performance claim.
+<a id="evolution"></a>
+## Evolution
 
-<a id="search-loop"></a>
-## Search loop
+Eco² was a production service where I built an **asynchronous agent workflow and cloud runtime**. GEODE separated those lessons into a reusable **autonomous agent runtime and meta-harness**. The current Experimental Loop feeds execution and evaluation evidence back into an **outer scaffold-search loop**.
 
-```text
-hypotheses and method candidates
-              ↓
-run → observe → verify → adopt or reject
- ↑                         ↓
- └──── results and failures ────┘
+```mermaid
+sequenceDiagram
+    participant E as Eco2
+    participant G as GEODE Runtime
+    participant M as Meta Harness
+    participant X as Experimental Loop
+    E->>G: Product workflow becomes reusable runtime
+    G->>M: Runtime controls become explicit mechanisms
+    M->>X: Verification becomes a search signal
+    X->>M: Accepted scaffold candidate
+    M->>G: Versioned policy and configuration
+    G-->>X: New trajectory and evaluation evidence
 ```
 
-The output of this loop is not a single final score. Trajectories, verifier receipts, failure causes, rejection reasons, and adopted changes remain available. They become material for candidate generation and evaluation design in later experiments.
-
-Here, RSI refers to a **research direction that recursively searches the scaffold and development methodology around a model using execution results**, not recursive weight training. GEODE's public experiments do not claim that sustained self improvement has been established.
+The progression is mainly about separating the layers that **execute, control, observe, and improve** a stochastic system.
 
 <a id="selected-work"></a>
 ## Selected work
 
 ### GEODE
 
-An autonomous agent runtime that plans work and uses tools from natural language requests. I have built its long running memory, multi provider connections, tool execution, permission boundaries, evaluation, and experimental layers as a solo project.
+An **autonomous agent runtime** with long-running memory, multi-provider routing, tool execution, permission boundaries, observability, and evaluation. The distribution separates `core` for execution, `evals` for evidence production, and `evolve` for experimental scaffold search.
 
-The current design separates the `core` execution runtime, `evals` measurement and evidence production, and `evolve` scaffold search. Inside the runtime, Model, Runtime, Harness, and Agent form the task loop. Outside it, candidate generation, measurement, promotion gates, and the ledger form a separate search loop. Original results and failures feed back into later candidates and search policy.
+Its meta-harness groups control mechanisms into Context Control, Plan and Execute, Verify, Observe, and Scaffold. These are code-backed control surfaces rather than conceptual labels.
 
-<p align="center"><img src="assets/geode-meta-harness.svg" alt="GEODE meta-harness: autonomous runtime inside an evidence-driven scaffold search loop" width="100%"></p>
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as Context Control
+    participant P as Plan and Execute
+    participant V as Verify
+    participant O as Observe
+    U->>C: Goal and session state
+    C->>P: Bounded context and tool surface
+    loop Agentic execution
+        P->>P: Plan, act, observe, replan
+        P->>V: Candidate result
+        V-->>P: Pass, retry, or replan
+        P->>O: Events, calls, usage, state
+    end
+    O-->>U: Result plus session trajectory
+```
 
-SIL evaluates safety related behavior and Crucible evaluates task capability. The search changes instructions, tool policies, Skills, and other execution scaffolding rather than model weights.
+Context budgets and compaction, dynamic replanning and convergence detection, verification modes and safety gates, event persistence, and session timelines live at different layers so each can be measured and changed independently.
 
-[Code](https://github.com/mangowhoiscloud/geode) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Execution and evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [RSI experiment records](https://mangowhoiscloud.github.io/geode/self-improving/)
+[Code](https://github.com/mangowhoiscloud/geode) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Meta-harness catalog](https://mangowhoiscloud.github.io/geode/docs/reference/meta-harness-catalog) · [Execution and evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [RSI experiments](https://mangowhoiscloud.github.io/geode/self-improving/)
+
+### Eco²
+
+An AI recycling service that evolved from a chatbot into a multi-agent workflow using Vision LLM, RAG, tool calls, LangGraph-based processing, asynchronous SSE, and a Kubernetes platform.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API
+    participant W as Agent Workflow
+    participant L as LLM and RAG
+    participant T as Tools and Data
+    participant S as SSE Stream
+    participant K as Kubernetes
+    U->>A: Scan or chat request
+    A->>W: Dispatch async workflow
+    W->>L: Interpret and plan
+    L->>T: Retrieve or call tool
+    T-->>L: External observation
+    L-->>W: Structured result
+    W-->>S: Stream output
+    S-->>U: Async response
+    W->>K: Logs, metrics, traces
+```
+
+The main lesson was operating models inside a service runtime: asynchronous work, streaming, external data, observability, authorization, deployment automation, and load verification had to move together. This became the starting point for GEODE's runtime and meta-harness split.
+
+**Recorded milestones:** **2025 AI SeSACTHON Excellence Award (4th/181)**, **24-node Kubernetes** with Terraform, Ansible, and ArgoCD, Scan API **97.8% at 1,000 VU**, and a separate ext-authz path at **1,477 RPS with 2,500 VU**. VU means virtual users, not actual users. The service has closed.
+
+[Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)
+
+### Experimental Loop
+
+GEODE's outer loop searches **scaffolding around the model**, not model weights. System instructions, tool policy, Skills, and task decomposition can become candidates. A frozen measurement layer evaluates them before promotion or rejection.
+
+```mermaid
+sequenceDiagram
+    participant B as Baseline
+    participant S as Scaffold Search
+    participant E as Evaluation
+    participant L as Ledger
+    participant R as Ratchet
+    B->>S: Champion and search state
+    S->>E: Candidate scaffold
+    E->>E: Frozen audit and replication
+    E-->>L: Scores, stderr, trajectory, lineage
+    L->>R: Evidence-bound verdict input
+    alt Real gain and no critical regression
+        R->>B: Promote
+    else Regression, tie, invalid run, or weak evidence
+        R-->>S: Reject and preserve attempt
+    end
+    L-->>S: Prior for next hypothesis
+```
+
+**The ratchet does not move because a single score increased.** Candidate edits and measurement apparatus stay separate. Critical-dimension regressions can veto promotion, gain is compared against uncertainty, and baseline plus result ledgers are retained. Promotion changes the next baseline; rejection searches another hypothesis against the same baseline. CI adds deterministic ratchets for architecture, repository hygiene, prompt integrity, behavior, and coverage.
+
+[Two loops](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops) · [Experiment loop](https://mangowhoiscloud.github.io/geode/docs/self-improving/loop-overview) · [Public evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
 ### Compiler AX Lab
 
-Independent research on turning AI generated code into small changes connected to their cause, diff, and execution evidence. The public project contains Rust tests for the public `furiosa-opt` SDK and a Python runner. It is unaffiliated with and not approved by FuriosaAI.
-
-Public CPU records dated 2026-09-16 include **46,080 matching output values** in double buffering examples and a workspace run with **720 regular tests and 55 doctests passing**. The A/B pilot's control result was tied. CPU value checks do not establish NPU correctness or performance.
+Independent research on handing over **reviewable changes with cause, diff, and execution evidence**. Public CPU records dated 2026-09-16 include **46,080 matching output values**, **720 regular tests**, and **55 doctests**. Separate executions are not combined into one score; the A/B controls tied, and CPU checks do not establish NPU performance. The project is unaffiliated with FuriosaAI.
 
 [Code and verification boundaries](https://github.com/mangowhoiscloud/compiler-ax-lab) · [Retrospective report](https://mangowhoiscloud.github.io/compiler-ax-lab/report.pdf)
 
 ### REODE @ pinxlab
 
-I redesigned the GEODE derived harness into a code migration product. OpenRewrite handled rule based changes while LLMs handled context dependent work. Repeated repair failures led to an investigate before fixing procedure.
+A GEODE-derived code-migration harness combining OpenRewrite with LLM-based contextual repair. A **5,523-file** Java 1.8→22 and Spring 4→6 delivery passed **83/83 tests** plus frontend/backend end-to-end verification. The recorded run covered 33 autonomous sessions, 1,133 rounds, and 5h 48m with zero human intervention during that run, not zero preparation or review.
 
-The March 2026 delivery record covers a **5,523 file** service moving from Java 1.8 to 22 and Spring 4 to 6. It passed **83/83 tests plus frontend and backend end to end verification**. The recorded execution covered 33 autonomous sessions, 1,133 rounds, and 5 hours 48 minutes. Zero human intervention applies to that execution, not to preparation, design, or final review.
+[Delivery scope](docs/PROFILE_NOTES.md#reode)
 
-[Scope of the public delivery record](docs/PROFILE_NOTES.md#reode)
+<a id="evidence"></a>
+## Verification, reproduction, and records
 
-### Eco²
+**Verification checks the contract.** Local tests, CI, external evaluation, installation, and deployment checks do not substitute for one another. Each record states what it actually established.
 
-An AI recycling service. I started as the backend and infrastructure engineer in a five person MVP team, then continued development and operation solo. The system combined a multi agent workflow with cloud infrastructure, including tool calls, parallel LangGraph execution, and SSE streaming.
+**Reproduction starts by freezing conditions.** Model route, harness revision, task set, effort, timeout, seed, and attempt lineage stay attached to a run when they can affect the result. Baseline and candidate share measurement conditions; errored or quota-contaminated runs stay separate.
 
-From the public portfolio, the application runtime can be read as an API edge feeding a LangGraph based agent workflow, model and data tools, an SSE response path, and an observability layer. That application plane ran on a Kubernetes platform provisioned with Terraform and Ansible and synchronized through ArgoCD. The diagram groups publicly described responsibilities rather than claiming source package boundaries.
+**A trajectory is research data.** Requests, tool calls, external observations, failures, retries, and final verdicts form an execution trace. Successful trajectories show which controls were active. Failed trajectories become material for regression tests and mutation hypotheses. Original records take precedence over summaries, with provenance and privacy review for published artifacts.
 
-<p align="center"><img src="assets/eco2-runtime.svg" alt="Eco2 runtime: multi-agent application flow on Kubernetes infrastructure" width="100%"></p>
+```mermaid
+sequenceDiagram
+    participant A as Action
+    participant O as Observation
+    participant T as Trajectory
+    participant V as Verification
+    participant R as Regression Contract
+    participant N as Next Experiment
+    A->>O: Tool or environment interaction
+    O->>T: Preserve raw observation
+    T->>V: Replay with run conditions
+    V-->>R: Pass, failure, tie, or invalid evidence
+    R->>N: Test, gate, prior, or new hypothesis
+    N-->>A: Next bounded execution
+```
 
-The project received the **2025 AI SeSACTHON Excellence Award (4th/181)**. I operated a **24 node Kubernetes** environment with Terraform, Ansible, and ArgoCD. Public load records report the Scan API at **97.8% with 1,000 VU** and a separate ext authz path at **1,477 RPS with 2,500 VU**. VU means virtual users in a load test, not actual users. The service has closed.
-
-[Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/SeSACTHON/backend)
-
-<details>
-<summary><strong>Other work</strong></summary>
-
-**Kiki @ pinxlab, 2026.04 to 05:** a Slack directed workflow in which agents split analysis, implementation, and review.
-
-**Cotton @ pinxlab, 2026.05:** an RPG script translation SaaS that models branches, conditions, character voice, and subtitle budgets as a dialogue graph.
-
-**[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb), 2026.05:** a game production experiment connecting multiple CLI agents through a shared interface with replayable execution records.
-
-**[DREAM](https://github.com/KakaoTech-Hackathon-Dream), 2024.09:** a KakaoTech hackathon project using generative AI to turn older adults' unrealized dreams into narratives and images.
-
-**[Aimo](https://github.com/KTB16Team), 2024:** backend development for an LLM based conflict mediation app.
-
-</details>
-
-## Public GitHub activity
-
-I do not use public activity as a score for engineering or research quality. The previous GitHub Readme Stats images were removed because failed image loads appeared as question-mark boxes in some clients. From the profile README of public follower [@swstegall](https://github.com/swstegall), whose GitHub profile lists JPMorganChase, I kept the useful part of the pattern: clear section hierarchy and project-first visuals, without copying follower counters, view counters, streaks, or language-score cards.
+**A ratchet automates memory.** An understood failure becomes a regression test or deterministic check. A promoted baseline becomes the next reference. When a check fails, the first response is investigation, not relaxing the threshold.
 
 <a id="concepts"></a>
 ## Concepts
 
-An **agent** uses tools to make progress instead of only producing an answer. A **harness** manages tools, memory, permissions, failure handling, and verification around the model. A **Skill** is a procedure retrieved for a particular task. An **evaluation gate** is a condition that must be satisfied before a change is adopted.
+An **agent** uses tools to make progress. A **harness** manages tools, memory, permissions, failure handling, and verification. A **meta-harness** makes that harness observable, bounded, and evolvable. **RSI (Recursive Self-Improvement)** here means feeding evidence from earlier executions back into later changes and experiments while keeping adoption and repeated improvement as separate claims.
+
+<details>
+<summary><strong>Other work</strong></summary>
+
+**Kiki @ pinxlab · 2026.04–05:** Slack-directed multi-agent analysis, implementation, and review with a two-stage gate.  
+**Cotton @ pinxlab · 2026.05:** RPG translation SaaS modeling dialogue as a graph.  
+**[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb) · 2026.05:** replayable CLI-agent game-studio experiment.  
+**[DREAM](https://github.com/KakaoTech-Hackathon-Dream) · 2024.09:** generative AI narrative and image service.  
+**[Aimo](https://github.com/KTB16Team) · 2024:** LLM-based conflict-mediation backend.
+
+</details>
 
 <a id="experience"></a>
 ## Experience
 
 | Period | Experience |
 | --- | --- |
-| 2026.09 | **Compiler AX Lab** · Public CPU test and development workflow research |
-| 2026.02 to present | **GEODE** · Solo development · SIL, Crucible, RSI and scaffold search |
-| 2026.03 to 05 | **pinxlab** · Freelance delivery of REODE, Kiki, and Cotton |
-| 2025.10 to 2026.02 | **Eco²** · Backend and infrastructure, followed by solo development and operation |
-| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · Petabyte scale distributed storage in a global team |
-| 2024.07 to 11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
+| 2026.09 | **Compiler AX Lab** · CPU-test and workflow research |
+| 2026.02–present | **GEODE** · Solo development · SIL 2026.05–06 · Crucible 2026.07–present |
+| 2026.03–05 | **pinxlab** · Freelance · REODE, Kiki, Cotton |
+| 2025.10–2026.02 | **Eco²** · Backend/infrastructure to solo development and operation · 2025 AI SeSACTHON Excellence Award |
+| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB-scale distributed storage |
+| 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
 | 2017.03–2023.08 | **Pusan National University** · B.S., Computer Science & Engineering |
 
-At Rakuten, I worked on C and Kubernetes based storage. The previously listed **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0** experience belongs to this period.
+Rakuten work included **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0**.
 
 <a id="more"></a>
 ## Notes
 
-I publish engineering and experiment notes on my [blog](https://rooftopsnow.tistory.com) and [YouTube](https://www.youtube.com/@mango_fr). Previous GitHub account: [@mng990](https://github.com/mng990).
+I document implementation and experimental findings on my [blog](https://rooftopsnow.tistory.com) and [YouTube](https://www.youtube.com/@mango_fr). [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · Previous GitHub account: [@mng990](https://github.com/mng990)
 
-<sub>Content reviewed: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">Sources and measurement boundaries</a> · Architecture diagrams summarize responsibility boundaries from public documentation and portfolio material; they are not project performance evaluations.</sub>
+<sub>Content reviewed: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">Sources, scope, and maintenance notes</a></sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
