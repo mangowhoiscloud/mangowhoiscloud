@@ -12,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 PAGES = ("README.md", "README_EN.md", "docs/PROFILE_NOTES.md")
 ANCHORS = {"how-i-work", "selected-work", "concepts", "experience", "more"}
 RETAINED = (
-    "GEODE", "Compiler AX Lab", "REODE", "Eco²", "Kiki", "Cotton", "Crumb",
+    "GEODE", "REODE", "Eco²", "Kiki", "Cotton", "Crumb",
     "DREAM", "Aimo", "pinxlab", "Rakuten Symphony Korea", "mng990", "4th/181",
-    "83/83", "5,523", "46,080", "720", "55", "1,477", "2,500", "97.8%",
-    "2026-09-16", "2017.03–2023.08", "2024.12–2025.08",
+    "83/83", "5,523", "1,477", "2,500", "97.8%",
+    "2017.03–2023.08", "2024.12–2025.08",
 )
 
 class Markup(HTMLParser):
