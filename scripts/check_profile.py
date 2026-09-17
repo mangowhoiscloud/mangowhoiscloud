@@ -20,7 +20,7 @@ RETAINED = (
     "GEODE", "Compiler AX Lab", "REODE", "Eco²", "Kiki", "Cotton", "Crumb",
     "DREAM", "Aimo", "pinxlab", "Rakuten Symphony Korea", "mng990", "4th/181",
     "83/83", "5,523", "46,080", "720", "55", "1,477", "2,500", "97.8%",
-    "2026-09-16", "2026-09-17", "2017.03–2023.08", "2024.12–2025.08",
+    "2026-09-16", "2026-09-18", "2017.03–2023.08", "2024.12–2025.08",
 )
 
 
@@ -62,11 +62,9 @@ class Markup(HTMLParser):
 
 def inspect(text: str) -> Markup:
     parser = Markup()
-    # Fenced examples are not links or HTML to validate.
     prose = re.sub(r"(?ms)^```[^\n]*\n.*?^```\s*$", "", text)
     parser.feed(prose)
     parser.close()
-    # Includes both image and destination in a linked badge.
     parser.links.extend(unescape(url) for url in re.findall(r"\]\(([^\s)]+)\)", prose))
     for alt in re.findall(r"!\[([^\]\n]*)\]\([^\s)]+\)", prose):
         if not alt.strip():

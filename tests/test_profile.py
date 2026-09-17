@@ -48,6 +48,7 @@ class RepositoryTests(unittest.TestCase):
             target = self.root / filename
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / filename, target)
+        shutil.copytree(ROOT / 'assets', self.root / 'assets')
 
     def change(self, before, after, filename='README.md'):
         path = self.root / filename
