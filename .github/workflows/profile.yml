@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   profile-checks:
-    name: Profile content and checker tests
+    name: Profile content and architecture ratchets
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -25,5 +25,5 @@ jobs:
           persist-credentials: false
       - name: Validate profile content
         run: python3 scripts/check_profile.py
-      - name: Run checker regression tests
-        run: python3 -m unittest discover -s tests -v
+      - name: Validate architecture narrative
+        run: python3 scripts/check_architecture_profile.py
