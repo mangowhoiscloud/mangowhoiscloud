@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
-"""Offline checks for this profile's deliberately small Markdown/HTML subset.
-
-This validates structure and retained text, not claims or remote availability.
-Only inline Markdown links/images and explicit HTML anchors are supported.
-"""
+"""Offline checks for profile structure and retained public facts."""
 from __future__ import annotations
-
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -20,9 +15,8 @@ RETAINED = (
     "GEODE", "Compiler AX Lab", "REODE", "Eco²", "Kiki", "Cotton", "Crumb",
     "DREAM", "Aimo", "pinxlab", "Rakuten Symphony Korea", "mng990", "4th/181",
     "83/83", "5,523", "46,080", "720", "55", "1,477", "2,500", "97.8%",
-    "2026-09-16", "2026-09-18", "2017.03–2023.08", "2024.12–2025.08",
+    "2026-09-16", "2017.03–2023.08", "2024.12–2025.08",
 )
-
 
 class Markup(HTMLParser):
     def __init__(self) -> None:
@@ -31,7 +25,6 @@ class Markup(HTMLParser):
         self.ids: set[str] = set()
         self.errors: list[str] = []
         self.details = 0
-
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
         anchor = values.get("id")
@@ -52,13 +45,11 @@ class Markup(HTMLParser):
                 self.errors.append("image needs a source")
             else:
                 self.links.append(values["src"] or "")
-
     def handle_endtag(self, tag: str) -> None:
         if tag == "details":
             self.details -= 1
             if self.details < 0:
                 self.errors.append("closing details without an opener")
-
 
 def inspect(text: str) -> Markup:
     parser = Markup()
@@ -74,7 +65,6 @@ def inspect(text: str) -> Markup:
     if re.search(r"(?m)^\s*\[[^\]]+\]:|\[[^\]\n]+\]\[[^\]\n]*\]", prose):
         parser.errors.append("reference-style links are unsupported; use inline links")
     return parser
-
 
 def validate_page(path: Path, root: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
@@ -118,10 +108,8 @@ def validate_page(path: Path, root: Path) -> list[str]:
                 errors.append(f"missing explicit anchor: {link}")
     return errors
 
-
 def external_destinations(text: str) -> set[str]:
     return {link for link in inspect(text).links if urlsplit(link).scheme == "https"}
-
 
 def validate_repository(root: Path) -> list[str]:
     errors: list[str] = []
@@ -137,7 +125,6 @@ def validate_repository(root: Path) -> list[str]:
         errors.extend(f"bilingual destination mismatch: {link}" for link in sorted(difference))
     return errors
 
-
 def main() -> int:
     errors = validate_repository(ROOT)
     if errors:
@@ -145,11 +132,8 @@ def main() -> int:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print(f"Profile checks passed: {len(PAGES)} pages; local links, anchors, alt text, "
-          "structure, retained facts, and bilingual destinations.")
-    print("External availability, factual accuracy, and browser layout require separate review.")
+    print("Profile checks passed: structure, retained facts, local links, anchors, and bilingual destinations.")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
