@@ -22,7 +22,6 @@ COMMON = (
     "Scaffold Search",
     "Evaluation",
     "Ledger",
-    "46,080",
     "83/83",
     "97.8%",
     "1,477",
@@ -44,6 +43,14 @@ EN = (
     "search space stays open",
 )
 
+FORBIDDEN = (
+    "Compiler AX",
+    "compiler-ax-lab",
+    "46,080",
+    "doctest",
+    "FuriosaAI",
+)
+
 
 def main() -> int:
     errors = []
@@ -53,8 +60,9 @@ def main() -> int:
             errors.append(f"{path.name}: expected at least four Mermaid sequence diagrams")
         if "—" in text:
             errors.append(f"{path.name}: em dash is not allowed")
-        if "img.shields.io/badge/Compiler" in text or "CPU%20tests" in text:
-            errors.append(f"{path.name}: Compiler AX badge returned")
+        for term in FORBIDDEN:
+            if term in text:
+                errors.append(f"{path.name}: removed Compiler AX reference returned: {term!r}")
         for term in COMMON:
             if term not in text:
                 errors.append(f"{path.name}: missing architecture term {term!r}")
