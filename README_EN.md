@@ -10,12 +10,7 @@ I do not freeze one successful method as the answer. Code, prompts, Skills, tool
 
 [GEODE](https://mangowhoiscloud.github.io/geode/) · [Technical blog](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
 
-<p>
-  <a href="https://mangowhoiscloud.github.io/geode/self-improving/"><img src="https://img.shields.io/badge/Research-RSI%20%26%20scaffold%20search-3f4854?style=flat-square" alt="RSI and scaffold search research"></a>
-  <a href="https://github.com/mangowhoiscloud/geode"><img src="https://img.shields.io/badge/Systems-Autonomous%20Agents-3f4854?style=flat-square" alt="Autonomous agent systems"></a>
-  <a href="https://mangowhoiscloud.github.io/eco2/"><img src="https://img.shields.io/badge/Infrastructure-Cloud%20%26%20Kubernetes-3f4854?style=flat-square" alt="Cloud and Kubernetes infrastructure"></a>
-  <a href="https://github.com/mangowhoiscloud/geode/releases/latest"><img src="https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&amp;label=GEODE" alt="GEODE latest release"></a>
-</p>
+`RSI / scaffold search` · `autonomous agents` · `cloud / Kubernetes` · [GEODE latest release](https://github.com/mangowhoiscloud/geode/releases/latest)
 
 [How I work](#how-i-work) · [Search loop](#search-loop) · [Selected work](#selected-work) · [Experience](#experience)
 
@@ -54,7 +49,9 @@ Here, RSI refers to a **research direction that recursively searches the scaffol
 
 An autonomous agent runtime that plans work and uses tools from natural language requests. I have built its long running memory, multi provider connections, tool execution, permission boundaries, evaluation, and experimental layers as a solo project.
 
-Current work separates `core` for execution, `evals` for checking results, and `evolve` for searching candidate changes. Original results stay distinct from derived analysis. Failures and incomplete calls remain available so later experiments can use earlier runs as data.
+The current design separates the `core` execution runtime, `evals` measurement and evidence production, and `evolve` scaffold search. Inside the runtime, Model, Runtime, Harness, and Agent form the task loop. Outside it, candidate generation, measurement, promotion gates, and the ledger form a separate search loop. Original results and failures feed back into later candidates and search policy.
+
+<p align="center"><img src="assets/geode-meta-harness.svg" alt="GEODE meta-harness: autonomous runtime inside an evidence-driven scaffold search loop" width="100%"></p>
 
 SIL evaluates safety related behavior and Crucible evaluates task capability. The search changes instructions, tool policies, Skills, and other execution scaffolding rather than model weights.
 
@@ -80,6 +77,10 @@ The March 2026 delivery record covers a **5,523 file** service moving from Java 
 
 An AI recycling service. I started as the backend and infrastructure engineer in a five person MVP team, then continued development and operation solo. The system combined a multi agent workflow with cloud infrastructure, including tool calls, parallel LangGraph execution, and SSE streaming.
 
+From the public portfolio, the application runtime can be read as an API edge feeding a LangGraph based agent workflow, model and data tools, an SSE response path, and an observability layer. That application plane ran on a Kubernetes platform provisioned with Terraform and Ansible and synchronized through ArgoCD. The diagram groups publicly described responsibilities rather than claiming source package boundaries.
+
+<p align="center"><img src="assets/eco2-runtime.svg" alt="Eco2 runtime: multi-agent application flow on Kubernetes infrastructure" width="100%"></p>
+
 The project received the **2025 AI SeSACTHON Excellence Award (4th/181)**. I operated a **24 node Kubernetes** environment with Terraform, Ansible, and ArgoCD. Public load records report the Scan API at **97.8% with 1,000 VU** and a separate ext authz path at **1,477 RPS with 2,500 VU**. VU means virtual users in a load test, not actual users. The service has closed.
 
 [Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/SeSACTHON/backend)
@@ -101,12 +102,7 @@ The project received the **2025 AI SeSACTHON Excellence Award (4th/181)**. I ope
 
 ## Public GitHub activity
 
-These cards visualize public repository activity and language distribution. They are not scores for skill or research quality. The public GitHub Readme Stats instance can occasionally be unavailable because of GitHub API limits.
-
-<p>
-  <a href="https://github.com/anuraghazra/github-readme-stats"><img height="150" src="https://github-readme-stats.vercel.app/api?username=mangowhoiscloud&amp;hide_rank=true&amp;show_icons=false&amp;include_all_commits=true&amp;hide_border=true&amp;bg_color=00000000&amp;title_color=57606a&amp;text_color=57606a" alt="Public GitHub activity statistics"></a>
-  <a href="https://github.com/anuraghazra/github-readme-stats"><img height="150" src="https://github-readme-stats.vercel.app/api/top-langs/?username=mangowhoiscloud&amp;layout=compact&amp;langs_count=6&amp;hide_border=true&amp;bg_color=00000000&amp;title_color=57606a&amp;text_color=57606a" alt="Languages in public non fork repositories"></a>
-</p>
+I do not use public activity as a score for engineering or research quality. The previous GitHub Readme Stats images were removed because failed image loads appeared as question-mark boxes in some clients. From the profile README of public follower [@swstegall](https://github.com/swstegall), whose GitHub profile lists JPMorganChase, I kept the useful part of the pattern: clear section hierarchy and project-first visuals, without copying follower counters, view counters, streaks, or language-score cards.
 
 <a id="concepts"></a>
 ## Concepts
@@ -133,6 +129,6 @@ At Rakuten, I worked on C and Kubernetes based storage. The previously listed **
 
 I publish engineering and experiment notes on my [blog](https://rooftopsnow.tistory.com) and [YouTube](https://www.youtube.com/@mango_fr). Previous GitHub account: [@mng990](https://github.com/mng990).
 
-<sub>Content reviewed: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">Sources and measurement boundaries</a> · Profile metrics visualize public GitHub activity and do not evaluate project performance.</sub>
+<sub>Content reviewed: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">Sources and measurement boundaries</a> · Architecture diagrams summarize responsibility boundaries from public documentation and portfolio material; they are not project performance evaluations.</sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)

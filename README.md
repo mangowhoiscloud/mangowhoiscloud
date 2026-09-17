@@ -10,12 +10,7 @@
 
 [GEODE](https://mangowhoiscloud.github.io/geode/) · [기술 블로그](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
 
-<p>
-  <a href="https://mangowhoiscloud.github.io/geode/self-improving/"><img src="https://img.shields.io/badge/Research-RSI%20%26%20scaffold%20search-3f4854?style=flat-square" alt="RSI and scaffold search research"></a>
-  <a href="https://github.com/mangowhoiscloud/geode"><img src="https://img.shields.io/badge/Systems-Autonomous%20Agents-3f4854?style=flat-square" alt="Autonomous agent systems"></a>
-  <a href="https://mangowhoiscloud.github.io/eco2/"><img src="https://img.shields.io/badge/Infrastructure-Cloud%20%26%20Kubernetes-3f4854?style=flat-square" alt="Cloud and Kubernetes infrastructure"></a>
-  <a href="https://github.com/mangowhoiscloud/geode/releases/latest"><img src="https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&amp;label=GEODE" alt="GEODE latest release"></a>
-</p>
+`RSI / scaffold search` · `autonomous agents` · `cloud / Kubernetes` · [GEODE latest release](https://github.com/mangowhoiscloud/geode/releases/latest)
 
 [작업 방식](#how-i-work) · [탐색 루프](#search-loop) · [대표 작업](#selected-work) · [이력](#experience)
 
@@ -54,7 +49,9 @@ RSI라는 표현은 여기서 **모델 가중치의 재귀적 자기학습이 �
 
 자연어로 맡긴 일을 계획하고 도구를 사용하는 자율 에이전트 런타임입니다. 장기 실행 메모리, 여러 모델 제공자 연결, 도구 실행, 권한 경계, 평가와 실험 계층을 단독으로 구축해 왔습니다.
 
-현재는 실행을 담당하는 `core`, 결과를 확인하는 `evals`, 변경 후보를 탐색하는 `evolve`의 경계를 분리합니다. 원본 결과와 파생된 분석을 구분하고, 실패와 미완료 호출도 보존해 다음 실험이 이전 실행을 데이터로 사용할 수 있게 합니다.
+현재 구조는 `core`의 실행 런타임, `evals`의 측정과 증거 생산, `evolve`의 scaffold 탐색을 분리합니다. 런타임 안에서는 Model, Runtime, Harness, Agent가 작업 루프를 이루고, 바깥에서는 candidate, measurement, promotion gate, ledger가 별도의 탐색 루프를 이룹니다. 원본 결과와 실패 기록은 다음 후보와 탐색 정책의 입력으로 되돌아갑니다.
+
+<p align="center"><img src="assets/geode-meta-harness.svg" alt="GEODE meta-harness: autonomous runtime inside an evidence-driven scaffold search loop" width="100%"></p>
 
 SIL은 안전성 관련 행동을, Crucible은 과제 수행 능력을 기준으로 변경 후보를 검사합니다. 바뀌는 대상은 모델 가중치가 아니라 지침, 도구 정책, Skill과 같은 실행 구성입니다.
 
@@ -80,6 +77,10 @@ GEODE에서 출발한 하네스를 코드 마이그레이션 제품으로 재설
 
 재활용을 돕는 AI 서비스입니다. 5인 팀의 백엔드와 인프라 담당으로 시작해 이후 고도화와 운영을 단독으로 이어갔습니다. 도구 호출, LangGraph 병렬 처리, SSE 스트리밍을 포함한 멀티에이전트 워크플로우와 클라우드 인프라를 함께 운영했습니다.
 
+공개 포트폴리오를 기준으로 보면 애플리케이션 런타임은 API edge, LangGraph 기반 에이전트 워크플로우, 모델과 데이터 도구, SSE 응답 스트림, 관측 계층으로 나뉩니다. 이 실행 계층은 Terraform과 Ansible로 구성하고 ArgoCD로 동기화한 Kubernetes 운영 기반 위에 놓였습니다. 아래 그림은 소스 패키지 경계가 아니라 공개된 책임 단위를 기준으로 요약한 것입니다.
+
+<p align="center"><img src="assets/eco2-runtime.svg" alt="Eco2 runtime: multi-agent application flow on Kubernetes infrastructure" width="100%"></p>
+
 **2025 AI 새싹톤 우수상(4th/181)**을 받았고 Terraform, Ansible, ArgoCD 기반 **24노드 Kubernetes**를 운영했습니다. 공개 부하 기록은 Scan API **1,000 VU에서 97.8%**, 별도의 ext authz 경로 **2,500 VU에서 1,477 RPS**입니다. VU는 실제 이용자 수가 아니라 부하 시험의 가상 사용자입니다. 서비스 운영은 종료됐습니다.
 
 [기술 포트폴리오](https://mangowhoiscloud.github.io/eco2/) · [프로젝트 저장소](https://github.com/SeSACTHON/backend)
@@ -101,12 +102,7 @@ GEODE에서 출발한 하네스를 코드 마이그레이션 제품으로 재설
 
 ## 공개 GitHub 활동
 
-아래 카드는 공개 저장소를 기준으로 한 활동과 언어 분포입니다. 숙련도나 연구 성과의 점수로 사용하지 않습니다. GitHub Readme Stats의 공개 인스턴스는 GitHub API 제한에 따라 일시적으로 표시되지 않을 수 있습니다.
-
-<p>
-  <a href="https://github.com/anuraghazra/github-readme-stats"><img height="150" src="https://github-readme-stats.vercel.app/api?username=mangowhoiscloud&amp;hide_rank=true&amp;show_icons=false&amp;include_all_commits=true&amp;hide_border=true&amp;bg_color=00000000&amp;title_color=57606a&amp;text_color=57606a" alt="Public GitHub activity statistics"></a>
-  <a href="https://github.com/anuraghazra/github-readme-stats"><img height="150" src="https://github-readme-stats.vercel.app/api/top-langs/?username=mangowhoiscloud&amp;layout=compact&amp;langs_count=6&amp;hide_border=true&amp;bg_color=00000000&amp;title_color=57606a&amp;text_color=57606a" alt="Languages in public non fork repositories"></a>
-</p>
+공개 활동은 프로젝트 설명을 대신하는 점수로 사용하지 않습니다. 기존 GitHub Readme Stats 이미지는 일부 클라이언트에서 깨진 이미지가 물음표 상자로 보이는 문제가 있어 제거했습니다. JPMorganChase 소속으로 공개 표시된 팔로워 [@swstegall](https://github.com/swstegall)의 프로필에서 사용한 구성 중, 외부 카드보다 **명확한 섹션 구분과 프로젝트 중심 시각 계층**만 참고했습니다.
 
 <a id="concepts"></a>
 ## 개념
@@ -133,6 +129,6 @@ Rakuten에서는 C와 Kubernetes 기반 스토리지 개발에 참여했습니�
 
 구현 과정과 실험에서 얻은 내용은 [블로그](https://rooftopsnow.tistory.com)와 [YouTube](https://www.youtube.com/@mango_fr)에 남깁니다. 이전 GitHub 계정은 [@mng990](https://github.com/mng990)입니다.
 
-<sub>내용 검토: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">수치의 출처와 범위</a> · 프로필 지표는 공개 GitHub 활동의 시각화이며 프로젝트 성능 평가가 아닙니다.</sub>
+<sub>내용 검토: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">수치의 출처와 범위</a> · 아키텍처 그림은 공개 문서와 포트폴리오의 책임 단위를 요약한 것이며 프로젝트 성능 평가가 아닙니다.</sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)

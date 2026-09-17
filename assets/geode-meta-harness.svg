@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<title id="title">GEODE meta-harness architecture</title><desc id="desc">A two-loop architecture showing the autonomous runtime inside an evidence-driven scaffold search loop.</desc>
+<defs><style>.bg{fill:#0d1117}.box{fill:#161b22;stroke:#30363d;stroke-width:2}.accent{fill:#161b22;stroke:#8b949e;stroke-width:2}.t{fill:#f0f6fc;font:600 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.s{fill:#8b949e;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.m{fill:#c9d1d9;font:600 17px ui-monospace,SFMono-Regular,Consolas,monospace}.line{stroke:#8b949e;stroke-width:2;fill:none}.dash{stroke:#6e7681;stroke-width:2;stroke-dasharray:8 7;fill:none}</style><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b949e"/></marker></defs>
+<rect class="bg" width="1200" height="600" rx="18"/><text class="t" x="54" y="55">GEODE meta-harness</text><text class="s" x="54" y="82">bounded task execution inside an evidence-driven scaffold search loop</text>
+<rect class="box" x="55" y="125" width="1090" height="250" rx="16"/><text class="m" x="82" y="160">INNER LOOP  /  core runtime</text>
+<rect class="accent" x="90" y="205" width="180" height="105" rx="12"/><text class="t" x="130" y="242">Model</text><text class="s" x="112" y="274">provider adapters</text>
+<rect class="accent" x="325" y="205" width="210" height="105" rx="12"/><text class="t" x="374" y="242">Runtime</text><text class="s" x="350" y="274">tools, MCP, memory</text>
+<rect class="accent" x="590" y="205" width="210" height="105" rx="12"/><text class="t" x="638" y="242">Harness</text><text class="s" x="613" y="274">policy, hooks, lanes</text>
+<rect class="accent" x="855" y="205" width="245" height="105" rx="12"/><text class="t" x="920" y="242">Agent</text><text class="s" x="887" y="274">plan, act, observe</text>
+<path class="line" marker-end="url(#a)" d="M270 258H325"/><path class="line" marker-end="url(#a)" d="M535 258H590"/><path class="line" marker-end="url(#a)" d="M800 258H855"/><path class="line" marker-end="url(#a)" d="M1095 323C1095 350 93 350 93 323"/><text class="s" x="475" y="350">tool result and execution evidence feed the next turn</text>
+<text class="m" x="55" y="430">OUTER LOOP  /  evals + evolve</text>
+<rect class="box" x="55" y="455" width="185" height="88" rx="12"/><text class="t" x="91" y="490">Candidate</text><text class="s" x="80" y="518">scaffold change</text>
+<rect class="box" x="285" y="455" width="185" height="88" rx="12"/><text class="t" x="330" y="490">Measure</text><text class="s" x="317" y="518">audits + evals</text>
+<rect class="box" x="515" y="455" width="185" height="88" rx="12"/><text class="t" x="574" y="490">Gate</text><text class="s" x="546" y="518">accept / reject</text>
+<rect class="box" x="745" y="455" width="185" height="88" rx="12"/><text class="t" x="793" y="490">Ledger</text><text class="s" x="773" y="518">results + lineage</text>
+<rect class="box" x="975" y="455" width="170" height="88" rx="12"/><text class="t" x="1007" y="490">Next search</text><text class="s" x="1000" y="518">policy + seeds</text>
+<path class="line" marker-end="url(#a)" d="M240 499H285"/><path class="line" marker-end="url(#a)" d="M470 499H515"/><path class="line" marker-end="url(#a)" d="M700 499H745"/><path class="line" marker-end="url(#a)" d="M930 499H975"/><path class="dash" marker-end="url(#a)" d="M1060 455C1060 405 150 405 150 455"/><path class="dash" marker-end="url(#a)" d="M608 455V375"/><text class="s" x="620" y="417">runtime evidence</text>
+</svg>
