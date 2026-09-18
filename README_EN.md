@@ -237,7 +237,7 @@ Terraform and Ansible established the infrastructure base. Kubernetes manifests 
 
 This is the bridge to GEODE's more explicit meta-harness. In Eco², `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict` was an external engineering loop shared by a human and coding agent. GEODE turns the production scaffold, trajectories, revision-bound evaluation, ratchets, and promotion contracts into explicit system components.
 
-**Recorded milestone:** **2025 AI SeSACTHON Excellence Award (4th/181)**. In the preserved Scan k6 sweep, the final 1,000-VU run completed **1,469/1,518 tasks, 97.8%**, while earlier runs on the same day include 0% regressions. I therefore do not present the sequence as monotonic performance improvement. The service has closed.
+**Recorded milestone:** **2025 AI SeSACTHON Excellence Award (4th/181)**. In the preserved Scan k6 sweep, the final 1,000-VU run completed **1,469/1,518 tasks, 97.8%**, while earlier runs on the same day include 0% regressions. A separate ext-authz load record reports **1,477 RPS at 2,500 VU**; I do not combine it with the Scan workload into one performance metric. I therefore do not present the sequence as monotonic performance improvement. The service has closed.
 
 [Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)
 
