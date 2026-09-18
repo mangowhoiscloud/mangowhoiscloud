@@ -354,6 +354,48 @@ flowchart TB
 
 </details>
 
+<details>
+<summary>개선 루프 · 관측한 실패가 다음 구조를 바꾸는 방식</summary>
+
+Eco²에서 개선은 “새 기술을 추가했다”는 순서보다 **같은 압력을 재현하고, 병목 가설을 좁히고, 가장 작은 변경을 배포한 뒤 같은 신호로 다시 측정하는 순서**에 가까웠습니다. production runtime이 스스로 source를 바꾸는 자기개선은 아니었고, 사람과 coding agent가 함께 돌린 외부 engineering loop였습니다.
+
+```mermaid
+sequenceDiagram
+    participant W as Reproducible Workload
+    participant O as Observability
+    participant H as Human and Coding Agent
+    participant D as Contract and Small Diff
+    participant CI as CI
+    participant G as Git and ArgoCD
+    participant K as Kubernetes
+    W->>O: Reproduce pressure or failure
+    O->>H: Metrics, logs, traces, events
+    H->>D: Falsifiable bottleneck hypothesis
+    D->>CI: Code and manifest checks
+    CI->>G: Accepted revision
+    G->>K: Reconcile desired state
+    K->>W: Run the same workload again
+    W->>O: New evidence
+    O-->>H: Keep, revise, or revert
+```
+
+| 관측한 압력 | 세운 가설 | 변경 | 다음 측정에서 배운 것 |
+| --- | --- | --- | --- |
+| 50 VU 부근에서 SSE 연결과 RabbitMQ connection, scan-api memory가 함께 증가하고 readiness 503이 발생 | task 실행 수명과 progress delivery 수명이 한 연결 구조에 묶여 있다 | RabbitMQ는 task queue로 유지하고 진행 이벤트를 Redis Streams → Event Router → SSE Gateway로 분리 | 연결 증폭을 줄이자 queue wait, worker 상태, 외부 API가 다음 병목 후보로 이동했습니다. |
+| publish 실패 뒤 ACK, reconnect gap, duplicate, hot Pub/Sub channel | event delivery는 단순 실시간 전송이 아니라 recovery contract가 필요하다 | ACK-on-success, reclaim, dedupe, Last-Event-ID catch-up, master-only Pub/Sub, 4-shard channel을 추가 | “정상 경로가 빠르다”보다 실패 뒤 복구 가능한지가 별도 검증 항목이 됐습니다. |
+| VU sweep에서 CPU·memory보다 probe restart와 in-flight loss가 실패에 기여 | guardrail이 workload 특성과 맞지 않으면 보호 장치가 새로운 실패를 만든다 | KEDA min/max와 workload signal을 조정하고 probe 원인을 분리해 조사 | **guardrail 자체도 검증 대상**이라는 원칙이 생겼습니다. |
+| Chat 응답 품질을 한 judge 점수로 설명하기 어려움 | 생성 품질과 evaluator 신뢰도를 같은 숫자로 합치면 실패 원인이 사라진다 | deterministic Code Grader, BARS LLM Judge, Calibration Monitor로 역할 분리 | 측정 장치도 drift와 wiring을 검증해야 했고, 이 경험이 GEODE의 evaluator separation으로 이어졌습니다. |
+
+여기서 중요한 것은 성공 수치보다 **실패가 계약으로 바뀌는 과정**입니다. ACK 조건, recovery, KEDA fallback, CI 검증, Git desired state 같은 결정론적 규칙은 모델의 판단에 맡기지 않았습니다. Observability는 변경을 승인하는 권한이 아니라 다음 가설을 만드는 feedback surface였고, 최종 keep/revise/revert는 사람에게 남았습니다.
+
+이 흐름을 압축하면 다음과 같습니다.
+
+`failure signal → reproducible workload → hypothesis → scoped code/manifest diff → CI → Git/ArgoCD → same workload → human verdict → next contract`
+
+GEODE에서는 이 느슨한 외부 루프를 trajectory, revision-bound evaluation, explicit ratchet과 promotion contract로 구조화했습니다. Eco²가 **운영 중 실패를 다음 변경의 입력으로 쓰는 루프**였다면, GEODE는 그 루프 자체를 재현 가능한 연구 대상으로 바꾸는 방향입니다.
+
+</details>
+
 공개 프로젝트 보고의 Scan 성공률은 **1,000 VU에서 97.8%**, 별도 ext-authz 부하 기록은 **2,500 VU에서 1,477 RPS**입니다. 서로 다른 workload이며 실제 사용자 수나 공통 성능 지표로 합치지 않습니다. 완료 건수와 성공률의 분모 불일치는 [출처 메모](docs/PROFILE_NOTES.md#eco2)에 남겼습니다.
 
 [포트폴리오](https://mangowhoiscloud.github.io/eco2/) · [프로젝트 저장소](https://github.com/eco2-team/backend)
