@@ -30,7 +30,7 @@ My background spans distributed storage, backend engineering, and cloud infrastr
 <a id="evolution"></a>
 ## Evolution
 
-Eco² was a production service where I built an **asynchronous agent workflow and cloud runtime**. GEODE separated those lessons into a reusable **autonomous agent runtime and meta-harness**. SIL made scaffold changes measurable through external safety audits. Crucible then turned the lessons from those experiments into a **frozen experiment contract** that binds candidate, evaluator, task pack, budget, and promotion authority before execution. The current Experimental Loop feeds execution and evaluation evidence back into an outer scaffold-search loop.
+Eco² was a production service where I built an **asynchronous agent workflow and cloud runtime**. GEODE separated those lessons into a reusable **autonomous agent runtime**, then treated the build layer as a **meta-harness**. Here meta-harness does not mean a controller sitting above the runtime. It means the **system that builds the harness itself**, including the development harness, its instruction scaffold, Skills, verification, and ratchets. SIL made scaffold changes measurable through external safety audits. Crucible then turned the lessons from those experiments into a **frozen experiment contract** that binds candidate, evaluator, task pack, budget, and promotion authority before execution. The current Experimental Loop feeds execution and evaluation evidence back into an outer scaffold-search loop.
 
 ```mermaid
 sequenceDiagram
@@ -66,7 +66,7 @@ RSI is a direction, not a claimed current capability. The historical 2026-05-22 
 ```text
 service runtime
   -> autonomous agent runtime
-  -> observable meta-harness
+  -> autonomous agent harness\n  -> meta-harness: harness-building system
   -> SIL: safety-scaffold audit loop
   -> Crucible: frozen experiment + promotion ratchet   [current]
   -> repeated cross-task evidence and retained improvements
@@ -82,7 +82,28 @@ So the claim is not “RSI is implemented.” It is **building toward RSI by fir
 
 An **autonomous agent runtime** with long-running memory, multi-provider routing, tool execution, permission boundaries, observability, and evaluation. The distribution separates `core` for execution, `evals` for evidence production, and `evolve` for experimental scaffold search.
 
-Its meta-harness groups control mechanisms into Context Control, Plan and Execute, Verify, Observe, and Scaffold. These are code-backed control surfaces rather than conceptual labels.
+In GEODE, the **agent harness** and the **meta-harness** are different scopes. Context Control, Plan and Execute, Verify, and Observe belong to the shipped harness that converges an agent run. The meta-harness is the **apparatus that builds that harness**. Development harnesses such as Claude Code or Codex CLI read `CLAUDE.md`, `AGENTS.md`, development Skills, CI, and ratchets to produce and modify GEODE code and its runtime scaffold.
+
+`Scaffold` therefore describes the build-side contract rather than another runtime control category. Patterns validated in the runtime can move into the build line; failures found while building become tests, instructions, or CI ratchets. When the self-improving outer loop mutates and audits the runtime scaffold and promotes or reverts a candidate, that relationship begins to close recursively. Operator gates still retain PR merge and release authority.
+
+```mermaid
+sequenceDiagram
+    participant D as Development Harness
+    participant S as Build Scaffold
+    participant C as GEODE Code
+    participant H as Agent Harness
+    participant E as Evidence
+    participant X as Experimental Loop
+    D->>S: Read instructions, Skills, CI contracts
+    S->>C: Produce or modify GEODE
+    C->>H: Build autonomous execution harness
+    H->>E: Emit trajectories and verification
+    E->>X: Form next bounded hypothesis
+    X->>S: Promote accepted scaffold change
+    S-->>D: Ratchets constrain the next build
+```
+
+Here, meta means that **the harness itself is the object being built**, not merely that another layer observes it.
 
 ```mermaid
 sequenceDiagram
@@ -212,7 +233,7 @@ sequenceDiagram
 <a id="concepts"></a>
 ## Concepts
 
-An **agent** uses tools to make progress. A **harness** manages tools, memory, permissions, failure handling, and verification. A **meta-harness** makes that harness observable, bounded, and evolvable. **RSI (Recursive Self-Improvement)** here means feeding evidence from earlier executions back into later changes and experiments while keeping adoption and repeated improvement as separate claims.
+An **agent** uses tools to make progress. A **harness** manages tools, memory, permissions, failure handling, and verification. A **meta-harness** treats the harness itself as the artifact to build, verify, and revise. In GEODE, development harnesses, instruction scaffolds, Skills, and CI ratchets form that production line, with runtime evidence feeding the next build change. **RSI (Recursive Self-Improvement)** here means feeding evidence from earlier executions back into later changes and experiments while keeping adoption and repeated improvement as separate claims.
 
 <details>
 <summary><strong>Other work</strong></summary>
