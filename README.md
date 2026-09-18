@@ -269,7 +269,7 @@ Trajectory는 연구 데이터입니다. 무엇을 만들었는지뿐 아니라 
 | --- | --- |
 | 2026.02–현재 | **GEODE** · 단독 개발 · SIL 2026.05–06 · Crucible 2026.07–현재 |
 | 2026.03–05 | **pinxlab** · 프리랜서(단독 개발) · REODE, Kiki, Cotton |
-| 2025.10–2026.02 | **Eco²** · 백엔드/인프라에서 단독 개발·운영까지 · 2025 AI 새싹톤 우수상 |
+| 2025.10–2026.02 | **Eco²** · 백엔드/인프라(FE-DESIGN-AI-BACKEND/INFRA 5인, 1달)에서 단독 개발·운영(1인, 3개월)까지 · 2025 AI 새싹톤 우수상 |
 | 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB급 분산 스토리지 |
 | 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
 | 2017.03–2023.08 | **부산대학교** · 컴퓨터공학 학사 |
