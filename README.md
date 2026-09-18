@@ -21,20 +21,7 @@
 
 런타임을 만드는 시스템도 별도로 다룹니다. 여기서 **메타 하네스는 하네스의 코드와 scaffold를 제작·검증·수정하는 장치**입니다. Claude Code나 Codex CLI가 `AGENTS.md`, `CLAUDE.md`, Skills와 CI 계약을 읽어 GEODE를 고칩니다. 실행 위에 놓인 또 하나의 제어기를 뜻하지 않습니다.
 
-```mermaid
-flowchart TB
-    subgraph Build["Meta-harness · 제작"]
-        S["Build Scaffold<br/>Instructions · Skills · CI"] -->|제작 계약| D["Development harness<br/>Claude Code · Codex CLI"]
-    end
-    subgraph Runtime["GEODE · 실행"]
-        C["Context Control"] -->|컨텍스트 제공| P["AgenticLoop<br/>Model · tools"]
-        P <-->|계약에 따른 검증| V["Verify"]
-        P --> O["Observe<br/>Trajectory · usage"]
-    end
-    D -->|검토한 런타임 변경| P
-    O --> X["Experimental Loop<br/>Scaffold Search"]
-    X -.->|후속 검토를 위한 후보 제안| D
-```
+![GEODE의 제작·실행·실험 경계. Build Scaffold가 coding agent의 변경을 안내하고, 런타임의 Context Control·AgenticLoop·Verify·Observe가 실행과 Trajectory를 관리한다. Experimental Loop의 Scaffold Search는 검토할 후보를 제안한다.](assets/geode-overview.svg)
 
 실행 기록은 다음 변경의 근거가 됩니다. **변경 후보의 채택과 PR merge·release 승인은 별개**이며, 배포 권한은 운영자에게 남습니다.
 
@@ -43,20 +30,7 @@ flowchart TB
 
 개발자는 작업 범위와 수용 조건을 정하고, coding agent는 기존 구현과 실패 근거를 읽은 뒤 격리된 worktree에서 변경합니다. **수정한 코드뿐 아니라 재발을 잡는 검사도 남깁니다.** CI는 같은 변경 revision을 검사하며, 실패하면 원인을 수정하고 다시 검증합니다.
 
-```mermaid
-flowchart TB
-    accTitle: GEODE 개발 절차와 CI ratchet
-    accDescr: 작업 범위와 공유 지침을 받은 coding agent가 worktree에서 코드와 회귀 검사를 만든다. 로컬 검사와 PR CI가 실패하면 수정 단계로 돌아간다. 통과 후에도 현재 PR 근거와 승인 권한을 확인해야 develop과 main으로 반영할 수 있다.
-    Scope(["개발자<br/>범위 · 수용 조건"]) --> Agent
-    Scaffold["AGENTS.md · CLAUDE.md · Skills<br/>GAP audit · 원본 확인"]
-    Scaffold --> Agent["Claude Code · Codex CLI<br/>Isolated worktree"]
-    Agent --> Change["Code · regression tests<br/>Docs · CHANGELOG"]
-    Change --> Gate{"CI ratchet<br/>검사 · 계약 통과?"}
-    Gate -->|실패 근거로 수정| Agent
-    Gate -->|통과| Review["Merge admission<br/>현재 SHA · checks · 승인"]
-    Scope -.->|검토 권한| Review
-    Review --> Branches["develop → main<br/>CI 재검증 · 승인"]
-```
+![GEODE CI Ratchet. 격리 worktree에서 만든 코드·회귀 검사를 CI가 확인하며, 실패하면 수정한다. 통과한 뒤에도 현재 head와 base, 필수 checks와 검토 권한을 확인해야 merge할 수 있다.](assets/geode-ci-ratchet.svg)
 
 | CI가 고정하는 기준 | 코드에 남긴 검사 | 차단하는 회귀 |
 | --- | --- | --- |
@@ -76,23 +50,7 @@ flowchart TB
 
 아래는 호출과 응답의 시간순서가 중요한 구간입니다. 컨텍스트 구성과 compaction은 런타임이 관리하고, 검증은 해당 실행의 계약에 따라 수행합니다.
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant R as AgenticLoop
-    participant T as Tool / Environment
-    participant V as Verifier
-    U->>R: Goal and session state
-    loop Until completion or a stopping condition
-        R->>T: Tool call
-        T-->>R: Observation or error
-        opt Verification required by the run contract
-            R->>V: Candidate result
-            V-->>R: Verdict and evidence
-        end
-    end
-    R-->>U: Result and execution trace
-```
+![GEODE 실행 순서. 사용자의 목표를 받은 AgenticLoop가 tool call과 observation을 반복하고, 실행 계약이 요구할 때 verifier에서 판정과 근거를 받는다. 완료 선언과 verifier 결과, 종료 사유는 별도 기록이다.](assets/geode-runtime.svg)
 
 모델의 완료 선언, 검증 결과, 실행 종료 사유를 같은 값으로 취급하지 않습니다. 컨텍스트·실행·검증·관측을 나누면 어느 부분의 변경이 결과에 영향을 줬는지 조사할 수 있습니다.
 
@@ -107,22 +65,7 @@ Terminal-Bench 2.1에서 GEODE와 native Codex를 **paired rollout**으로 비�
 
 계획은 **89 tasks × 5 repetitions × 2 arms = 890 cells**였습니다. Cell은 `task × repetition × arm`이며, 두 arm 모두 OpenAI subscription의 `gpt-5.6-sol`, 요청 effort `max`를 사용했습니다. 당시 GEODE arm은 `AgenticLoop`에 Harbor 기반 `terminal_exec` 하나를 연결한 구성입니다. 이후 full-runtime 실험과 구분합니다.
 
-```mermaid
-flowchart TB
-    accTitle: Harbor paired rollout과 공개 근거의 경로
-    accDescr: 동결 계약으로 Harbor가 GEODE와 Codex의 독립 trial을 관리한다. 행동 기록과 verifier 결과는 별도로 보존하고 검증·정제한 뒤 공개 artifact와 파생 replay로 제공한다.
-    F["Frozen run spec<br/>Task · budget · repetition"] --> H["Harbor<br/>Trial lifecycle · isolation"]
-    H --> G["GEODE<br/>Trial container"]
-    H --> C["Native Codex<br/>Trial container"]
-    G -->|환경 상태| V["Task verifier<br/>Result · reward"]
-    C -->|환경 상태| V
-    G --> T["Trajectory · lineage<br/>Actions · observations"]
-    C --> T
-    V --> Q["정규화 · 공개 전 검증<br/>Schema · hashes · privacy"]
-    T --> Q
-    Q --> A[("geode-eval-artifacts")]
-    A --> R["Replay · docs<br/>파생 표현"]
-```
+![Harbor paired rollout. 동결 계약 아래 GEODE와 native Codex를 각각 독립 컨테이너에서 실행하고 각 task verifier로 채점한다. 비공개 원본에서 계약상 선정·정규화·공개 검사를 거쳐 artifact와 파생 replay를 만든다.](assets/harbor-rollout.svg)
 
 Harbor가 컨테이너·timeout·task verifier를 관리합니다. **Score는 verifier 결과와 동결된 선정 규칙으로 계산하고, trajectory는 도구 호출과 실패 경로를 조사하는 데 씁니다.** 그림의 분기는 두 arm의 독립성을 나타내며 동시 실행을 뜻하지 않습니다.
 
@@ -164,64 +107,43 @@ Harbor가 컨테이너·timeout·task verifier를 관리합니다. **Score는 ve
 개발 방식, 네트워크, 배치 구조, 두 AI 워크플로우, 관측성을 나눴습니다. 아래 항목은 필요한 것만 펼쳐 볼 수 있습니다.
 
 <details>
-<summary>클러스터 구성 · 역할별 배치와 확장 경계</summary>
+<summary>클러스터 구성 · 제어, 요청 처리, 작업 실행의 경계</summary>
 
-Terraform으로 EC2 기반을 만들고 Ansible·kubeadm으로 Kubernetes를 구성했습니다. API, AI 작업, 저장 작업의 자원 사용과 확장 조건이 달라 worker 역할을 나눴습니다. 아래는 배치 역할을 묶은 도식이며, 점선은 통신 경로가 아니라 control plane의 관리 관계입니다.
+**API 응답, AI 작업, 진행 이벤트는 같은 수명으로 움직이지 않습니다.** 백엔드 README의 5개 계층을 바탕으로, Kubernetes 내부에서 무엇을 함께 배치하고 무엇을 별도 경로로 나눴는지 보여줍니다.
 
-```mermaid
-flowchart LR
-    accTitle: Eco² 자체 관리형 Kubernetes 클러스터 구성
-    accDescr: Terraform과 Ansible이 EC2 기반 kubeadm 클러스터를 구성한다. Control plane 아래에 서비스, AI worker, storage worker, 데이터 서비스, platform controller, 관측성 역할을 나누어 표시한다. 하나의 상자가 하나의 노드를 뜻하지 않는다.
-    Provision["Terraform · Ansible<br/>EC2 · kubeadm"] --> Control
-    subgraph Cluster["Self-managed Kubernetes · EC2"]
-        Control["Control plane<br/>API server · scheduler · etcd"]
-        Control -.-> APIs["Service workloads<br/>Domain APIs · SSE Gateway"]
-        Control -.-> AI["worker-ai<br/>Scan · Chat workers"]
-        Control -.-> Storage["worker-storage<br/>Persistence · checkpoint sync"]
-        Control -.-> Data[("Data services<br/>PostgreSQL · Redis · RabbitMQ")]
-        Control -.-> Platform["Platform controllers<br/>ArgoCD · Istiod · KEDA"]
-        Control -.-> Observe["Observability workloads<br/>Metrics · logs · traces"]
-    end
-```
+![Eco² 클러스터 구성. Kubernetes control plane과 Platform controller 아래에 Edge, Service, Integration, Persistence를 배치하고 요청, 작업, 관측 경로를 구분한 도식.](assets/eco2-cluster.svg)
 
-| 배치·확장 단위 | 구성과 책임 |
+Gateway는 요청을 라우팅하고, 도메인 API는 작업을 등록합니다. **RabbitMQ가 전달하는 작업과 Redis 기반의 진행 이벤트는 별도 경로입니다.** AI worker는 Scan·Chat을, storage worker는 DB 저장·checkpoint 동기화를 담당합니다. Event Router와 SSE Gateway는 작업 실행과 분리돼 진행 상태를 전달합니다.
+
+그림의 영역은 기능 경계입니다. 실제 배치는 다음 조건으로 나뉘며, 하나의 영역이 하나의 노드나 namespace를 뜻하지 않습니다.
+
+| 배치 경계 | 구현에서 확인한 조건 |
 | --- | --- |
-| 서비스 | auth, users, scan, chat, character, location, info, images와 SSE Gateway가 요청·연결을 처리합니다. |
-| AI / storage workers | `nodeSelector`와 taint/toleration으로 역할을 구분합니다. 외부 LLM 호출과 DB 저장·checkpoint 동기화를 다른 worker에 배치합니다. |
-| 데이터 | PostgreSQL, RabbitMQ와 용도별 Redis를 구분합니다. Streams, Pub/Sub, cache, 인증 상태의 역할을 하나의 저장소로 뭉뚱그리지 않습니다. |
-| 확장·배포 | KEDA가 queue·pending·connection 관련 신호로 대상 workload를 확장합니다. ArgoCD는 replica 필드를 무시하도록 설정해 autoscaler와의 충돌을 피합니다. |
+| 클러스터·플랫폼 제어 | 단일 `k8s-master`에 kubeadm control plane을 구성합니다. Istiod·ALB Controller·ExternalDNS의 selector와 ArgoCD 설치 절차도 이 역할을 사용합니다. KEDA는 `infra-type=monitoring`에 배치합니다. |
+| 진입점·인증 | Gateway는 `role=ingress-gateway`, ext-authz는 `domain=auth`와 `auth` namespace를 사용합니다. 인증을 요청하는 proxy와 판정하는 서버가 분리됩니다. |
+| 작업 실행·이벤트 전달 | `worker-ai`와 `worker-storage`를 구분합니다. Event Router는 `domain=event-router`, SSE Gateway는 `domain=sse`를 사용하며 namespace도 `event-router`와 `sse-consumer`로 나뉩니다. |
+| 상태·관측 | PostgreSQL과 용도별 Redis, RabbitMQ, monitoring·logging 역할을 구분합니다. PostgreSQL의 selector는 넓은 `domain=data`이며, `logging` namespace는 sidecar injection을 끕니다. |
 
-공개 문서에는 시점별로 다른 노드 수가 남아 있어 여기서는 고정 수치를 쓰지 않습니다. 종료된 서비스의 구현 구조이며 현재 가동 중인 클러스터 현황은 아닙니다.
+**배치 분리는 HA나 보안 격리의 증명이 아닙니다.** 단일 master, PostgreSQL standalone, RabbitMQ dev 1 replica 선언은 그대로 남습니다. State KV는 Redis 데이터의 역할이지 추가 DB 서버가 아닙니다. 자료마다 다른 노드 수를 하나로 고정하지 않았으며, 종료된 서비스의 코드 구조를 설명합니다.
 
-[EC2 provisioning](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/ec2/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Worker 배치](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
+[README의 5개 계층](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [노드 선언](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Namespace 경계](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/namespaces/base/namespaces.yaml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Workload 배치](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
 
 </details>
 
 <details>
-<summary>네트워크 토폴로지 · 요청, 인증, 비동기 작업의 경로</summary>
+<summary>네트워크 토폴로지 · ALB에서 애플리케이션까지</summary>
 
-Route 53으로 찾은 ALB에서 TLS를 종료하고 요청을 Istio Ingress로 전달합니다. Gateway의 `CUSTOM` AuthorizationPolicy가 대상 API 경로의 인증을 ext-authz에 위임합니다. 도메인 간 동기 호출, RabbitMQ 작업 전달, 외부 API 호출은 서로 다른 경로이며, Calico는 Pod 네트워크를, Istio/Envoy는 mesh 라우팅과 mTLS를 담당합니다.
+**ALB는 트래픽을 전달하고, Gateway는 라우팅과 인증 위임을 수행합니다.** Route 53의 DNS 조회, Istiod의 설정 배포, ext-authz의 권한 검사를 HTTP 전달 경로와 구분했습니다.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² 요청 경로와 서비스 네트워크
-    accDescr: 사용자의 요청은 Route 53과 ALB, Istio Ingress를 거쳐 도메인 API로 전달된다. 인증 위임, RabbitMQ를 통한 worker 작업, 데이터 접근, 외부 API 호출을 분리한다. 그림은 논리 통신 경로이며 모든 노드가 private subnet에 있다는 뜻은 아니다.
-    Client(["Client<br/>Route 53 resolution"]) -->|HTTPS| Edge["AWS ALB<br/>TLS termination"]
-    subgraph VPC["VPC · Kubernetes"]
-        Edge --> Ingress["Istio Ingress<br/>VirtualService"]
-        Ingress --> APIs["Domain APIs · Envoy<br/>HTTP / gRPC · mesh mTLS"]
-        Ingress -.->|대상 경로의 인증 위임| Auth["ext-authz<br/>JWT · blacklist"]
-        APIs --> MQ[("RabbitMQ<br/>Task queues")]
-        MQ --> Workers["AI · storage workers"]
-        APIs --> Data[("PostgreSQL · Redis")]
-        Workers --> Data
-    end
-    Workers -->|AI: HTTPS| External["LLM · external APIs"]
-```
+![Eco² ingress 경로. Client에서 Kubernetes 밖의 ALB로 HTTPS 요청을 보내고, instance target의 NodePort를 거쳐 Gateway와 API에 도달한다. ext-authz 인증 호출과 Istiod 설정 배포는 별도 경로다.](assets/eco2-ingress.svg)
 
-도식은 Pod 간 논리 경로입니다. Terraform의 public/private subnet 정의를 실제 workload의 private 배치 보장으로 해석하지 않습니다. NetworkPolicy에는 허용 규칙이 있지만 **전역 `default-deny-all`은 kustomization에서 비활성화**돼 있어 전체 네트워크가 default-deny라고 표시하지 않았습니다.
+- **AWS 경계:** ALB가 ACM 인증서로 TLS를 종료하고, `instance` target의 EC2 NodePort로 HTTP를 전달합니다. 전용 Gateway Pod가 있다고 ALB target이 그 노드로만 제한되는 것은 아닙니다.
+- **Gateway 경계:** VirtualService·EnvoyFilter는 Envoy에 적용하는 설정이지 추가 proxy가 아닙니다. `CUSTOM` AuthorizationPolicy가 지정한 경로에서만 ext-authz에 gRPC 검사를 요청합니다.
+- **네트워크 기반:** Calico VXLAN과 kube-proxy가 Pod·Service 전달을 뒷받침합니다. AI worker의 외부 LLM 호출은 ingress와 다른 outbound HTTPS 경로입니다.
 
-[README의 서비스 계층](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [VPC 정의](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway 인증 정책](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy 구성](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
+Terraform의 EC2 선언은 public subnet을 사용하고, 전역 `default-deny-all`은 비활성화돼 있습니다. 따라서 private-only 배치나 ALB-only 접근, 전체 네트워크의 default-deny 격리를 주장하지 않습니다. 작업 queue와 SSE 이벤트 전달의 세부 경로는 아래 Scan·Chat 도식에서 이어집니다.
+
+[ALB bridge 설정](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/gateway.yaml) · [Istio·NodePort 설정](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/05-istio.yaml) · [VPC 정의](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway 인증 정책](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy 구성](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
 
 </details>
 
@@ -230,22 +152,7 @@ flowchart TB
 
 개발자는 `CLAUDE.md`, Skills와 SDK 호환성 점검 command에 작업 맥락과 검증 절차를 정리했습니다. Claude Code는 **제작 측 coding agent**이며, 위 클러스터에서 사용자 요청을 처리하는 Chat/Scan worker와 다릅니다. 아래는 제작 도구와 산출물의 연결이지, 모든 작업이 거치는 단일 시퀀스가 아닙니다.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² 메타 하네스와 배포 산출물의 구성
-    accDescr: 개발자의 요구와 프로젝트 지침이 Claude Code의 변경 작업을 안내한다. 코드와 manifest는 CI의 검사 대상이며, 조건에 맞는 빌드에서 이미지 생성과 Git manifest의 image tag 갱신이 이루어진다. ArgoCD는 Git manifest를 클러스터에 적용한다.
-    Scaffold["CLAUDE.md · Skills<br/>SDK check command"] --> Agent["Claude Code"]
-    Human(["개발자<br/>작업 범위 · 검토"]) --> Agent
-    Agent --> Change["Code · manifests<br/>apps/ · workloads/"]
-    Human -->|코드 검토| Change
-    Change --> CI["GitHub Actions<br/>Format · lint · tests"]
-    CI -.->|실패 원인 수정 · 재검증| Agent
-    CI -->|Build · push| Image[("Container images<br/>Docker Hub")]
-    CI -->|Image tag 갱신| Git[("Deployment manifests<br/>Git")]
-    Git --> CD["ArgoCD<br/>ApplicationSet · sync wave"]
-    CD --> Runtime["Cluster rollout"]
-    Image -.->|Image pull| Runtime
-```
+![Eco² 제작과 배포의 책임. 개발자와 scaffold가 Claude Code를 안내하고 CI는 변경 서비스를 검사한다. 조건에 맞는 빌드가 image와 Git manifest를 갱신하며 ArgoCD가 클러스터에 적용한다.](assets/eco2-build.svg)
 
 | 제작 구성 | 역할 |
 | --- | --- |
@@ -264,22 +171,7 @@ flowchart TB
 
 Scan API는 작업을 등록하고 `202 + job_id`를 반환합니다. Celery chain은 RabbitMQ의 단계별 queue를 따라 실행되며, 클라이언트는 별도의 SSE 연결로 진행 상태를 받습니다. SSE 연결이 닫혔다고 worker 작업까지 취소되는 구조는 아닙니다.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² Scan의 작업 체인과 이벤트 경로
-    accDescr: Scan API가 Celery chain을 등록하면 Vision, Rule, Answer, Reward가 차례로 실행된다. 각 단계의 진행 이벤트는 Redis Streams에 기록하고 Event Router와 SSE Gateway를 통해 클라이언트에 전달한다.
-    API["Scan API<br/>202 + job_id"] --> Queue[("RabbitMQ<br/>Celery chain")]
-    Queue --> Vision["Vision<br/>이미지 분류"]
-    Vision --> Rule["Rule<br/>규정 검색 · Lite RAG"]
-    Rule --> Answer["Answer<br/>분리배출 가이드"]
-    Answer --> Reward["Reward<br/>캐릭터 보상 · 저장 요청"]
-    Vision -.-> Events[("Redis Streams<br/>Stage events")]
-    Rule -.-> Events
-    Answer -.-> Events
-    Reward -.-> Events
-    Events --> Delivery["Event Router → Pub/Sub<br/>SSE Gateway"]
-    Delivery --> Client(["Client<br/>진행 상태 · 결과"])
-```
+![Eco² Scan의 두 경로. RabbitMQ와 Celery chain이 Vision·Rule·Answer·Reward 작업을 실행한다. 각 단계의 Redis Streams 이벤트는 Event Router·Pub/Sub·SSE를 거쳐 전달되며 ACK와 재접속 복구 규칙을 따로 관리한다.](assets/eco2-scan.svg)
 
 | 경로 | 저장·전달 규칙 |
 | --- | --- |
@@ -296,21 +188,7 @@ flowchart TB
 
 Chat API가 RabbitMQ에 작업을 발행하고 TaskIQ worker가 LangGraph를 실행합니다. Router는 intent와 요청 맥락으로 필요한 노드를 선택합니다. 아래 세 갈래는 노드의 역할을 묶은 것이며 매 요청에서 모두 실행하지 않습니다.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² Chat의 선택적 병렬 실행과 답변 생성
-    accDescr: Intent와 선택적 Vision 결과로 router가 필요한 도메인, 외부 도구, 이미지 생성 노드를 선택한다. Aggregator가 결과를 수집한 뒤 선택적 context 압축과 답변 스트리밍을 수행한다. 설정된 경우 별도 Eval 단계가 실행된다.
-    Input["Intent classifier<br/>Optional Vision"] --> Router{"Dynamic router<br/>LangGraph Send"}
-    Router -->|선택| Domain["Domain nodes<br/>Waste RAG · character"]
-    Router -->|선택| Tools["API / tool nodes<br/>Location · weather · search"]
-    Router -->|선택| Image["Image generation"]
-    Domain --> Join["Aggregator<br/>결과 수집 · 필수 context 확인"]
-    Tools --> Join
-    Image --> Join
-    Join --> Compact["Context preparation<br/>Optional compaction"]
-    Compact --> Answer["Answer<br/>Token streaming"]
-    Answer -.->|설정 시| Eval["Eval pipeline<br/>Grading · bounded regeneration"]
-```
+![Eco² Chat의 선택과 합류. Intent router가 필요한 domain·API tool·image branch를 선택한다. Aggregator와 context 준비를 거쳐 답변하며 Eval은 설정한 경우에만 실행한다. Redis checkpoint와 PostgreSQL 보관은 별도 경로다.](assets/eco2-chat.svg)
 
 | 실행·상태 | 구체적인 역할 |
 | --- | --- |
@@ -328,19 +206,7 @@ flowchart TB
 
 Queue 적체, Pod의 상태, 요청 경로, LLM 노드의 실행은 서로 다른 기록을 요구합니다. 운영 메트릭·로그·분산 trace와 LLM trace를 한 가지 지표로 합치지 않고 나누어 수집했습니다.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² 메트릭, 로그, 분산 trace와 LLM trace
-    accDescr: API와 worker, Envoy에서 메트릭·로그·trace가 각 저장 및 조회 계층으로 전달된다. Chat의 LangGraph와 LLM 호출은 설정된 LangSmith 경로로 별도 추적하며 선택적으로 OTEL과 연결한다.
-    Runtime["API · workers · Envoy"] -->|Metrics| Metrics["Prometheus<br/>ServiceMonitor · exporters"]
-    Metrics --> Dash["Grafana · Alertmanager"]
-    Metrics --> Mesh["Kiali<br/>Mesh topology"]
-    Runtime -->|stdout / stderr| Logs["Fluent Bit"]
-    Logs --> Search[("Elasticsearch · Kibana")]
-    Runtime -->|Spans| Trace["OpenTelemetry · Jaeger"]
-    LLM["Chat LangGraph<br/>LLM · tool calls"] --> Smith["LangSmith<br/>Nodes · tokens · errors"]
-    LLM -.->|OTEL 설정 시| Trace
-```
+![Eco² 관측성. API·worker·Envoy의 metrics, logs, request spans와 Chat LangGraph의 LLM trace를 구분해 수집한다. 각 저장·조회 경로를 queue 적체, 실패 맥락, 요청 지연, LLM 노드 조사에 연결한다.](assets/eco2-observability.svg)
 
 | 조사할 문제 | 읽는 기록과 용도 |
 | --- | --- |
@@ -359,25 +225,7 @@ flowchart TB
 
 Eco²에서 개선은 “새 기술을 추가했다”는 순서보다 **같은 압력을 재현하고, 병목 가설을 좁히고, 가장 작은 변경을 배포한 뒤 같은 신호로 다시 측정하는 순서**에 가까웠습니다. production runtime이 스스로 source를 바꾸는 자기개선은 아니었고, 사람과 coding agent가 함께 돌린 외부 engineering loop였습니다.
 
-```mermaid
-sequenceDiagram
-    participant W as Reproducible Workload
-    participant O as Observability
-    participant H as Human and Coding Agent
-    participant D as Contract and Small Diff
-    participant CI as CI
-    participant G as Git and ArgoCD
-    participant K as Kubernetes
-    W->>O: Reproduce pressure or failure
-    O->>H: Metrics, logs, traces, events
-    H->>D: Falsifiable bottleneck hypothesis
-    D->>CI: Code and manifest checks
-    CI->>G: Accepted revision
-    G->>K: Reconcile desired state
-    K->>W: Run the same workload again
-    W->>O: New evidence
-    O-->>H: Keep, revise, or revert
-```
+![Eco² 개선 과정의 책임별 경로. 같은 workload에서 실패를 재현하고 사람과 coding agent가 가설·작은 변경·회귀 검사를 만든다. CI와 Git·ArgoCD 배포 뒤 같은 신호로 다시 측정하며 사람이 keep·revise·revert를 결정한다.](assets/eco2-improvement.svg)
 
 | 관측한 압력 | 세운 가설 | 변경 | 다음 측정에서 배운 것 |
 | --- | --- | --- | --- |
@@ -407,19 +255,7 @@ GEODE에서는 이 느슨한 외부 루프를 trajectory, revision-bound evaluat
 <details>
 <summary>Baseline이 바뀌는 조건: KEEP / REJECT / INVALID</summary>
 
-```mermaid
-flowchart TB
-    F["Frozen Baseline + candidate<br/>Task pack · evaluator · budget"] --> E["Evaluation"]
-    E --> V{"실행이 유효한가?"}
-    E -.->|실행 근거| L[("Ledger · 모든 시도와 판정")]
-    V -->|아니오| I["INVALID<br/>Baseline 유지"]
-    V -->|예| G{"개선이 불확실성을 넘고<br/>critical veto가 없는가?"}
-    G -->|아니오| R["REJECT<br/>Baseline 유지"]
-    G -->|예| K["KEEP<br/>다음 Baseline으로 채택"]
-    I -.-> L
-    R -.-> L
-    K -.-> L
-```
+![Experimental Loop의 Baseline 채택 조건. 동결한 비교의 Evaluation이 유효한지, 개선이 불확실성을 넘고 critical veto가 없는지 판정한다. KEEP·REJECT·INVALID와 모든 시도를 Ledger에 남기며 KEEP만 다음 Baseline을 바꾼다.](assets/experimental-admission.svg)
 
 Ratchet은 이 판정 조건을 적용합니다. 단순 점수 상승, 동률, 불완전 실행만으로 baseline을 바꾸지 않습니다. `KEEP`도 해당 실험의 판정이지 배포 승인이나 지속적인 자기개선의 입증은 아닙니다.
 
