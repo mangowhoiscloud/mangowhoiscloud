@@ -234,4 +234,16 @@ An **agent** uses tools to make progress. A **harness** manages tools, memory, p
 | 2026.03–05 | **pinxlab** · Freelance · REODE, Kiki, Cotton |
 | 2025.10–2026.02 | **Eco²** · Backend/infrastructure to solo development and operation · 2025 AI SeSACTHON Excellence Award |
 | 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB-scale distributed storage |
-| 2024.07–11 | **Kakao Tech Bootcamp
+| 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
+| 2017.03–2023.08 | **Pusan National University** · B.S., Computer Science & Engineering |
+
+Rakuten work included **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0**.
+
+<a id="more"></a>
+## Notes
+
+I document implementation and experimental findings on my [blog](https://rooftopsnow.tistory.com) and [YouTube](https://www.youtube.com/@mango_fr). [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · Previous GitHub account: [@mng990](https://github.com/mng990)
+
+<sub>Content reviewed: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">Sources, scope, and maintenance notes</a></sub>
+
+[![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
