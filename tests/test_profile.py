@@ -1,10 +1,12 @@
 """Positive and deliberate-fault tests for the profile checker, using no network."""
 from pathlib import Path
+import re
 import shutil
 import tempfile
 import unittest
 
 from scripts.check_profile import ROOT, external_destinations, inspect, validate_page, validate_repository
+from scripts.check_architecture_profile import validate_architecture
 
 
 class ParserTests(unittest.TestCase):
@@ -37,6 +39,17 @@ class ParserTests(unittest.TestCase):
 
     def test_code_example_is_not_a_live_link(self):
         self.assertFalse(inspect('```text\n[x](missing.md)\n```\n').links)
+
+
+class ArchitectureTests(unittest.TestCase):
+    def test_diagram_choice_does_not_change_content_requirements(self):
+        text = (ROOT / "README_EN.md").read_text()
+        text = re.sub(r"```mermaid\nsequenceDiagram.*?```", "", text, flags=re.S)
+        self.assertEqual(validate_architecture(text), [])
+
+    def test_invalid_outcome_cannot_disappear(self):
+        text = (ROOT / "README_EN.md").read_text().replace("INVALID", "")
+        self.assertIn("missing architecture term 'INVALID'", validate_architecture(text))
 
 
 class RepositoryTests(unittest.TestCase):

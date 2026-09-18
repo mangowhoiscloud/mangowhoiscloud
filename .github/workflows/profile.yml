@@ -27,3 +27,5 @@ jobs:
         run: python3 scripts/check_profile.py
       - name: Validate architecture narrative
         run: python3 scripts/check_architecture_profile.py
+      - name: Exercise profile checker regressions
+        run: python3 -m unittest discover -s tests -v

@@ -1,6 +1,6 @@
 # Profile notes · 출처, 범위, 업데이트 원칙
 
-Reviewed: **2026-09-17**. This document supports both [한국어](../README.md) and [English](../README_EN.md).
+Reviewed: **2026-09-18**. This document supports both [한국어](../README.md) and [English](../README_EN.md).
 
 The profile is an introduction, not a benchmark report. Published project records support the technical claims; the previous public profile supports retained career and client-delivery statements. A public statement is not the same as independently reproduced evidence.
 
@@ -11,8 +11,10 @@ The profile is an introduction, not a benchmark report. Published project record
 | [Previous Korean profile](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/fcfa534c1062c6c8a9ac7e06ebb5789c7841eb8e/README.md) / [English](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/fcfa534c1062c6c8a9ac7e06ebb5789c7841eb8e/README_EN.md) | Career dates, award placement, REODE, Kiki, Cotton, Crumb, DREAM, Aimo | Public self-reported history, preserved rather than independently audited. The pre-refresh commit remains in Git history. |
 | [GEODE README](https://github.com/mangowhoiscloud/geode/blob/main/README.md) | Runtime / evaluation / experimental-evolution boundaries | Current architecture and experimental status, not proof of sustained improvement. |
 | [GEODE evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts) | Original evidence versus derived summaries; incomplete runs; tied results | Run-local claims retain their task, model, harness, and execution conditions. |
+| [Terminal-Bench contract at reviewed GEODE revision](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/docs/eval/terminal-bench-2.md) / [public run at reviewed artifact revision](https://github.com/mangowhoiscloud/geode-eval-artifacts/tree/d277607f3a179f191ad24b1497c0934beb9d2470/terminal-bench/terminalbench21-sol-max-fullsuite-paired-20260827t190300z) | Harbor ownership, paired rollouts, file roles, secondary counts, and replay provenance | Historical one-tool GEODE adapter; 890 planned cells, not 890 valid trials or complete traces. Later full-runtime and Astra runs are separate. |
 | [Compiler AX Lab](https://github.com/mangowhoiscloud/compiler-ax-lab/blob/main/README.md) | CPU verification and A/B pilot boundaries, recorded 2026-09-16 | Independent work; no NPU, throughput, procedure-superiority, or employer-approval claim. |
-| [Eco² portfolio](https://mangowhoiscloud.github.io/eco2/) / [landing repository](https://github.com/mangowhoiscloud/eco2) | Current portfolio address, service closure, 24-node cluster, API-specific load results | Virtual-user load tests, not real user counts. Separate workloads are not one combined result. |
+| [Eco² portfolio](https://mangowhoiscloud.github.io/eco2/) / [backend repository](https://github.com/eco2-team/backend) | Portfolio address, service closure, task/event architecture, API-specific load results | Public project reports, not new measurements. Workload denominators and infrastructure snapshots need separate reconciliation, as noted below. |
+| [Profile before this revision](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/55bfad72981afb86bb9ecfc693f3afc12601b07c/README.md) | Latest published narrative, architecture descriptions, and metric discrepancies | This refresh changes presentation; it does not rerun experiments or resolve conflicting historical records. |
 
 Only previously public information is included. Client code, private repositories, protected evaluation inputs, account data, and unpublished application material are not publication sources for this refresh.
 
@@ -31,17 +33,20 @@ Source: the previous public profile linked above. These are **March 2026 deliver
 
 The old profile also mentions Spring Boot 2→3. That label and Spring Framework 4→6 describe different version axes; the refresh does not conflate them or claim independent version verification of the private codebase.
 
+<a id="eco2"></a>
 ## Eco²: preserve the achievement, separate the workloads
 
 The award remains **2025 AI 새싹톤 우수상 / AI SeSACTHON Excellence Award (4th/181)**, as previously published. The project began with a five-person MVP and continued with solo development and operation. Its service is now marked **Closed** in the public portfolio.
 
 | Item | Previous profile | Current presentation |
 | --- | --- | --- |
-| Infrastructure | 14 EC2 nodes → 24-node Kubernetes; Terraform, Ansible, ArgoCD | Keep the 24-node operated cluster; preserve the starting point here. |
-| Scan load | 0→1,000 VU, 97.8% | Name the Scan API, 1,000 virtual users and 97.8%; the portfolio also reports 373 RPM. Not 1,000 real simultaneous customers. |
+| Infrastructure | Earlier notes and the backend README describe 24 nodes; the 2026-09-18 profile describes 20 EC2 instances. | These snapshots are not reconciled. Omit the node count from the profile rather than choose one as verified current infrastructure. Terraform, Ansible, Kubernetes, and ArgoCD remain supported architecture descriptions. |
+| Scan load | The backend README reports 97.8% at 1,000 VU; the latest profile also pairs 1,469/1,518 completed tasks with 97.8%. | 1,469 ÷ 1,518 = 96.77%, not 97.8%. Retain 97.8% only as a public project-reported rate, without the incompatible fraction. The original load-test receipt and its success definition are needed to reconcile the figures. |
 | Authentication | 48→1,500 RPS | Keep this historical shorthand here. The currently published ext-authz result is 1,477 RPS at 2,500 VU; do not silently equate distinct runs or use a rounded endpoint as a new measurement. |
 | Quality | 69.4→99.8/100; Swiss Cheese 3-Layer | Retained historical project-evaluation figure. The task set, rubric, judge, and repeatability must accompany any renewed headline use; this is not a general model-quality score. |
 | Architecture | Tool calling, LangGraph parallelism, SSE, Agent SDK | Retain the chatbot-to-workflow engineering story rather than an undated claim that the service is currently running. |
+
+The Scan percentage and ext-authz throughput belong to separate load tests. Neither is a count of real simultaneous users, and this profile revision does not independently reproduce either test.
 
 ## GEODE: historical figures are not live counters
 
@@ -59,6 +64,16 @@ SIL evaluates safety-related behavior; Crucible experiments with capability gate
 
 The newer public evaluation repository also preserves negative results: a skill-attribution pilot's observed gain did not reproduce in its repeated diagnostic. A local comparison must not become a blanket claim that a workflow is superior.
 
+### Harbor: paired execution, not shadow traffic
+
+The reviewed run is `terminalbench21-sol-max-fullsuite-paired-20260827t190300z`. Its frozen plan is 89 tasks × 5 repetitions × 2 arms, using OpenAI subscription `gpt-5.6-sol` with requested effort `max`. Pairing aligns task and repetition, not random seeds or execution time. Harbor provides no shared seed control in this protocol. The diagram shows independent trial environments and evidence routes, not concurrent scheduling or every internal stage.
+
+The historical GEODE adapter used `AgenticLoop` with one Harbor-backed `terminal_exec` tool. The later `GeodeRuntimeHarborAgent` treatment is not the implementation measured by these historical counts. The task verifier and frozen selection rules own scores; the internal runtime's Verify/Reflexion and the replay do not replace that authority.
+
+The full-suite primary remains **not measurable**: `bn-fit-modify` and `tune-mjcf` were symmetrically excluded before model execution because their amd64 oracle/verifier paths did not complete normally under the arm64/Rosetta host (20 planned cells), and six native cells remained infrastructure-invalid. The common-valid secondary is **339/429 GEODE versus 331/429 native Codex**. Do not turn this incomplete population into a full-suite rank or a causal estimate of later runtime changes.
+
+The public file table describes normalized derivatives, not a second raw store. A trajectory can carry source digests without publishing full action bodies. ATIF-derived casts remain derived replay; observer PTY captures remain procedural evidence. Neither proves complete historical behavior coverage. New runs retain new identities and do not fill old evidence retroactively. The Astra 1-task smoke is listed only as a separate integration check.
+
 ## Compiler AX Lab: keep the units separate
 
 The 2026-09-16 public record distinguishes these executions:
@@ -75,11 +90,15 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 ## Editorial decisions
 
-**Lead with the person, then the system.** A conversational introduction and observable working habits come before technical classification. Each selected project explains what it does, what was built, and what the result supports.
+**Lead with current work and its evidence.** A short introduction leads directly to selected projects. Evolution and working methods follow the concrete systems rather than delaying them. Each project names the problem, design choice, and evidence boundary.
 
-**Explain the vocabulary at the point of need.** The main page briefly explains agent and harness; optional details explain Skill, regression test, ratchet, evaluation gate, and self-improvement. These are working definitions for this profile, not a universal taxonomy.
+**Choose diagrams by the question they answer.** Per language, nine sequence diagrams become five diagrams: a GEODE boundary/architecture view, one runtime request/response sequence, a Harbor paired-rollout/evidence flow, an Eco² task/event topology, and a branching experiment decision flow. Project evolution, workload differences, operational ownership, and evidence provenance use tables. No minimum diagram count or sequence-diagram quota belongs in CI.
 
-**Use badges as navigation, not decoration.** The GEODE release badge points to live release metadata. The evidence and CPU-test badges point to records. Profile CI has its own badge and is explicitly not project-performance certification. No visitor counters, contribution-score cards, tracking pixels, animated banners, or secrets are needed.
+**Use progressive disclosure.** The GEODE overview and Harbor comparison stay visible. Runtime detail, the evaluation file map and measurement repairs, Eco² infrastructure, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded. Native Markdown, Mermaid, and GitHub's own typography keep the page maintainable and theme-aware; no separate frontend is needed.
+
+**Explain vocabulary at the point of need.** The main text defines meta-harness when introducing the build boundary. Optional definitions distinguish agent, harness, meta-harness, and RSI. These are working definitions for this profile, not a universal taxonomy.
+
+**Use badges as navigation, not decoration.** One GEODE release badge points to live release metadata. Profile CI has its own footer badge and is explicitly not project-performance certification. Evidence links stay beside their claims. No visitor counters, contribution-score cards, tracking pixels, animated banners, or secrets are needed.
 
 **Keep both languages aligned.** Titles, dates, results, evidence boundaries, project coverage, and destinations should change together. CI catches structural mistakes and selected fact/link drift, not translation quality or truthfulness.
 
@@ -88,6 +107,8 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 [Simon Willison's profile](https://github.com/simonw/simonw) informed the direct route from current work to releases and writing. [Anthony Fu's profile](https://github.com/antfu/antfu) informed compact navigation. Their content and assets are not copied; these are design references, not endorsements or a ranked survey.
 
 [GitHub profile README documentation](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme) defines profile publication. [Shields static-badge documentation](https://shields.io/badges/static-badge) informs badge formatting. This repository needs no separate Pages site: merging the root README into the default branch updates the profile.
+
+[GitHub diagram documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart reference](https://mermaid.js.org/syntax/flowchart.html) support the native diagram choices. Local rendering checks syntax and legibility; GitHub's deployed Mermaid version and theme still require a post-publication check.
 
 ## Maintenance and next improvements
 
@@ -103,6 +124,7 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 ```bash
 python3 scripts/check_profile.py
+python3 scripts/check_architecture_profile.py
 python3 -m unittest discover -s tests -v
 ```
 
