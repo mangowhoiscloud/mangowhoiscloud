@@ -131,9 +131,9 @@ sequenceDiagram
 
 ### Eco²
 
-재활용을 돕는 AI 서비스입니다. Eco²는 하나의 “에이전트”가 아니라 **서로 다른 실행 계약을 가진 워크플로우, 클러스터, 그리고 그것을 바꾸는 제작 라인**으로 보는 편이 정확합니다. 현재 코드 기준 Chat은 10개 intent를 분류해 필요한 노드를 병렬 fan-out하고, Scan은 Vision → Rule/RAG → Answer → Reward의 Celery chain을 사용합니다. 이미지 생성은 별도 branch로 실행됩니다.
+재활용을 돕는 AI 서비스입니다. Eco²는 하나의 “에이전트”보다 **목적이 다른 실행 그래프, 이를 지탱하는 클러스터, 그리고 관측 결과로 둘을 다시 만드는 외부 개선 루프**로 보는 편이 정확합니다. 코드 검증 기준 Chat은 10개 intent를 분류해 필요한 노드를 병렬 fan-out하고, Scan은 Vision → Rule/RAG → Answer → Reward의 Celery chain을 사용합니다. 이미지 생성은 별도 branch입니다.
 
-#### 용도별 에이전트 워크플로우
+#### 용도별 실행 그래프
 
 ```mermaid
 sequenceDiagram
@@ -157,7 +157,7 @@ sequenceDiagram
     S-->>U: Incremental answer
 ```
 
-Chat은 **질문을 분해하고 필요한 도메인 작업을 병렬 합류시키는 workflow**입니다. 반복형 ReAct subagent 여러 개가 자유롭게 도는 구조로 과장하지 않습니다. 현재 production wiring은 대부분 한 번의 structured/function call로 인자를 정한 뒤 deterministic application command를 실행합니다.
+**Chat은 routing과 parallel join 문제**입니다. 반복형 ReAct subagent 여러 개가 자유롭게 도는 구조로 표현하지 않습니다. 현재 production wiring은 대부분 structured/function call로 인자를 정한 뒤 deterministic application command를 실행합니다.
 
 ```mermaid
 sequenceDiagram
@@ -179,11 +179,11 @@ sequenceDiagram
     B-->>U: Recoverable async status
 ```
 
-Scan은 대화형 routing보다 **비동기 작업 파이프라인**에 가깝습니다. 긴 작업은 RabbitMQ/Celery가 소유하고, 진행 이벤트는 이후 Redis Streams, Event Router, Pub/Sub, SSE Gateway로 분리했습니다. 작업 실행과 client connection의 수명을 분리한 것이 핵심입니다.
+**Scan은 비동기 job pipeline 문제**입니다. 긴 작업은 RabbitMQ/Celery가 소유하고, 진행 이벤트는 Redis Streams → Event Router → Pub/Sub/State → SSE Gateway로 분리했습니다. Chat이 “어떤 경로로 답할지”를 다룬다면 Scan은 “긴 작업을 어떻게 완료하고 복구 가능한 상태로 전달할지”를 다룹니다.
 
-#### 클러스터와 이벤트 전달 구조
+#### 클러스터와 배포 구조
 
-검증 팩트 기준으로는 **EC2 20노드, 19개 마이크로서비스(9 API + 9 Worker + ext-authz)** 규모입니다. 기존 README의 24-node 표기는 내부 architecture facts와 불일치해 여기서는 코드와 검증 문서에 맞춘 20 EC2를 사용합니다. Istio가 edge/service traffic을, RabbitMQ가 task plane을, Redis가 event/recovery plane을, KEDA가 workload별 scaling을 맡습니다.
+검증 팩트 시트 기준 **EC2 20노드, 19개 마이크로서비스(9 API + 9 Worker + ext-authz)** 규모입니다. 과거 README의 24-node 표기와 불일치가 있어 프로필에서는 코드와 검증 문서에 맞춘 20 EC2를 사용합니다.
 
 ```mermaid
 sequenceDiagram
@@ -208,38 +208,49 @@ sequenceDiagram
     Note over ER,SG: retry, reclaim, dedupe, Last-Event-ID recovery
 ```
 
-이 구조는 “Redis를 썼다”보다 **권한과 수명을 분리했다**는 점이 중요합니다. RabbitMQ는 task orchestration, Event Router는 ACK/reclaim, State/Streams는 replay와 recovery, SSE Gateway는 client connection을 소유합니다. KEDA는 queue, pending, connection 같은 workload signal로 replica를 조정하고 ArgoCD는 replica field와 충돌하지 않도록 desired-state 책임을 분리합니다.
+핵심은 구성요소 수가 아니라 **소유권을 분리한 것**입니다. Istio는 edge/service traffic, RabbitMQ는 task orchestration, Event Router는 ACK/reclaim, Streams/State는 replay와 recovery, SSE Gateway는 client connection을 소유합니다. KEDA는 queue, pending, connection 같은 workload signal로 replica를 조정하고, ArgoCD는 그 replica field를 건드리지 않도록 desired-state 책임을 분리합니다.
 
-#### 배포 구조와 Eco²의 메타 하네스
+배포도 한 번의 명령이 아니라 계층화했습니다. Terraform/Ansible로 기반을 만들고, Git의 Kubernetes manifest를 desired state로 두며, ArgoCD sync wave로 Redis → RabbitMQ → KEDA → Gateway → Router처럼 의존 순서를 관리했습니다. Prometheus/Grafana, EFK, Jaeger/OTEL, LangSmith는 서로 다른 관측면을 제공합니다.
 
-Eco²에도 GEODE로 이어지는 **하네스 제작 장치의 초기 형태**가 있었습니다. 다만 runtime이 스스로 source를 고치는 자기개선 시스템은 아니었습니다. 사람이 coding agent와 함께 research/ADR에서 변경 가설을 만들고, CI가 code와 manifest를 검사하고, Git desired state를 ArgoCD가 cluster에 reconcile한 뒤, 같은 workload와 observability signal로 다시 측정해 사람이 keep/revise/revert를 결정했습니다.
+#### 개선 루프가 닫힌 지점
+
+Eco² 포트폴리오에서 중요한 것은 최종 아키텍처보다 **실패가 다음 구조를 어떻게 바꿨는지**입니다. 이 루프는 production runtime이 스스로 source를 수정하는 RSI가 아니라, 사람과 coding agent가 관측값을 읽고 작은 변경을 만든 뒤 같은 workload로 다시 측정하는 외부 engineering loop였습니다.
 
 ```mermaid
 sequenceDiagram
-    participant H as Human and Coding Agent
-    participant D as Research and ADR
-    participant C as Code and Manifest
-    participant CI as CI
-    participant G as Git Desired State
-    participant A as ArgoCD
-    participant K as Kubernetes
+    participant W as Workload
     participant O as Observability
-    H->>D: Failure signal and hypothesis
-    D->>C: Small scoped change
-    C->>CI: Lint, test, render, schema checks
+    participant H as Human and Coding Agent
+    participant D as Contract and Diff
+    participant CI as CI
+    participant G as Git and ArgoCD
+    participant K as Kubernetes
+    W->>O: Reproduce pressure or failure
+    O->>H: Metrics, logs, traces, cluster events
+    H->>D: Hypothesis and smallest scoped change
+    D->>CI: Test code and manifests
     CI->>G: Accepted revision
-    G->>A: Desired state
-    A->>K: Reconcile by sync wave
-    K->>O: Metrics, logs, traces, events
-    O-->>H: Same workload, new evidence
-    H->>G: Keep, revise, or revert
+    G->>K: Reconcile desired state
+    K->>W: Run the same workload again
+    W->>O: New measurements
+    O-->>H: Keep, revise, or revert evidence
 ```
 
-배포 측면에서는 Terraform/Ansible로 기반을 만들고, Kubernetes manifest와 Git을 desired state로 두며, ArgoCD의 sync wave로 Redis, RabbitMQ, KEDA, Gateway, Router 같은 의존 순서를 관리했습니다. Prometheus/Grafana, EFK, Jaeger/OTEL, LangSmith가 서로 다른 관측면을 제공했습니다. 이때 observability는 승인 권한이 아니라 **다음 변경을 만들기 위한 feedback surface**였습니다.
+이 패턴은 실제 발전 과정에 반복됩니다.
 
-이 경험이 GEODE에서 더 명시적인 메타 하네스로 발전했습니다. Eco²에서는 `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict`가 사람과 coding agent가 함께 돌리는 외부 engineering loop였다면, GEODE에서는 제작 scaffold, trajectory, revision-bound evaluation, ratchet과 promotion contract를 별도 구조로 만들고 있습니다.
+**첫 번째 루프는 SSE 연결 폭발이었습니다.** 50 VU 부하에서 활성 SSE 연결이 RabbitMQ connection 증가와 scan-api memory pressure로 이어지고 readiness 503이 발생했습니다. 여기서 “브로커를 교체한다”보다 **task plane과 progress/event plane의 수명이 묶여 있다**는 가설을 세웠습니다. RabbitMQ는 task queue로 남기고, 진행 이벤트를 Redis Streams와 별도 SSE Gateway로 분리했습니다. 이후 publish 실패 시 ACK 보류, reclaim, dedupe, Last-Event-ID 복구, Pub/Sub master와 4-shard hot-channel 분산을 추가했습니다. 즉 한 번의 재설계가 끝이 아니라 새 failure signal이 다음 contract를 만들었습니다.
 
-**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**. Scan workload의 보존된 k6 결과 중 최종 VU 1,000 실행은 **1,469/1,518 완료, 97.8%**였고 같은 날 이전 실행에는 0% 회귀도 남아 있습니다. 별도의 ext-authz 부하 기록은 **2,500 VU에서 1,477 RPS**이며 Scan 결과와 하나의 성능 지표로 합치지 않습니다. 따라서 이를 선형적인 성능 향상으로 표현하지 않습니다. 서비스 운영은 종료됐습니다.
+**두 번째 루프는 scaling과 guardrail 자체의 실패였습니다.** 연결 병목을 줄인 뒤 VU sweep을 다시 돌리자 queue wait, worker state와 probe restart가 새 병목으로 드러났습니다. CPU나 memory만 올리는 대신 KEDA의 workload-specific signal과 min/max replica를 조정했고, 보호 장치였던 probe가 I/O-bound Celery worker에서 in-flight task loss를 만들 수 있다는 점도 별도 실패 원인으로 분리했습니다. **guardrail도 검증 대상**이라는 원칙이 여기서 생겼습니다.
+
+**세 번째 루프는 평가 자체였습니다.** Chat 응답 품질을 한 LLM judge 점수로 끝내지 않고 deterministic Code Grader, BARS 기반 LLM Judge, judge drift를 보는 Calibration Monitor로 역할을 분리했습니다. 다만 calibration seed와 runtime wiring에 남은 한계가 있어 이를 “완성된 production quality loop”라고 부르지 않습니다. 측정 장치 자체도 다시 측정해야 한다는 경험은 이후 GEODE의 evaluator separation과 Crucible의 frozen contract로 이어졌습니다.
+
+그래서 Eco²의 meta-harness 전신은 다음 식으로 요약할 수 있습니다.
+
+`failure signal → reproducible workload → hypothesis → scoped code/manifest diff → CI → Git/ArgoCD → same workload → human verdict → next contract`
+
+Observability는 승인 권한이 아니라 **다음 제작 변경을 만드는 feedback surface**였고, Git history와 CI가 당시의 ratchet 역할을 했습니다. GEODE에서는 이 느슨한 외부 루프를 development scaffold, trajectory, revision-bound evaluation, explicit ratchet과 promotion contract로 구조화하고 있습니다.
+
+**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**. Scan workload의 보존된 k6 결과 중 최종 VU 1,000 실행은 **1,469/1,518 완료, 97.8%**였지만 같은 날 이전 실행에는 **92.5% → 96.6% → 0% → 0% → 0% → 97.8%**가 함께 남아 있습니다. 별도의 ext-authz 부하 기록은 **2,500 VU에서 1,477 RPS**이며 Scan 결과와 합산하지 않습니다. 이 숫자들은 선형 성공 그래프가 아니라 **회귀를 보존하고 다시 측정한 기록**으로 읽습니다. 서비스 운영은 종료됐습니다.
 
 [기술 포트폴리오](https://mangowhoiscloud.github.io/eco2/) · [프로젝트 저장소](https://github.com/eco2-team/backend)
 
