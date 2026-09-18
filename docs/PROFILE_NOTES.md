@@ -11,6 +11,7 @@ The profile is an introduction, not a benchmark report. Published project record
 | [Previous Korean profile](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/fcfa534c1062c6c8a9ac7e06ebb5789c7841eb8e/README.md) / [English](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/fcfa534c1062c6c8a9ac7e06ebb5789c7841eb8e/README_EN.md) | Career dates, award placement, REODE, Kiki, Cotton, Crumb, DREAM, Aimo | Public self-reported history, preserved rather than independently audited. The pre-refresh commit remains in Git history. |
 | [GEODE README](https://github.com/mangowhoiscloud/geode/blob/main/README.md) | Runtime / evaluation / experimental-evolution boundaries | Current architecture and experimental status, not proof of sustained improvement. |
 | [GEODE evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts) | Original evidence versus derived summaries; incomplete runs; tied results | Run-local claims retain their task, model, harness, and execution conditions. |
+| [Terminal-Bench contract at reviewed GEODE revision](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/docs/eval/terminal-bench-2.md) / [public run at reviewed artifact revision](https://github.com/mangowhoiscloud/geode-eval-artifacts/tree/d277607f3a179f191ad24b1497c0934beb9d2470/terminal-bench/terminalbench21-sol-max-fullsuite-paired-20260827t190300z) | Harbor ownership, paired rollouts, file roles, secondary counts, and replay provenance | Historical one-tool GEODE adapter; 890 planned cells, not 890 valid trials or complete traces. Later full-runtime and Astra runs are separate. |
 | [Compiler AX Lab](https://github.com/mangowhoiscloud/compiler-ax-lab/blob/main/README.md) | CPU verification and A/B pilot boundaries, recorded 2026-09-16 | Independent work; no NPU, throughput, procedure-superiority, or employer-approval claim. |
 | [Eco² portfolio](https://mangowhoiscloud.github.io/eco2/) / [backend repository](https://github.com/eco2-team/backend) | Portfolio address, service closure, task/event architecture, API-specific load results | Public project reports, not new measurements. Workload denominators and infrastructure snapshots need separate reconciliation, as noted below. |
 | [Profile before this revision](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/55bfad72981afb86bb9ecfc693f3afc12601b07c/README.md) | Latest published narrative, architecture descriptions, and metric discrepancies | This refresh changes presentation; it does not rerun experiments or resolve conflicting historical records. |
@@ -63,6 +64,16 @@ SIL evaluates safety-related behavior; Crucible experiments with capability gate
 
 The newer public evaluation repository also preserves negative results: a skill-attribution pilot's observed gain did not reproduce in its repeated diagnostic. A local comparison must not become a blanket claim that a workflow is superior.
 
+### Harbor: paired execution, not shadow traffic
+
+The reviewed run is `terminalbench21-sol-max-fullsuite-paired-20260827t190300z`. Its frozen plan is 89 tasks × 5 repetitions × 2 arms, using OpenAI subscription `gpt-5.6-sol` with requested effort `max`. Pairing aligns task and repetition, not random seeds or execution time. Harbor provides no shared seed control in this protocol. The diagram shows independent trial environments and evidence routes, not concurrent scheduling or every internal stage.
+
+The historical GEODE adapter used `AgenticLoop` with one Harbor-backed `terminal_exec` tool. The later `GeodeRuntimeHarborAgent` treatment is not the implementation measured by these historical counts. The task verifier and frozen selection rules own scores; the internal runtime's Verify/Reflexion and the replay do not replace that authority.
+
+The full-suite primary remains **not measurable**: `bn-fit-modify` and `tune-mjcf` were symmetrically excluded before model execution because their amd64 oracle/verifier paths did not complete normally under the arm64/Rosetta host (20 planned cells), and six native cells remained infrastructure-invalid. The common-valid secondary is **339/429 GEODE versus 331/429 native Codex**. Do not turn this incomplete population into a full-suite rank or a causal estimate of later runtime changes.
+
+The public file table describes normalized derivatives, not a second raw store. A trajectory can carry source digests without publishing full action bodies. ATIF-derived casts remain derived replay; observer PTY captures remain procedural evidence. Neither proves complete historical behavior coverage. New runs retain new identities and do not fill old evidence retroactively. The Astra 1-task smoke is listed only as a separate integration check.
+
 ## Compiler AX Lab: keep the units separate
 
 The 2026-09-16 public record distinguishes these executions:
@@ -81,9 +92,9 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 **Lead with current work and its evidence.** A short introduction leads directly to selected projects. Evolution and working methods follow the concrete systems rather than delaying them. Each project names the problem, design choice, and evidence boundary.
 
-**Choose diagrams by the question they answer.** Per language, nine sequence diagrams become four diagrams: a GEODE boundary/architecture view, one runtime request/response sequence, an Eco² task/event topology, and a branching experiment decision flow. Project evolution, workload differences, operational ownership, and evidence provenance use tables. No minimum diagram count or sequence-diagram quota belongs in CI.
+**Choose diagrams by the question they answer.** Per language, nine sequence diagrams become five diagrams: a GEODE boundary/architecture view, one runtime request/response sequence, a Harbor paired-rollout/evidence flow, an Eco² task/event topology, and a branching experiment decision flow. Project evolution, workload differences, operational ownership, and evidence provenance use tables. No minimum diagram count or sequence-diagram quota belongs in CI.
 
-**Use progressive disclosure.** The GEODE overview stays visible. Runtime detail, Eco² infrastructure, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded. Native Markdown, Mermaid, and GitHub's own typography keep the page maintainable and theme-aware; no separate frontend is needed.
+**Use progressive disclosure.** The GEODE overview and Harbor comparison stay visible. Runtime detail, the evaluation file map and measurement repairs, Eco² infrastructure, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded. Native Markdown, Mermaid, and GitHub's own typography keep the page maintainable and theme-aware; no separate frontend is needed.
 
 **Explain vocabulary at the point of need.** The main text defines meta-harness when introducing the build boundary. Optional definitions distinguish agent, harness, meta-harness, and RSI. These are working definitions for this profile, not a universal taxonomy.
 

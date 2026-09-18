@@ -67,6 +67,57 @@ A model's completion statement, a verifier verdict, and a termination reason are
 
 [Code](https://github.com/mangowhoiscloud/geode) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Meta-harness catalog](https://mangowhoiscloud.github.io/geode/docs/reference/meta-harness-catalog) · [Evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
+<a id="harbor-rollout"></a>
+#### Harbor · Investigating score differences through execution records
+
+I compared GEODE and native Codex in **paired rollouts** on Terminal-Bench 2.1. The two arms receive matched task/repetition assignments but work independently, with a separate container for each attempt. This is neither GEODE imitating Codex's actions nor production shadow traffic.
+
+The plan covered **89 tasks × 5 repetitions × 2 arms = 890 cells**. A cell is `task × repetition × arm`. Both arms used the OpenAI subscription route to `gpt-5.6-sol`, with requested effort `max`. The historical GEODE arm connected `AgenticLoop` to one Harbor-backed `terminal_exec` tool; later full-runtime experiments are separate.
+
+```mermaid
+flowchart TB
+    accTitle: Harbor paired rollouts and the path to public evidence
+    accDescr: A frozen contract governs independent GEODE and Codex trials in Harbor. Behavior records and verifier results are preserved separately, validated and sanitized, then published as artifacts and derived replay.
+    F["Frozen run spec<br/>Task · budget · repetition"] --> H["Harbor<br/>Trial lifecycle · isolation"]
+    H --> G["GEODE<br/>Trial container"]
+    H --> C["Native Codex<br/>Trial container"]
+    G -->|Environment state| V["Task verifier<br/>Result · reward"]
+    C -->|Environment state| V
+    G --> T["Trajectory · lineage<br/>Actions · observations"]
+    C --> T
+    V --> Q["Normalize · publication checks<br/>Schema · hashes · privacy"]
+    T --> Q
+    Q --> A[("geode-eval-artifacts")]
+    A --> R["Replay · docs<br/>Derived views"]
+```
+
+Harbor owns containers, timeouts, and task verifiers. **Scores follow verifier results and frozen selection rules; trajectories support investigation of tool calls and failure paths.** The branches represent independent arms, not simultaneous execution.
+
+The secondary observation on 429 common-valid pairs recorded **339/429 passes for GEODE and 331/429 for Codex**. Infrastructure exclusions and unresolved cells leave the preregistered full-suite metric not measurable. This is not an official leaderboard rank or evidence that the current full GEODE runtime is superior.
+
+[Execution contract and limits](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/terminal-bench-2.md) · [Public run artifacts](https://github.com/mangowhoiscloud/geode-eval-artifacts/tree/main/terminal-bench/terminalbench21-sol-max-fullsuite-paired-20260827t190300z) · [GEODE / Codex replay](https://mangowhoiscloud.github.io/geode/benchmarks/terminal-bench/replay/)
+
+<details>
+<summary>What was retained, and how was measurement improved?</summary>
+
+| Data | Public files | What they support |
+| --- | --- | --- |
+| Execution contract | `run-spec.json`, `task-manifest.json` | Establish model, tasks, budgets, and comparison scope. |
+| Attempt lineage | `attempts.jsonl` | Track original and supplementary attempts, validity, and selection. |
+| Behavior records | `trajectory.json`, replay derivatives | Investigate action order and provenance from retained ATIF/session evidence. |
+| Scoring evidence and analysis | `native-results.json`, `verifier-receipts.json`, `outcomes.json`, `analysis.json` | Distinguish raw reward, contract-selected outcomes, and aggregation denominators. |
+| Publication manifest | `publication*.json` | Identify admitted files, hashes, and validation scope. |
+
+Raw jobs remain private. Public derivatives pass schema, lineage, hash, secret, PII, and local-path checks. An ATIF-reconstructed `recording.cast` is **derived replay**, not an original PTY recording. Observer PTY capture is separate procedural evidence. Public replay does not expose every prompt or output body, and later reruns do not overwrite missing historical records or scores.
+
+Follow-up integration review found missing cache-write separation in inclusive-input cost estimates, cleanup paths that could mask the first execution error, and unretained raw samples from failed performance checks. Changes corrected cost accounting, preserved the first error and original samples, and made usage producers and denominators explicit.
+
+A later, **separate Astra smoke** froze its run spec and recorded reward 1/1, verifier 6/6, errors/retries 0/0, tool calls/results 2/2, and 0 orphans on Harbor 0.22.0. This is a 1/89-task, k=1 account-scoped integration check, not another sample in the `gpt-5.6-sol` comparison or evidence of suite-level performance, Reflexion effectiveness, or complete whole-runtime usage.
+
+[Harbor gap closure PR #3311](https://github.com/mangowhoiscloud/geode/pull/3311) · [Terminal-Bench Astra smoke](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/2026-09-05-terminalbench-astra-openssl-smoke.md)
+
+</details>
+
 ### Eco² · Let the work outlive the connection
 
 I built and operated the backend and Kubernetes infrastructure for an AI recycling service. Long-running AI workers and the SSE connections delivering progress have separate lifetimes. The project received the **2025 AI SeSACTHON Excellence Award (4th/181)**. The service has closed.
@@ -198,16 +249,7 @@ A Trajectory is research data. I connect **who produces a record, who reads it, 
 
 Original records remain separate from derived summaries, with provenance and privacy checked before publication. Local tests, external evaluations, CI, and deployment checks do not substitute for one another.
 
-<details>
-<summary>Harbor rollout: repairing the measurement apparatus first</summary>
-
-Comparing actual rollout against integration drafts exposed cache-accounting inclusion errors, cleanup paths that could mask the first execution error, and missing raw samples from performance failures. Changes preserved the first error and original samples, and made usage producers and denominators explicit.
-
-A separate preregistered Terminal-Bench 2.1 smoke on Harbor 0.22.0 recorded **reward 1/1, verifier 6/6, errors/retries 0/0, tool calls/results 2/2, and 0 orphans**. This is a 1/89-task, k=1 account-scoped integration check, not a suite-level result or a Reflexion-effect estimate. It does not establish complete whole-runtime usage.
-
-[Harbor gap closure PR #3311](https://github.com/mangowhoiscloud/geode/pull/3311) · [Terminal-Bench Astra smoke](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/2026-09-05-terminalbench-astra-openssl-smoke.md)
-
-</details>
+The [Harbor paired-rollout case](#harbor-rollout) shows the concrete files and measurement repairs.
 
 <a id="concepts"></a>
 <details>

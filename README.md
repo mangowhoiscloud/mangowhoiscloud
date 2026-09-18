@@ -67,6 +67,57 @@ sequenceDiagram
 
 [코드](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [메타 하네스 카탈로그](https://mangowhoiscloud.github.io/geode/docs/reference/meta-harness-catalog) · [평가 기록](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
+<a id="harbor-rollout"></a>
+#### Harbor · 점수 차이를 실행 기록으로 조사하기
+
+Terminal-Bench 2.1에서 GEODE와 native Codex를 **paired rollout**으로 비교했습니다. 두 arm은 같은 task·repetition에 배정되지만, 매 시도마다 별도 컨테이너에서 독립적으로 작업합니다. Codex의 행동을 GEODE가 따라 하는 실행이나 실서비스 shadow traffic은 아닙니다.
+
+계획은 **89 tasks × 5 repetitions × 2 arms = 890 cells**였습니다. Cell은 `task × repetition × arm`이며, 두 arm 모두 OpenAI subscription의 `gpt-5.6-sol`, 요청 effort `max`를 사용했습니다. 당시 GEODE arm은 `AgenticLoop`에 Harbor 기반 `terminal_exec` 하나를 연결한 구성입니다. 이후 full-runtime 실험과 구분합니다.
+
+```mermaid
+flowchart TB
+    accTitle: Harbor paired rollout과 공개 근거의 경로
+    accDescr: 동결 계약으로 Harbor가 GEODE와 Codex의 독립 trial을 관리한다. 행동 기록과 verifier 결과는 별도로 보존하고 검증·정제한 뒤 공개 artifact와 파생 replay로 제공한다.
+    F["Frozen run spec<br/>Task · budget · repetition"] --> H["Harbor<br/>Trial lifecycle · isolation"]
+    H --> G["GEODE<br/>Trial container"]
+    H --> C["Native Codex<br/>Trial container"]
+    G -->|환경 상태| V["Task verifier<br/>Result · reward"]
+    C -->|환경 상태| V
+    G --> T["Trajectory · lineage<br/>Actions · observations"]
+    C --> T
+    V --> Q["정규화 · 공개 전 검증<br/>Schema · hashes · privacy"]
+    T --> Q
+    Q --> A[("geode-eval-artifacts")]
+    A --> R["Replay · docs<br/>파생 표현"]
+```
+
+Harbor가 컨테이너·timeout·task verifier를 관리합니다. **Score는 verifier 결과와 동결된 선정 규칙으로 계산하고, trajectory는 도구 호출과 실패 경로를 조사하는 데 씁니다.** 그림의 분기는 두 arm의 독립성을 나타내며 동시 실행을 뜻하지 않습니다.
+
+공통 유효 429쌍의 보조 관측에서 **통과 건수는 GEODE 339/429, Codex 331/429**입니다. 환경 문제로 제외·미해결 cell이 남아 사전 정의한 전체 평가값은 측정 불성립입니다. 공식 leaderboard 순위나 현재 GEODE 전체 런타임의 우위로 제시하지 않습니다.
+
+[실행 계약과 한계](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/terminal-bench-2.md) · [공개 run artifact](https://github.com/mangowhoiscloud/geode-eval-artifacts/tree/main/terminal-bench/terminalbench21-sol-max-fullsuite-paired-20260827t190300z) · [GEODE / Codex replay](https://mangowhoiscloud.github.io/geode/benchmarks/terminal-bench/replay/)
+
+<details>
+<summary>어떤 데이터를 남겼고, 측정 장치는 어떻게 보강했는가</summary>
+
+| 데이터 | 공개 파일 | 읽는 목적 |
+| --- | --- | --- |
+| 실행 계약 | `run-spec.json`, `task-manifest.json` | 모델·task·예산과 비교 범위를 확인합니다. |
+| 시도 이력 | `attempts.jsonl` | 원래 시도와 보충 시도, 유효성·선정 여부를 추적합니다. |
+| 행동 기록 | `trajectory.json`, replay 파생물 | 보존된 ATIF·세션 기록을 바탕으로 행동의 순서와 출처를 조사합니다. |
+| 채점 근거와 분석 | `native-results.json`, `verifier-receipts.json`, `outcomes.json`, `analysis.json` | 원본 reward, 계약상 선정 결과, 집계의 분모를 확인합니다. |
+| 공개 명세 | `publication*.json` | 공개 대상 파일·hash와 검증 범위를 확인합니다. |
+
+원본 job은 비공개로 보존하고, schema·lineage·hash와 secret·PII·로컬 경로를 검사한 파생물을 공개합니다. ATIF에서 복원한 `recording.cast`는 **derived replay**이지 당시 PTY 원본 녹화가 아닙니다. Observer PTY는 실행 절차의 별도 기록입니다. 공개 replay가 모든 prompt·출력 본문을 담는 것도 아니며, 이후 재실행으로 과거의 누락 기록이나 점수를 덮어쓰지 않습니다.
+
+후속 통합 점검에서는 inclusive-input 비용 추정의 cache-write 분리 누락, cleanup 오류가 최초 실행 오류를 가리는 경로, 성능 검사 실패 시 raw sample의 미보존을 확인했습니다. 비용 계산과 오류·표본 보존을 고치고, usage의 생산자와 분모를 명시했습니다.
+
+후속 **별도 Astra smoke**는 run spec을 동결한 뒤 Harbor 0.22.0에서 reward 1/1, verifier 6/6, error/retry 0/0, tool call/result 2/2, orphan 0을 기록했습니다. 이는 1/89 task·k=1의 account-scoped 통합 확인이며, 위 `gpt-5.6-sol` 비교의 보충 표본이나 전체 suite·Reflexion 효과·whole-runtime usage의 완전성을 입증하는 결과가 아닙니다.
+
+[Harbor gap closure PR #3311](https://github.com/mangowhoiscloud/geode/pull/3311) · [Terminal-Bench Astra smoke](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/2026-09-05-terminalbench-astra-openssl-smoke.md)
+
+</details>
+
 ### Eco² · 연결이 끊겨도 작업은 계속되도록
 
 재활용을 돕는 AI 서비스의 백엔드와 Kubernetes 인프라를 개발·운영했습니다. 긴 AI 작업을 처리하는 worker와 사용자에게 진행 상황을 전달하는 SSE connection의 수명을 분리했습니다. **2025 AI 새싹톤 우수상**(4th/181)을 받았으며, 서비스 운영은 종료됐습니다.
@@ -198,16 +249,7 @@ Trajectory는 연구 데이터입니다. 무엇을 만들었는지뿐 아니라 
 
 원본과 파생 요약을 구분하고, 공개 전에 provenance와 privacy를 확인합니다. 로컬 테스트, 외부 평가, CI, 배포 확인은 서로를 대신하지 않습니다.
 
-<details>
-<summary>Harbor rollout: 성공률보다 먼저 고친 측정 장치</summary>
-
-실제 rollout을 통합 초안과 대조하면서 cache accounting의 포함 관계, cleanup 오류가 최초 실행 오류를 가리는 경로, 성능 실패 raw sample의 누락을 찾았습니다. 최초 오류와 원본 표본을 보존하고, usage의 생산자와 분모를 명시하도록 고쳤습니다.
-
-별도 Terminal-Bench 2.1 smoke는 run spec을 동결한 뒤 Harbor 0.22.0에서 **reward 1/1, verifier 6/6, error/retry 0/0, tool call/result 2/2, orphan 0**을 기록했습니다. 이는 1/89 task·k=1의 account-scoped 통합 확인이며 전체 suite 성능이나 Reflexion 효과의 증거는 아닙니다. Whole-runtime usage가 완전하다는 주장도 하지 않습니다.
-
-[Harbor gap closure PR #3311](https://github.com/mangowhoiscloud/geode/pull/3311) · [Terminal-Bench Astra smoke](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/2026-09-05-terminalbench-astra-openssl-smoke.md)
-
-</details>
+구체적인 파일 구조와 관측 보강 사례는 [Harbor paired rollout](#harbor-rollout)에 정리했습니다.
 
 <a id="concepts"></a>
 <details>
