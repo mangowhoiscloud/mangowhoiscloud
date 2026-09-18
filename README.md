@@ -65,7 +65,7 @@ sequenceDiagram
 
 </details>
 
-[코드](https://github.com/mangowhoiscloud/geode) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [메타 하네스 카탈로그](https://mangowhoiscloud.github.io/geode/docs/reference/meta-harness-catalog) · [평가 기록](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+[코드](https://github.com/mangowhoiscloud/geode) · [랜딩 페이지](https://mangowhoiscloud.github.io/geode/) · [문서](https://mangowhoiscloud.github.io/geode/docs) · [평가 기록](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
 <a id="harbor-rollout"></a>
 #### Harbor · 점수 차이를 실행 기록으로 조사하기
