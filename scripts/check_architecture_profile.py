@@ -25,6 +25,9 @@ COMMON = (
     "83/83",
     "97.8%",
     "1,477",
+    "Event Router",
+    "ArgoCD",
+    "Git/ArgoCD",
 )
 
 KO = (
@@ -33,6 +36,9 @@ KO = (
     "trajectory는 연구 데이터",
     "래칫은 기억을 자동화",
     "탐색 공간은 닫지 않습니다",
+    "개선 루프가 닫힌 지점",
+    "guardrail도 검증 대상",
+    "같은 workload",
 )
 
 EN = (
@@ -41,6 +47,9 @@ EN = (
     "A trajectory is research data",
     "A ratchet automates memory",
     "search space stays open",
+    "Where the improvement loop actually closed",
+    "guardrail itself an object of verification",
+    "same workload",
 )
 
 FORBIDDEN = (
