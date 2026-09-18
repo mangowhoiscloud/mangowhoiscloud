@@ -30,7 +30,7 @@
 <a id="evolution"></a>
 ## 발전 과정
 
-Eco²에서는 실제 서비스를 운영하며 **비동기 에이전트 워크플로우와 클라우드 런타임**을 만들었습니다. GEODE에서는 이를 범용 **자율 에이전트 런타임과 메타 하네스**로 분리했습니다. SIL에서는 “scaffold 변경이 안전성 기준을 개선하는가”를 외부 audit로 측정했고, Crucible에서는 그 경험을 바탕으로 **candidate, evaluator, task pack, budget을 먼저 동결하는 실험 계약**으로 발전시켰습니다. 현재 Experimental Loop에서는 실행과 평가 기록을 다시 외부 scaffold 탐색 루프에 투입합니다.
+Eco²에서는 실제 서비스를 운영하며 **비동기 에이전트 워크플로우와 클라우드 런타임**을 만들었습니다. GEODE에서는 이를 범용 **자율 에이전트 런타임**으로 분리했고, 별도의 제작 계층을 **메타 하네스**로 다루기 시작했습니다. 여기서 메타 하네스는 런타임을 감싸는 상위 제어기가 아니라, 하네스의 코드와 scaffold를 만들고 검증하고 다시 고치는 **하네스 제작 장치**를 뜻합니다. SIL에서는 “scaffold 변경이 안전성 기준을 개선하는가”를 외부 audit로 측정했고, Crucible에서는 그 경험을 바탕으로 **candidate, evaluator, task pack, budget을 먼저 동결하는 실험 계약**으로 발전시켰습니다. 현재 Experimental Loop에서는 실행과 평가 기록을 다시 외부 scaffold 탐색 루프에 투입합니다.
 
 ```mermaid
 sequenceDiagram
@@ -68,7 +68,7 @@ RSI는 목표 방향이지 현재 달성 상태를 뜻하지 않습니다. 2026-
 ```text
 service runtime
   -> autonomous agent runtime
-  -> observable meta-harness
+  -> autonomous agent harness\n  -> meta-harness: harness-building system
   -> SIL: safety-scaffold audit loop
   -> Crucible: frozen experiment + promotion ratchet   [current]
   -> repeated cross-task evidence and retained improvements
@@ -84,7 +84,28 @@ service runtime
 
 장기 실행 메모리, 여러 모델 제공자 연결, 도구 실행, 권한 경계, 관찰과 평가를 갖춘 **자율 에이전트 런타임**입니다. 배포 경계는 `core`, `evals`, `evolve`로 나뉩니다. `core`는 실행, `evals`는 증거 생산, `evolve`는 실험적인 scaffold 탐색을 담당합니다.
 
-메타 하네스는 Context Control, Plan and Execute, Verify, Observe, Scaffold로 제어 메커니즘을 구분합니다. 개념적인 분류가 아니라 실제 코드 경로와 제어 지점에 연결된 구조입니다.
+GEODE에서 **하네스**와 **메타 하네스**는 같은 층이 아닙니다. 하네스는 Context Control, Plan and Execute, Verify, Observe를 통해 실제 에이전트 실행을 수렴시킵니다. 메타 하네스는 그 하네스를 **제작하는 장치**입니다. Claude Code나 Codex CLI 같은 개발 하네스가 `CLAUDE.md`, `AGENTS.md`, 개발 Skill, CI와 ratchet을 읽어 GEODE의 코드와 runtime scaffold를 생산하고 수정합니다.
+
+그래서 `Scaffold`는 런타임 제어 항목 하나가 아니라 **제작 측면의 계약**입니다. 런타임에서 검증된 패턴이 제작 라인으로 올라가고, 제작 과정에서 발견된 실패는 테스트, 지침, CI ratchet으로 고정됩니다. self-improving outer loop가 runtime scaffold를 변이하고 audit한 뒤 승격 또는 revert하는 단계에서는 이 관계가 재귀적으로 닫힙니다. 다만 PR merge와 release 권한은 운영자 게이트에 남습니다.
+
+```mermaid
+sequenceDiagram
+    participant D as Development Harness
+    participant S as Build Scaffold
+    participant C as GEODE Code
+    participant H as Agent Harness
+    participant E as Evidence
+    participant X as Experimental Loop
+    D->>S: Read instructions, Skills, CI contracts
+    S->>C: Produce or modify GEODE
+    C->>H: Build autonomous execution harness
+    H->>E: Emit trajectories and verification
+    E->>X: Form next bounded hypothesis
+    X->>S: Promote accepted scaffold change
+    S-->>D: Ratchets constrain the next build
+```
+
+이 의미에서 meta는 단순히 “더 위에서 관찰한다”는 뜻이 아니라 **하네스를 대상으로 삼아 하네스를 만들어 내는 층**이라는 뜻에 가깝습니다.
 
 ```mermaid
 sequenceDiagram
@@ -214,7 +235,7 @@ sequenceDiagram
 <a id="concepts"></a>
 ## 개념
 
-**에이전트**는 도구를 사용해 작업을 진행합니다. **하네스**는 도구, 메모리, 권한, 실패 처리와 검증을 관리합니다. **메타 하네스**는 그 하네스 자체를 관찰 가능하고 제한 가능하며 발전 가능한 대상으로 만드는 제어 계층입니다. **RSI(Recursive Self-Improvement)**는 여기서 이전 실행의 증거를 이후 변경과 실험으로 되돌리는 문제를 뜻하며, 변경 채택과 반복 개선은 별개의 증거를 요구합니다.
+**에이전트**는 도구를 사용해 작업을 진행합니다. **하네스**는 도구, 메모리, 권한, 실패 처리와 검증을 관리합니다. **메타 하네스**는 하네스를 대상으로 삼아 그 코드와 scaffold를 제작, 검증, 수정하는 제작 시스템입니다. GEODE에서는 개발 하네스, instruction scaffold, Skills, CI ratchet이 이 제작 라인을 이루며, runtime evidence가 다음 제작 변경으로 되먹임됩니다. **RSI(Recursive Self-Improvement)**는 여기서 이전 실행의 증거를 이후 변경과 실험으로 되돌리는 문제를 뜻하며, 변경 채택과 반복 개선은 별개의 증거를 요구합니다.
 
 <details>
 <summary><strong>그 밖의 작업</strong></summary>
