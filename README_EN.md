@@ -39,6 +39,39 @@ flowchart TB
 Execution records inform subsequent changes. **Candidate adoption is separate from PR merge and release approval**; deployment authority remains with the operator.
 
 <details>
+<summary>Meta-harness · Building changes and blocking regressions with a CI ratchet</summary>
+
+The developer sets scope and acceptance criteria. The coding agent reads the implementation and failure evidence, then works in an isolated worktree. **A fix includes a check that can catch the failure again.** Local checks and PR CI inspect the same change revision; failures return to diagnosis and correction.
+
+```mermaid
+flowchart TB
+    accTitle: GEODE development workflow and CI ratchet
+    accDescr: Scope and shared instructions guide a coding agent in an isolated worktree. Code and regression checks go through local verification and PR CI. Failures return to correction. Passing checks still require current PR evidence and authorized review before develop and main promotion.
+    Scope(["Developer<br/>Scope · acceptance"]) --> Agent
+    Scaffold["AGENTS.md · CLAUDE.md · Skills<br/>GAP audit · source check"]
+    Scaffold --> Agent["Claude Code · Codex CLI<br/>Isolated worktree"]
+    Agent --> Change["Code · regression tests<br/>Docs · CHANGELOG"]
+    Change --> Gate{"CI ratchet<br/>Checks · contracts pass?"}
+    Gate -->|Diagnose and correct| Agent
+    Gate -->|Pass| Review["Merge admission<br/>Current SHA · checks · authority"]
+    Scope -.->|Review authority| Review
+    Review --> Branches["develop → main<br/>CI recheck · approval"]
+```
+
+| CI invariant | Executable checks | Regression it addresses |
+| --- | --- | --- |
+| Behavior, types, and dependencies | Ruff, mypy, pytest, import contracts | Behavioral failures, type mismatches, and dependency-boundary violations. |
+| Baselines and policy | Legacy import ratchet, architecture exception debt, performance baseline | Newly introduced legacy imports, policy violations, and performance-baseline failures. |
+| Prompt, evaluation, and documentation consistency | Prompt hash, eval catalog/contract, generated-doc checks | Unintended prompt changes and code/contract/documentation drift. |
+| PR-bound admission evidence | Required CI `Gate` + `scripts/merge_pr.py` | Missing or failed prerequisite jobs, stale head/base SHAs, and mismatched branch-protection evidence. |
+
+Changed paths determine which checks run. The CI ratchet **guards code and contract invariants**; the Experimental Loop ratchet below **decides whether an experimental candidate is adopted**. Green CI is neither merge authority nor evidence of a performance gain.
+
+[Development workflow](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/docs/workflow.md) · [CI implementation](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/.github/workflows/ci.yml) · [Merge admission](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/scripts/merge_pr.py)
+
+</details>
+
+<details>
 <summary>What repeats within a run?</summary>
 
 This is the part where request and response order matters. The runtime manages context assembly and compaction; verification follows the contract for that run.
@@ -65,7 +98,7 @@ A model's completion statement, a verifier verdict, and a termination reason are
 
 </details>
 
-[Code](https://github.com/mangowhoiscloud/geode) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Meta-harness catalog](https://mangowhoiscloud.github.io/geode/docs/reference/meta-harness-catalog) · [Evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+[Code](https://github.com/mangowhoiscloud/geode) · [Landing page](https://mangowhoiscloud.github.io/geode/) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
 
 <a id="harbor-rollout"></a>
 #### Harbor · Investigating score differences through execution records
@@ -128,37 +161,196 @@ I built and operated the backend and Kubernetes infrastructure for an AI recycli
 | Scan | Celery chain: Vision → Rule/RAG → Answer → Reward | Separate long-running execution from progress delivery. |
 | Image generation | Separate graph branch | Use a distinct path from the other conversational work. |
 
+Development, networking, placement, the two AI workflows, and observability are separate views. Expand only the detail you need below.
+
 <details>
-<summary>Task plane and event/recovery plane</summary>
+<summary>Cluster composition · Placement and scaling boundaries</summary>
+
+Terraform provisions EC2 infrastructure; Ansible and kubeadm bootstrap Kubernetes. API, AI, and storage workloads have different resource and scaling needs, so worker roles are separated. This view groups placement roles; dashed arrows mean control-plane management, not network traffic.
+
+```mermaid
+flowchart LR
+    accTitle: Eco² self-managed Kubernetes cluster topology
+    accDescr: Terraform and Ansible provision an EC2-based kubeadm cluster. The control plane manages service, AI-worker, storage-worker, data, platform, and observability roles. A box is not an individual machine.
+    Provision["Terraform · Ansible<br/>EC2 · kubeadm"] --> Control
+    subgraph Cluster["Self-managed Kubernetes · EC2"]
+        Control["Control plane<br/>API server · scheduler · etcd"]
+        Control -.-> APIs["Service workloads<br/>Domain APIs · SSE Gateway"]
+        Control -.-> AI["worker-ai<br/>Scan · Chat workers"]
+        Control -.-> Storage["worker-storage<br/>Persistence · checkpoint sync"]
+        Control -.-> Data[("Data services<br/>PostgreSQL · Redis · RabbitMQ")]
+        Control -.-> Platform["Platform controllers<br/>ArgoCD · Istiod · KEDA"]
+        Control -.-> Observe["Observability workloads<br/>Metrics · logs · traces"]
+    end
+```
+
+| Placement / scaling unit | Components and responsibility |
+| --- | --- |
+| Services | auth, users, scan, chat, character, location, info, images, and SSE Gateway handle requests and connections. |
+| AI / storage workers | `nodeSelector` and taints/tolerations separate roles. External LLM calls run apart from storage and checkpoint synchronization workers. |
+| Data | PostgreSQL, RabbitMQ, and purpose-specific Redis instances have distinct roles. Streams, Pub/Sub, cache, and authentication state are not interchangeable stores. |
+| Scaling / deployment | KEDA uses queue, pending-message, and connection-related signals for its target workloads. ArgoCD ignores replica fields to avoid conflicting with autoscalers. |
+
+Public documents retain different node counts from different snapshots, so no fixed count is asserted here. This is the implementation of a closed service, not a live cluster inventory.
+
+[EC2 provisioning](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/ec2/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Worker placement](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
+
+</details>
+
+<details>
+<summary>Network topology · Requests, authorization, and asynchronous work</summary>
+
+Route 53 resolves the ALB, which terminates TLS and forwards requests to Istio Ingress. The gateway's `CUSTOM` AuthorizationPolicy delegates covered API paths to ext-authz. Synchronous domain calls, RabbitMQ dispatch, and external API calls take different paths. Calico provides Pod networking; Istio/Envoy provides mesh routing and mTLS.
 
 ```mermaid
 flowchart TB
-    Client["Client"] --> API["Domain API"]
-    subgraph Tasks["Task plane · execution"]
-        API --> MQ["RabbitMQ"] --> Worker["AI Worker"]
+    accTitle: Eco² request paths and service network
+    accDescr: Client requests traverse Route 53, ALB, and Istio Ingress to domain APIs. Delegated authorization, RabbitMQ worker dispatch, data access, and external API calls are distinct paths. This logical view does not imply every machine is in a private subnet.
+    Client(["Client<br/>Route 53 resolution"]) -->|HTTPS| Edge["AWS ALB<br/>TLS termination"]
+    subgraph VPC["VPC · Kubernetes"]
+        Edge --> Ingress["Istio Ingress<br/>VirtualService"]
+        Ingress --> APIs["Domain APIs · Envoy<br/>HTTP / gRPC · mesh mTLS"]
+        Ingress -.->|Covered paths| Auth["ext-authz<br/>JWT · blacklist"]
+        APIs --> MQ[("RabbitMQ<br/>Task queues")]
+        MQ --> Workers["AI · storage workers"]
+        APIs --> Data[("PostgreSQL · Redis")]
+        Workers --> Data
     end
-    subgraph Events["Event / recovery plane"]
-        Streams[("Redis Streams")] --> Router["Event Router"]
-        Router --> State[("State KV")]
-        Router --> PubSub["Pub/Sub"]
-    end
-    Worker -->|Progress events| Streams
-    PubSub --> Gateway["SSE Gateway"] --> Client
-    State -.->|Recovery state| Gateway
+    Workers -->|AI: HTTPS| External["LLM · external APIs"]
 ```
 
-Event Router owns ACK, reclaim, and deduplication. Streams and State provide replay and recovery records. SSE Gateway owns client connections. This is a topology and data-flow view, not a single sequence traversed by every request.
+This is a logical Pod communication view. Terraform's public/private subnet definitions do not prove private placement for every workload. Allow policies exist, but **global `default-deny-all` is disabled in the kustomization**; the diagram does not claim network-wide default-deny isolation.
 
-| Operational responsibility | Implementation |
+[Service layers in the README](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [VPC definition](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway authorization policy](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
+
+</details>
+
+<details>
+<summary>Meta-harness · How service and infrastructure changes are built</summary>
+
+The developer captured context and verification procedures in `CLAUDE.md`, Skills, and an SDK-compatibility command. Claude Code is a **development-side coding agent**, not a Chat/Scan worker serving users in the cluster. This view connects build tools and artifacts; it is not one mandatory execution sequence.
+
+```mermaid
+flowchart TB
+    accTitle: Eco² meta-harness and deployment artifacts
+    accDescr: Developer requirements and instructions guide Claude Code. CI checks code and manifests; failure evidence guides correction. Qualifying builds produce images and update image tags in Git manifests. ArgoCD applies Git manifests to the cluster.
+    Scaffold["CLAUDE.md · Skills<br/>SDK check command"] --> Agent["Claude Code"]
+    Human(["Developer<br/>Scope · review"]) --> Agent
+    Agent --> Change["Code · manifests<br/>apps/ · workloads/"]
+    Human -->|Code review| Change
+    Change --> CI["GitHub Actions<br/>Format · lint · tests"]
+    CI -.->|Diagnose · correct · recheck| Agent
+    CI -->|Build · push| Image[("Container images<br/>Docker Hub")]
+    CI -->|Image tag update| Git[("Deployment manifests<br/>Git")]
+    Git --> CD["ArgoCD<br/>ApplicationSet · sync wave"]
+    CD --> Runtime["Cluster rollout"]
+    Image -.->|Image pull| Runtime
+```
+
+| Build component | Role |
 | --- | --- |
-| Infrastructure and service traffic | Terraform, Ansible, Kubernetes, Istio |
-| Desired deployment state | Git manifests and ArgoCD sync waves |
-| Replica adjustment during execution | KEDA, with replica ownership separated from ArgoCD |
-| Before/after observations | Prometheus/Grafana, EFK, Jaeger/OTEL, LangSmith |
+| Instructions and Skills | `CLAUDE.md` and `.claude/skills/` provide domain context and architecture, code-review, Git-workflow, and Kubernetes-debugging procedures. |
+| Tools and checks | `.claude/commands/check-sdk-compat.md` guides SDK-compatibility checks; CI runs format, lint, and tests for changed services. |
+| Deployment artifacts | The cited CI runs quality checks on PRs. Qualifying push/manual runs build and push images, then update image tags in Git manifests. ArgoCD applies Git state. |
 
-A human and coding agent propose deployment changes, and CI checks them. ArgoCD applies approved Git state. The same workload is measured again before a human decides to keep, revise, or revert. This was not a runtime rewriting its own source.
+During development, failure logs guide correction and rechecking. This is a development procedure, not CI autonomously fixing code. Eco²'s service-scoped CI is not the same implementation as GEODE's baseline and contract ratchets. Development/review authority, CI checks, and ArgoCD deployment remain distinct responsibilities.
 
-Chat's production wiring mostly uses a structured/function call to extract arguments, then executes an application command. That differs from multiple unconstrained ReAct agents.
+[Development context](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/CLAUDE.md) · [Skills and commands](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/.claude) · [Actual CI](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/.github/workflows/ci-services.yml) · [ArgoCD configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/40-apis-appset.yaml)
+
+</details>
+
+<details>
+<summary>Scan workflow · Separate execution from progress delivery</summary>
+
+The Scan API registers work and returns `202 + job_id`. A Celery chain executes through stage-specific RabbitMQ queues while a separate SSE connection delivers progress. Closing that connection does not itself cancel the worker's job.
+
+```mermaid
+flowchart TB
+    accTitle: Eco² Scan task chain and event delivery
+    accDescr: The Scan API dispatches a Celery chain through Vision, Rule, Answer, and Reward. Each stage writes progress to Redis Streams. Event Router and SSE Gateway deliver these events to the client.
+    API["Scan API<br/>202 + job_id"] --> Queue[("RabbitMQ<br/>Celery chain")]
+    Queue --> Vision["Vision<br/>Image classification"]
+    Vision --> Rule["Rule<br/>Regulation lookup · Lite RAG"]
+    Rule --> Answer["Answer<br/>Disposal guidance"]
+    Answer --> Reward["Reward<br/>Character reward · storage request"]
+    Vision -.-> Events[("Redis Streams<br/>Stage events")]
+    Rule -.-> Events
+    Answer -.-> Events
+    Reward -.-> Events
+    Events --> Delivery["Event Router → Pub/Sub<br/>SSE Gateway"]
+    Delivery --> Client(["Client<br/>Progress · result"])
+```
+
+| Path | Storage and delivery rule |
+| --- | --- |
+| Tasks | `scan.vision → scan.rule → scan.answer → scan.reward` queues connect stages. Reward here grants service characters; it is not a GEODE benchmark reward. |
+| Events | Workers `XADD`; the router reads through consumer groups. Failed processing leaves messages unacknowledged so a reclaimer can retry pending work. |
+| Reconnection | Pub/Sub handles live delivery. State KV and Streams support recovery/catch-up; Pub/Sub itself is not the durable log. |
+
+[Scan tasks](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/scan_worker/presentation/tasks) · [Event Router / SSE incident and fix](https://rooftopsnow.tistory.com/237) · [Load test and bottleneck analysis](https://rooftopsnow.tistory.com/255)
+
+</details>
+
+<details>
+<summary>Chat workflow · Select the needed tools, then join their results</summary>
+
+The Chat API publishes to RabbitMQ; a TaskIQ worker executes LangGraph. The router selects nodes using intent and request context. The three branches below group node roles; they do not all run on every request.
+
+```mermaid
+flowchart TB
+    accTitle: Eco² Chat selective parallel execution and answer generation
+    accDescr: Intent and optional Vision results guide a router that selects domain, external-tool, or image-generation nodes. An aggregator collects results before optional context compaction and answer streaming. A separate Eval stage runs when configured.
+    Input["Intent classifier<br/>Optional Vision"] --> Router{"Dynamic router<br/>LangGraph Send"}
+    Router -->|Selected| Domain["Domain nodes<br/>Waste RAG · character"]
+    Router -->|Selected| Tools["API / tool nodes<br/>Location · weather · search"]
+    Router -->|Selected| Image["Image generation"]
+    Domain --> Join["Aggregator<br/>Results · required context"]
+    Tools --> Join
+    Image --> Join
+    Join --> Compact["Context preparation<br/>Optional compaction"]
+    Compact --> Answer["Answer<br/>Token streaming"]
+    Answer -.->|When configured| Eval["Eval pipeline<br/>Grading · bounded regeneration"]
+```
+
+| Execution / state | Concrete responsibility |
+| --- | --- |
+| Selection and join | `Send` dispatches multiple intents; the aggregator collects results. RAG feedback and Eval depend on configuration, not unlimited retry. |
+| Tool execution | Production wiring primarily chooses arguments with structured/function calls and executes application commands. This is not an unconstrained loop of multiple ReAct agents. |
+| Conversation state | Checkpoints go to Redis; a syncer archives them asynchronously to PostgreSQL. Read-through from PG on a Redis miss and the consumer persisting conversation messages are separate paths. |
+| User delivery | Answer token events also traverse Event Router and SSE Gateway. HTTP connections, worker execution, and checkpoint state have separate lifetimes. |
+
+[Graph factory](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/orchestration/langgraph/factory.py) · [Checkpoint implementation](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/orchestration/langgraph/sync) · [Redis / PostgreSQL design record](https://rooftopsnow.tistory.com/242)
+
+</details>
+
+<details>
+<summary>Observability · Which record explains a bottleneck or failure?</summary>
+
+Queue buildup, Pod health, request paths, and LLM-node execution require different evidence. Operational metrics, logs, distributed traces, and LLM traces are collected through separate paths rather than collapsed into one score.
+
+```mermaid
+flowchart TB
+    accTitle: Eco² metrics, logs, distributed traces, and LLM traces
+    accDescr: APIs, workers, and Envoy emit metrics, logs, and spans to separate storage and query systems. Chat LangGraph and LLM calls use configured LangSmith tracing, optionally connected to OTEL.
+    Runtime["API · workers · Envoy"] -->|Metrics| Metrics["Prometheus<br/>ServiceMonitor · exporters"]
+    Metrics --> Dash["Grafana · Alertmanager"]
+    Metrics --> Mesh["Kiali<br/>Mesh topology"]
+    Runtime -->|stdout / stderr| Logs["Fluent Bit"]
+    Logs --> Search[("Elasticsearch · Kibana")]
+    Runtime -->|Spans| Trace["OpenTelemetry · Jaeger"]
+    LLM["Chat LangGraph<br/>LLM · tool calls"] --> Smith["LangSmith<br/>Nodes · tokens · errors"]
+    LLM -.->|When OTEL is configured| Trace
+```
+
+| Investigation | Records and use |
+| --- | --- |
+| Slow or queued work | Prometheus/Grafana queue depth, pending messages, connections, and Pod metrics help distinguish worker shortage from delivery bottlenecks. |
+| Failed requests | Search structured logs, then use Jaeger spans to narrow the service/MQ/worker path. Kiali shows mesh relationships. |
+| Slow LLM responses | LangSmith node execution, token usage, and error records help investigate tool waits and model calls. Availability depends on tracing configuration. |
+
+Declared Istio trace sampling is 50%. This is a map of **collection paths and investigation methods**, not a claim that every request has a retained trace. Logs and traces are observational evidence, not verifier verdicts about answer quality.
+
+[Logging manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/logging) · [Trace sampling](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/global/telemetry.yaml) · [LangSmith wiring](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/telemetry/langsmith.py) · [Monitoring / tracing deployment](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps)
 
 </details>
 
@@ -191,7 +383,7 @@ The Ratchet applies these conditions. A score increase alone, a tie, or an incom
 
 </details>
 
-[Two loops](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops) · [Experiment design](https://mangowhoiscloud.github.io/geode/docs/self-improving/loop-overview) · [RSI experiment records](https://mangowhoiscloud.github.io/geode/self-improving/)
+[Two loops](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops/) · [Experiment design · frozen experiment kernel](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible-kernel.md) · [RSI experiment records](https://mangowhoiscloud.github.io/geode/self-improving/)
 
 ### REODE @ pinxlab · Code migration
 
@@ -267,10 +459,10 @@ The [Harbor paired-rollout case](#harbor-rollout) shows the concrete files and m
 
 | Period | Experience |
 | --- | --- |
-| 2026.02–present | **GEODE** · Solo development · SIL 2026.05–06 · Crucible 2026.07–present |
-| 2026.03–05 | **pinxlab** · Freelance · REODE, Kiki, Cotton |
-| 2025.10–2026.02 | **Eco²** · Backend/infrastructure to solo development and operation · 2025 AI SeSACTHON Excellence Award |
-| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB-scale distributed storage |
+| 2026.02–present | **GEODE** · Solo development · SIL 2026.05–06 · Crucible 2026.07 · Harbor × Terminal-Bench 2.1, 890-cell rollout plan with Codex control, 2026.08–09 |
+| 2026.03–05 | **pinxlab** · Freelance, sole developer · REODE, Kiki, Cotton |
+| 2025.10–2026.02 | **Eco²** · Backend/infrastructure in a five-person FE/design/AI/backend-infra team (one month), then solo development and operation (three months) · 2025 AI SeSACTHON Excellence Award |
+| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · Full-time · PB-scale distributed storage |
 | 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
 | 2017.03–2023.08 | **Pusan National University** · B.S., Computer Science & Engineering |
 
