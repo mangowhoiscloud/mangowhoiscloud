@@ -129,9 +129,9 @@ Context budgets and compaction, dynamic replanning and convergence detection, ve
 
 ### Eco²
 
-An AI recycling service. Eco² is more accurately described not as one “agent,” but as **multiple workflow contracts, a cluster runtime, and a production line that changed both**. In the verified code snapshot, Chat classifies 10 intents and fans out the required nodes in parallel, while Scan uses a Celery chain of Vision → Rule/RAG → Answer → Reward. Image generation runs as a separate graph branch.
+An AI recycling service. Eco² is more accurately described as **purpose-specific execution graphs, the cluster that supported them, and an external improvement loop that rebuilt both from observed failures**, rather than as one “agent.” In the verified code snapshot, Chat classifies 10 intents and fans out the required nodes in parallel, while Scan uses a Celery chain of Vision → Rule/RAG → Answer → Reward. Image generation is a separate branch.
 
-#### Workflows by purpose
+#### Execution graphs by purpose
 
 ```mermaid
 sequenceDiagram
@@ -155,7 +155,7 @@ sequenceDiagram
     S-->>U: Incremental answer
 ```
 
-Chat is a **routing and parallel-join workflow**. I do not describe the current production wiring as a collection of unconstrained ReAct subagents. Most domain nodes use one structured/function call to extract arguments and then execute a deterministic application command.
+**Chat is a routing and parallel-join problem.** I do not describe the production wiring as a set of unconstrained ReAct subagents. Most domain nodes use a structured/function call to extract arguments and then execute a deterministic application command.
 
 ```mermaid
 sequenceDiagram
@@ -177,11 +177,11 @@ sequenceDiagram
     B-->>U: Recoverable async status
 ```
 
-Scan is closer to an **asynchronous job pipeline** than conversational routing. RabbitMQ/Celery owns long-running work. Progress delivery was later separated into Redis Streams, Event Router, Pub/Sub, and an SSE Gateway. The important change was separating task lifetime from client-connection lifetime.
+**Scan is an asynchronous job-pipeline problem.** RabbitMQ/Celery owns long-running work, while progress delivery is separated into Redis Streams → Event Router → Pub/Sub/State → SSE Gateway. Chat decides which reasoning path should answer; Scan is concerned with completing long-running work and exposing recoverable state.
 
-#### Cluster and event delivery
+#### Cluster and deployment structure
 
-The verified fact sheet records **20 EC2 nodes and 19 microservices (9 APIs + 9 Workers + ext-authz)**. An older 24-node README claim conflicts with the architecture facts, so this profile uses the verified 20-EC2 figure. Istio owns edge/service traffic, RabbitMQ the task plane, Redis the event/recovery plane, and KEDA workload-specific scaling.
+The verified fact sheet records **20 EC2 nodes and 19 microservices (9 APIs + 9 Workers + ext-authz)**. An older README listed 24 nodes, so the profile uses the code-verified 20-EC2 figure.
 
 ```mermaid
 sequenceDiagram
@@ -206,38 +206,49 @@ sequenceDiagram
     Note over ER,SG: retry, reclaim, dedupe, Last-Event-ID recovery
 ```
 
-The point is not simply that Redis was present. **Ownership and lifetime were separated.** RabbitMQ owns task orchestration, Event Router owns ACK/reclaim, Streams/State own replay and recovery, and SSE Gateway owns client connections. KEDA adjusts replicas from workload signals such as queue depth, pending work, and connections, while ArgoCD avoids fighting the autoscaler over replica ownership.
+The important property is **ownership separation**, not component count. Istio owns edge/service traffic, RabbitMQ task orchestration, Event Router ACK/reclaim, Streams/State replay and recovery, and SSE Gateway client connections. KEDA adjusts replicas from workload signals such as queue depth, pending work, and connections, while ArgoCD avoids taking ownership of the autoscaler's replica field.
 
-#### Deployment and the Eco² meta-harness
+Deployment was layered as well. Terraform and Ansible established the base, Kubernetes manifests in Git formed desired state, and ArgoCD sync waves ordered dependencies such as Redis → RabbitMQ → KEDA → Gateway → Router. Prometheus/Grafana, EFK, Jaeger/OTEL, and LangSmith exposed different observation surfaces.
 
-Eco² contained an **early form of the harness-building apparatus** that later became explicit in GEODE. It was not a runtime autonomously rewriting its own source. A human and coding agent turned research and failure signals into a scoped change; CI checked code and manifests; Git held desired state; ArgoCD reconciled the cluster; the same workload and observability signals were measured again; a human made the keep/revise/revert decision.
+#### Where the improvement loop actually closed
+
+The useful story in the Eco² portfolio is not the final architecture. It is **how a failure changed the next architecture**. This was not RSI or a production runtime rewriting its own source. It was an external engineering loop in which a human and coding agent read evidence, made a small change, and reran the same workload.
 
 ```mermaid
 sequenceDiagram
-    participant H as Human and Coding Agent
-    participant D as Research and ADR
-    participant C as Code and Manifest
-    participant CI as CI
-    participant G as Git Desired State
-    participant A as ArgoCD
-    participant K as Kubernetes
+    participant W as Workload
     participant O as Observability
-    H->>D: Failure signal and hypothesis
-    D->>C: Small scoped change
-    C->>CI: Lint, test, render, schema checks
+    participant H as Human and Coding Agent
+    participant D as Contract and Diff
+    participant CI as CI
+    participant G as Git and ArgoCD
+    participant K as Kubernetes
+    W->>O: Reproduce pressure or failure
+    O->>H: Metrics, logs, traces, cluster events
+    H->>D: Hypothesis and smallest scoped change
+    D->>CI: Test code and manifests
     CI->>G: Accepted revision
-    G->>A: Desired state
-    A->>K: Reconcile by sync wave
-    K->>O: Metrics, logs, traces, events
-    O-->>H: Same workload, new evidence
-    H->>G: Keep, revise, or revert
+    G->>K: Reconcile desired state
+    K->>W: Run the same workload again
+    W->>O: New measurements
+    O-->>H: Keep, revise, or revert evidence
 ```
 
-Terraform and Ansible established the infrastructure base. Kubernetes manifests and Git formed desired state, while ArgoCD sync waves ordered dependencies such as Redis, RabbitMQ, KEDA, Gateway, and Router. Prometheus/Grafana, EFK, Jaeger/OTEL, and LangSmith exposed different observation surfaces. Observability had no promotion authority; it was a **feedback surface for the next build change**.
+The pattern appears repeatedly.
 
-This is the bridge to GEODE's more explicit meta-harness. In Eco², `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict` was an external engineering loop shared by a human and coding agent. GEODE turns the production scaffold, trajectories, revision-bound evaluation, ratchets, and promotion contracts into explicit system components.
+**The first loop was SSE connection amplification.** At 50 VU, active SSE connections drove RabbitMQ connection growth and scan-api memory pressure until readiness failures surfaced as 503s. The hypothesis was not merely “replace the broker”; it was that **task lifetime and progress-delivery lifetime were coupled**. RabbitMQ remained the task queue while progress moved to Redis Streams and a separate SSE Gateway. Later observations added ACK-on-success, reclaim, dedupe, Last-Event-ID recovery, Pub/Sub master handling, and four-way sharding. One redesign produced the next failure signal and therefore the next contract.
 
-**Recorded milestone:** **2025 AI SeSACTHON Excellence Award (4th/181)**. In the preserved Scan k6 sweep, the final 1,000-VU run completed **1,469/1,518 tasks, 97.8%**, while earlier runs on the same day include 0% regressions. A separate ext-authz load record reports **1,477 RPS at 2,500 VU**; I do not combine it with the Scan workload into one performance metric. I therefore do not present the sequence as monotonic performance improvement. The service has closed.
+**The second loop was scaling and guardrail failure.** After connection pressure was reduced, repeated VU sweeps exposed queue wait, worker state, and probe restarts as the next bottlenecks. Rather than only raising CPU or memory, the system moved toward workload-specific KEDA signals and bounded min/max replicas. A health probe that was supposed to protect the service could restart I/O-bound Celery workers and lose in-flight work. That made **the guardrail itself an object of verification**.
+
+**The third loop was evaluation.** Chat quality was split into a deterministic Code Grader, a BARS-based LLM Judge, and a Calibration Monitor that watches judge drift, rather than treating one LLM score as ground truth. The calibration seed and runtime wiring still had limitations, so I do not call it a finished production quality loop. The important lesson was that **the measurement apparatus also needs measurement**, which later appears in GEODE's evaluator separation and Crucible's frozen contracts.
+
+The Eco² precursor to a meta-harness can therefore be summarized as:
+
+`failure signal → reproducible workload → hypothesis → scoped code/manifest diff → CI → Git/ArgoCD → same workload → human verdict → next contract`
+
+Observability had no promotion authority. It was the **feedback surface that produced the next build change**, while Git history and CI acted as the ratchet. GEODE makes this formerly loose outer loop explicit through a development scaffold, trajectories, revision-bound evaluation, ratchets, and promotion contracts.
+
+**Recorded milestone:** **2025 AI SeSACTHON Excellence Award (4th/181)**. The preserved Scan k6 sweep ends with **1,469/1,518 completions, 97.8% at 1,000 VU**, but the same day also contains **92.5% → 96.6% → 0% → 0% → 0% → 97.8%**. A separate ext-authz load record reports **1,477 RPS at 2,500 VU** and is not combined with the Scan result. I read these as **a preserved regression-and-remeasurement record**, not a monotonic performance curve. The service has closed.
 
 [Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)
 
