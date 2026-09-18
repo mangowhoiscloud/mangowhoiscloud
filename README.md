@@ -267,7 +267,7 @@ Trajectory는 연구 데이터입니다. 무엇을 만들었는지뿐 아니라 
 
 | 기간 | 경험 |
 | --- | --- |
-| 2026.02–현재 | **GEODE** · 단독 개발 · SIL 2026.05–06 · Crucible 2026.07 · Harbor x {GEODE | Codex} x 터미널벤치2.1 롤아웃 2026.08–09 |
+| 2026.02–현재 | **GEODE** · 단독 개발 · SIL 2026.05–06 · Crucible 2026.07 · Harbor x 터미널벤치2.1 890-cell 롤아웃(비교군: Codex) 2026.08–09 |
 | 2026.03–05 | **pinxlab** · 프리랜서(단독 개발) · REODE, Kiki, Cotton |
 | 2025.10–2026.02 | **Eco²** · 백엔드/인프라(FE-DESIGN-AI-BACKEND/INFRA 5인, 1달)에서 단독 개발·운영(1인, 3개월) · 2025 AI 새싹톤 우수상 |
 | 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · 정규직 · PB급 분산 스토리지 |
