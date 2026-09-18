@@ -164,64 +164,114 @@ I built and operated the backend and Kubernetes infrastructure for an AI recycli
 Development, networking, placement, the two AI workflows, and observability are separate views. Expand only the detail you need below.
 
 <details>
-<summary>Cluster composition · Placement and scaling boundaries</summary>
+<summary>Cluster composition · Layers and placement boundaries inside Kubernetes</summary>
 
-Terraform provisions EC2 infrastructure; Ansible and kubeadm bootstrap Kubernetes. API, AI, and storage workloads have different resource and scaling needs, so worker roles are separated. This view groups placement roles; dashed arrows mean control-plane management, not network traffic.
+The backend README defines **Edge, Service, Integration, Persistence, and Platform** layers. Kubernetes control-plane components manage cluster state and scheduling; platform controllers manage deployment, mesh configuration, and scaling. Request-serving APIs, long-running workers, and progress delivery have separate lifetimes and scaling signals.
 
 ```mermaid
-flowchart LR
-    accTitle: Eco² self-managed Kubernetes cluster topology
-    accDescr: Terraform and Ansible provision an EC2-based kubeadm cluster. The control plane manages service, AI-worker, storage-worker, data, platform, and observability roles. A box is not an individual machine.
-    Provision["Terraform · Ansible<br/>EC2 · kubeadm"] --> Control
-    subgraph Cluster["Self-managed Kubernetes · EC2"]
-        Control["Control plane<br/>API server · scheduler · etcd"]
-        Control -.-> APIs["Service workloads<br/>Domain APIs · SSE Gateway"]
-        Control -.-> AI["worker-ai<br/>Scan · Chat workers"]
-        Control -.-> Storage["worker-storage<br/>Persistence · checkpoint sync"]
-        Control -.-> Data[("Data services<br/>PostgreSQL · Redis · RabbitMQ")]
-        Control -.-> Platform["Platform controllers<br/>ArgoCD · Istiod · KEDA"]
-        Control -.-> Observe["Observability workloads<br/>Metrics · logs · traces"]
+flowchart TB
+    accTitle: Control, execution, state, and observation boundaries inside Eco² Kubernetes
+    %%{init: {"flowchart": {"nodeSpacing": 20, "rankSpacing": 20, "padding": 10}}}%%
+    accDescr: Self-managed Kubernetes contains a Kubernetes control plane, platform controllers and observability, and application workloads. The application area contains Edge, Service, Integration, and Persistence layers. Integration separates AI workers, storage workers, and task and event delivery. Boxes show functional containment, not physical machines or security isolation.
+    subgraph Cluster["Self-managed Kubernetes"]
+        direction TB
+        subgraph Management[" "]
+            direction LR
+            subgraph KubeControl["Kubernetes control plane"]
+                Control["API server · etcd<br/>Scheduler · controllers"]
+            end
+            subgraph Platform["Platform Layer"]
+                direction LR
+                Controllers["ArgoCD · Istiod · KEDA<br/>ALB Controller · ExternalDNS"]
+                Observe["Metrics · traces · logs<br/>Prometheus · Jaeger · EFK"]
+                Controllers ~~~ Observe
+            end
+            KubeControl ~~~ Platform
+        end
+        subgraph Runtime["Application data plane"]
+            direction TB
+            subgraph Edge["Edge Layer"]
+                Ingress["Istio Ingress Gateway<br/>Envoy · routing / auth policy"]
+            end
+            subgraph Service["Service Layer"]
+                APIs["Domain APIs · Envoy<br/>auth · users · scan · chat · …"]
+            end
+            subgraph Integration["Integration Layer"]
+                direction LR
+                AI["AI workers<br/>scan-worker · chat-worker"]
+                Storage["Storage workers<br/>DB writes · checkpoint sync"]
+                Events["Task queues · Event Bus<br/>RabbitMQ · Event Router · SSE Gateway"]
+                AI ~~~ Storage ~~~ Events
+            end
+            subgraph Persistence["Persistence Layer"]
+                Data[("PostgreSQL · Redis<br/>Auth · Streams · Pub/Sub · cache")]
+            end
+            Edge ~~~ Service ~~~ Integration ~~~ Persistence
+        end
+        Management ~~~ Runtime
     end
+    style Management fill:none,stroke:none
 ```
 
-| Placement / scaling unit | Components and responsibility |
+Boxes show **functional containment**, not individual servers or namespaces. ALB and Route 53 are outside Kubernetes; the following network view shows the actual ingress path. Application data plane means the area executing requests and work, not a synonym for the Persistence Layer. Istiod's Envoy configuration path is distinct from user traffic.
+
+| Internal boundary | Responsibility and reason for separation |
 | --- | --- |
-| Services | auth, users, scan, chat, character, location, info, images, and SSE Gateway handle requests and connections. |
-| AI / storage workers | `nodeSelector` and taints/tolerations separate roles. External LLM calls run apart from storage and checkpoint synchronization workers. |
-| Data | PostgreSQL, RabbitMQ, and purpose-specific Redis instances have distinct roles. Streams, Pub/Sub, cache, and authentication state are not interchangeable stores. |
-| Scaling / deployment | KEDA uses queue, pending-message, and connection-related signals for its target workloads. ArgoCD ignores replica fields to avoid conflicting with autoscalers. |
+| Edge / Service | The gateway routes requests and delegates authorization for covered paths; domain APIs handle HTTP/gRPC. `ext-authz` uses the `auth` namespace and auth-node placement selector. |
+| Integration: execution | `worker-ai` handles Scan, Chat, and external LLM calls; `worker-storage` handles DB writes and checkpoint synchronization. Selectors and taints/tolerations separate execution resources. |
+| Integration: delivery | RabbitMQ carries tasks. Redis Streams → Event Router → Pub/Sub → SSE Gateway carries progress events. `event-router` and `sse-consumer` are separate namespaces. |
+| Persistence | PostgreSQL and Redis roles for authentication, Streams, Pub/Sub, and cache are distinct. State KV is a recovery-data role, not another database product or necessarily an independent server. |
+| Platform | ArgoCD applies Git declarations; Istiod configures Envoy. KEDA scales target workloads from load signals while ArgoCD ignores replica fields. Metrics, traces, and logs use separate observation paths. |
 
-Public documents retain different node counts from different snapshots, so no fixed count is asserted here. This is the implementation of a closed service, not a live cluster inventory.
+**Physical placement does not map one-to-one to functional layers.** Terraform, Ansible, and dev manifests declare the following placements.
 
-[EC2 provisioning](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/ec2/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Worker placement](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
+| Node / placement condition | Declared components |
+| --- | --- |
+| `k8s-master` / `role=control-plane` | Single kubeadm control plane. Istiod, ALB Controller, and ExternalDNS selectors, plus the ArgoCD installation procedure, use this node role. |
+| `role=ingress-gateway` / `domain=auth` | Ingress Gateway and ext-authz use gateway and auth roles respectively. Gateway authorization delegation is distinct from the auth server's placement. |
+| `domain=worker-ai` / `domain=worker-storage` | AI and storage work use separate worker-node groups. |
+| `domain=event-router` / `domain=sse` | Event Router and SSE Gateway are separate. Event-processing load and open connections are different scaling signals. |
+| `domain=data` / RabbitMQ affinity | PostgreSQL, purpose-specific Redis, and RabbitMQ nodes are declared. PostgreSQL's broad `domain=data` selector does not guarantee placement exclusively on its designated node. |
+| Monitoring / logging nodes | KEDA selects `infra-type=monitoring`. Being a controller does not imply placement on the master. |
+
+Namespaces, node placement, and NetworkPolicy are different boundaries. For example, `logging` disables Istio injection, so the entire cluster is not drawn as a single sidecar domain. Conflicting historical node counts are omitted. Single-master, PostgreSQL standalone, and RabbitMQ dev single-replica declarations are not presented as HA. This is the implementation of a closed service, not a live inventory.
+
+[Five layers in the README](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [Node declarations](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Namespace boundaries](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/namespaces/base/namespaces.yaml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Workload placement](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
 
 </details>
 
 <details>
 <summary>Network topology · Requests, authorization, and asynchronous work</summary>
 
-Route 53 resolves the ALB, which terminates TLS and forwards requests to Istio Ingress. The gateway's `CUSTOM` AuthorizationPolicy delegates covered API paths to ext-authz. Synchronous domain calls, RabbitMQ dispatch, and external API calls take different paths. Calico provides Pod networking; Istio/Envoy provides mesh routing and mTLS.
+Route 53 handles DNS resolution; ALB terminates HTTPS. Its `instance` targets connect through **EC2 NodePort → Istio Ingress Gateway Pod**. The gateway's `CUSTOM` AuthorizationPolicy delegates covered API paths to ext-authz on the auth node. Istio/Envoy applies mesh routing and policies over Calico VXLAN and the kube-proxy Service path.
 
 ```mermaid
 flowchart TB
     accTitle: Eco² request paths and service network
-    accDescr: Client requests traverse Route 53, ALB, and Istio Ingress to domain APIs. Delegated authorization, RabbitMQ worker dispatch, data access, and external API calls are distinct paths. This logical view does not imply every machine is in a private subnet.
-    Client(["Client<br/>Route 53 resolution"]) -->|HTTPS| Edge["AWS ALB<br/>TLS termination"]
-    subgraph VPC["VPC · Kubernetes"]
-        Edge --> Ingress["Istio Ingress<br/>VirtualService"]
-        Ingress --> APIs["Domain APIs · Envoy<br/>HTTP / gRPC · mesh mTLS"]
-        Ingress -.->|Covered paths| Auth["ext-authz<br/>JWT · blacklist"]
-        APIs --> MQ[("RabbitMQ<br/>Task queues")]
-        MQ --> Workers["AI · storage workers"]
-        APIs --> Data[("PostgreSQL · Redis")]
-        Workers --> Data
+    accDescr: After Route 53 DNS resolution, the client connects to ALB over HTTPS. ALB is outside Kubernetes and forwards through an instance target's NodePort to an Ingress Gateway Pod on a dedicated node. The gateway checks authorization with ext-authz on the auth node and routes to APIs. Asynchronous work and data access are separate paths.
+    Client(["Client<br/>DNS: Route 53"]) -->|HTTPS :443| Edge
+    subgraph VPC["AWS VPC"]
+        Edge["AWS ALB · ACM<br/>TLS termination"]
+        subgraph Cluster["Self-managed Kubernetes"]
+            NodePort["EC2 target · NodePort<br/>Service → gateway Pod"]
+            Ingress["Istio Ingress Gateway<br/>role=ingress-gateway"]
+            NodePort --> Ingress
+            Ingress -->|VirtualService routing| APIs["Domain APIs · Envoy<br/>HTTP / gRPC"]
+            Ingress -->|gRPC auth check| Auth["ext-authz<br/>domain=auth"]
+            APIs --> MQ[("RabbitMQ<br/>Task queues")]
+            MQ --> Workers["AI · storage workers"]
+            APIs --> Data[("PostgreSQL · Redis")]
+            Workers --> Data
+        end
+        Edge -->|HTTP · instance target| NodePort
     end
-    Workers -->|AI: HTTPS| External["LLM · external APIs"]
 ```
 
-This is a logical Pod communication view. Terraform's public/private subnet definitions do not prove private placement for every workload. Allow policies exist, but **global `default-deny-all` is disabled in the kustomization**; the diagram does not claim network-wide default-deny isolation.
+Solid arrows show request/task delivery; response arrows are omitted. ext-authz returns an authorization decision rather than proxying the entire application request. VirtualService configures gateway routing; it is not another proxy. AI workers make separate outbound HTTPS calls to external LLM APIs.
 
-[Service layers in the README](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [VPC definition](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway authorization policy](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
+Dedicated gateway-Pod placement does not itself restrict ALB targets to that node. Terraform's EC2 declarations use public subnets, and **global `default-deny-all` is disabled**. This view does not claim private-only placement, ALB-only access, or network-wide default-deny isolation.
+
+[ALB bridge configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/gateway.yaml) · [Istio and NodePort configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/05-istio.yaml) · [VPC definition](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway authorization policy](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
 
 </details>
 

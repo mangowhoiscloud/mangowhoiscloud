@@ -164,64 +164,114 @@ Harbor가 컨테이너·timeout·task verifier를 관리합니다. **Score는 ve
 개발 방식, 네트워크, 배치 구조, 두 AI 워크플로우, 관측성을 나눴습니다. 아래 항목은 필요한 것만 펼쳐 볼 수 있습니다.
 
 <details>
-<summary>클러스터 구성 · 역할별 배치와 확장 경계</summary>
+<summary>클러스터 구성 · Kubernetes 내부의 계층과 배치 경계</summary>
 
-Terraform으로 EC2 기반을 만들고 Ansible·kubeadm으로 Kubernetes를 구성했습니다. API, AI 작업, 저장 작업의 자원 사용과 확장 조건이 달라 worker 역할을 나눴습니다. 아래는 배치 역할을 묶은 도식이며, 점선은 통신 경로가 아니라 control plane의 관리 관계입니다.
+백엔드 README의 **Edge · Service · Integration · Persistence · Platform** 구분을 기준으로 Kubernetes 내부를 나눴습니다. Kubernetes control plane은 클러스터 상태와 스케줄링을, Platform의 controller는 배포·mesh 설정·확장을 맡습니다. 요청을 받는 API, 오래 실행되는 worker, 진행 이벤트를 전달하는 경로는 서로 다른 수명과 확장 조건을 가집니다.
 
 ```mermaid
-flowchart LR
-    accTitle: Eco² 자체 관리형 Kubernetes 클러스터 구성
-    accDescr: Terraform과 Ansible이 EC2 기반 kubeadm 클러스터를 구성한다. Control plane 아래에 서비스, AI worker, storage worker, 데이터 서비스, platform controller, 관측성 역할을 나누어 표시한다. 하나의 상자가 하나의 노드를 뜻하지 않는다.
-    Provision["Terraform · Ansible<br/>EC2 · kubeadm"] --> Control
-    subgraph Cluster["Self-managed Kubernetes · EC2"]
-        Control["Control plane<br/>API server · scheduler · etcd"]
-        Control -.-> APIs["Service workloads<br/>Domain APIs · SSE Gateway"]
-        Control -.-> AI["worker-ai<br/>Scan · Chat workers"]
-        Control -.-> Storage["worker-storage<br/>Persistence · checkpoint sync"]
-        Control -.-> Data[("Data services<br/>PostgreSQL · Redis · RabbitMQ")]
-        Control -.-> Platform["Platform controllers<br/>ArgoCD · Istiod · KEDA"]
-        Control -.-> Observe["Observability workloads<br/>Metrics · logs · traces"]
+flowchart TB
+    accTitle: Eco² Kubernetes 내부의 제어, 실행, 저장, 관측 경계
+    %%{init: {"flowchart": {"nodeSpacing": 20, "rankSpacing": 20, "padding": 10}}}%%
+    accDescr: 자체 관리형 Kubernetes 안에서 Kubernetes control plane, Platform controller와 관측성, 애플리케이션 실행 영역을 구분한다. 실행 영역은 Edge, Service, Integration, Persistence로 나뉜다. Integration에는 AI worker, storage worker, task queue와 이벤트 전달 경계가 있다. 상자는 기능의 포함 관계이며 물리 노드나 보안 격리를 보장하지 않는다.
+    subgraph Cluster["Self-managed Kubernetes"]
+        direction TB
+        subgraph Management[" "]
+            direction LR
+            subgraph KubeControl["Kubernetes control plane"]
+                Control["API server · etcd<br/>Scheduler · controllers"]
+            end
+            subgraph Platform["Platform Layer"]
+                direction LR
+                Controllers["ArgoCD · Istiod · KEDA<br/>ALB Controller · ExternalDNS"]
+                Observe["Metrics · traces · logs<br/>Prometheus · Jaeger · EFK"]
+                Controllers ~~~ Observe
+            end
+            KubeControl ~~~ Platform
+        end
+        subgraph Runtime["Application data plane"]
+            direction TB
+            subgraph Edge["Edge Layer"]
+                Ingress["Istio Ingress Gateway<br/>Envoy · routing / auth policy"]
+            end
+            subgraph Service["Service Layer"]
+                APIs["Domain APIs · Envoy<br/>auth · users · scan · chat · …"]
+            end
+            subgraph Integration["Integration Layer"]
+                direction LR
+                AI["AI workers<br/>scan-worker · chat-worker"]
+                Storage["Storage workers<br/>DB writes · checkpoint sync"]
+                Events["Task queues · Event Bus<br/>RabbitMQ · Event Router · SSE Gateway"]
+                AI ~~~ Storage ~~~ Events
+            end
+            subgraph Persistence["Persistence Layer"]
+                Data[("PostgreSQL · Redis<br/>Auth · Streams · Pub/Sub · cache")]
+            end
+            Edge ~~~ Service ~~~ Integration ~~~ Persistence
+        end
+        Management ~~~ Runtime
     end
+    style Management fill:none,stroke:none
 ```
 
-| 배치·확장 단위 | 구성과 책임 |
+상자는 **기능의 포함 관계**이며 하나의 서버나 namespace를 뜻하지 않습니다. ALB와 Route 53은 Kubernetes 밖에 있으며, 실제 요청 경로는 다음 네트워크 도식에서 따로 보여줍니다. 여기서 data plane은 요청·작업을 실행하는 영역이지 Persistence Layer의 다른 이름이 아닙니다. Istiod의 Envoy 설정 배포와 사용자 트래픽도 서로 다른 경로입니다.
+
+| 내부 경계 | 역할과 분리 이유 |
 | --- | --- |
-| 서비스 | auth, users, scan, chat, character, location, info, images와 SSE Gateway가 요청·연결을 처리합니다. |
-| AI / storage workers | `nodeSelector`와 taint/toleration으로 역할을 구분합니다. 외부 LLM 호출과 DB 저장·checkpoint 동기화를 다른 worker에 배치합니다. |
-| 데이터 | PostgreSQL, RabbitMQ와 용도별 Redis를 구분합니다. Streams, Pub/Sub, cache, 인증 상태의 역할을 하나의 저장소로 뭉뚱그리지 않습니다. |
-| 확장·배포 | KEDA가 queue·pending·connection 관련 신호로 대상 workload를 확장합니다. ArgoCD는 replica 필드를 무시하도록 설정해 autoscaler와의 충돌을 피합니다. |
+| Edge / Service | Gateway가 라우팅과 대상 경로의 인증 위임을 맡고, 도메인별 API가 HTTP·gRPC 요청을 처리합니다. `ext-authz`는 `auth` namespace와 auth 노드 배치 조건을 사용합니다. |
+| Integration: 실행 | `worker-ai`는 Scan·Chat과 외부 LLM 호출을, `worker-storage`는 DB 저장과 checkpoint 동기화를 맡습니다. `nodeSelector`와 taint/toleration으로 실행 자원을 나눴습니다. |
+| Integration: 전달 | RabbitMQ는 task queue입니다. Redis Streams → Event Router → Pub/Sub → SSE Gateway는 진행 이벤트 경로입니다. `event-router`와 `sse-consumer` namespace도 구분합니다. |
+| Persistence | PostgreSQL과 인증 상태·Streams·Pub/Sub·cache용 Redis를 구분합니다. State KV는 복구에 쓰는 데이터 역할이지 별도 DB 제품이나 독립 서버를 뜻하지 않습니다. |
+| Platform | ArgoCD는 Git 선언을 적용하고, Istiod는 Envoy를 설정합니다. KEDA는 부하 신호로 대상 workload를 확장하며 ArgoCD는 replica 필드를 무시합니다. 메트릭·trace·로그 수집은 별도 관측 경로입니다. |
 
-공개 문서에는 시점별로 다른 노드 수가 남아 있어 여기서는 고정 수치를 쓰지 않습니다. 종료된 서비스의 구현 구조이며 현재 가동 중인 클러스터 현황은 아닙니다.
+**물리 배치는 기능 계층과 일대일로 대응하지 않습니다.** Terraform·Ansible·dev manifest의 배치 조건은 다음과 같습니다.
 
-[EC2 provisioning](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/ec2/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Worker 배치](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
+| 노드·배치 조건 | 선언된 구성 |
+| --- | --- |
+| `k8s-master` / `role=control-plane` | 단일 kubeadm control plane. Istiod·ALB Controller·ExternalDNS의 selector와 ArgoCD의 설치 절차도 이 노드를 사용합니다. |
+| `role=ingress-gateway` / `domain=auth` | Ingress Gateway와 ext-authz를 각각 gateway·auth 역할에 배치합니다. Gateway의 인증 위임과 auth 서버 배치를 같은 상자로 묶지 않습니다. |
+| `domain=worker-ai` / `domain=worker-storage` | AI 작업과 저장 작업을 다른 worker 노드 집합에 배치합니다. |
+| `domain=event-router` / `domain=sse` | Event Router와 SSE Gateway를 분리합니다. 이벤트 처리량과 열린 연결 수를 다른 확장 신호로 다룹니다. |
+| `domain=data` / RabbitMQ affinity | PostgreSQL·용도별 Redis·RabbitMQ 노드를 선언합니다. 다만 PostgreSQL selector는 넓은 `domain=data`이므로 전용 PostgreSQL 노드에만 배치된다고 보장하지 않습니다. |
+| Monitoring / logging 노드 | KEDA는 `infra-type=monitoring`을 사용합니다. Controller라는 이유만으로 master에 배치되는 것은 아닙니다. |
+
+Namespace, 노드 배치, NetworkPolicy는 서로 다른 경계입니다. 예를 들어 `logging` namespace는 Istio injection을 비활성화하므로 Kubernetes 전체를 하나의 sidecar 영역으로 그리지 않았습니다. 노드 수는 자료 시점마다 달라 고정하지 않았고, 단일 master·PostgreSQL standalone·RabbitMQ dev 1 replica 선언을 HA로 표현하지 않습니다. 종료된 서비스의 구현 구조이며 현재 가동 현황은 아닙니다.
+
+[README의 5개 계층](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [노드 선언](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Namespace 경계](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/namespaces/base/namespaces.yaml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Workload 배치](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
 
 </details>
 
 <details>
 <summary>네트워크 토폴로지 · 요청, 인증, 비동기 작업의 경로</summary>
 
-Route 53으로 찾은 ALB에서 TLS를 종료하고 요청을 Istio Ingress로 전달합니다. Gateway의 `CUSTOM` AuthorizationPolicy가 대상 API 경로의 인증을 ext-authz에 위임합니다. 도메인 간 동기 호출, RabbitMQ 작업 전달, 외부 API 호출은 서로 다른 경로이며, Calico는 Pod 네트워크를, Istio/Envoy는 mesh 라우팅과 mTLS를 담당합니다.
+Route 53은 DNS 조회를 맡고, ALB가 HTTPS를 종료합니다. ALB의 `instance` target은 EC2의 **NodePort → Istio Ingress Gateway Pod**로 연결됩니다. Gateway의 `CUSTOM` AuthorizationPolicy는 대상 API 경로의 인증을 auth 노드의 ext-authz에 위임합니다. Calico VXLAN과 kube-proxy의 Service 전달 경로 위에서 Istio/Envoy가 mesh 라우팅과 정책을 처리합니다.
 
 ```mermaid
 flowchart TB
     accTitle: Eco² 요청 경로와 서비스 네트워크
-    accDescr: 사용자의 요청은 Route 53과 ALB, Istio Ingress를 거쳐 도메인 API로 전달된다. 인증 위임, RabbitMQ를 통한 worker 작업, 데이터 접근, 외부 API 호출을 분리한다. 그림은 논리 통신 경로이며 모든 노드가 private subnet에 있다는 뜻은 아니다.
-    Client(["Client<br/>Route 53 resolution"]) -->|HTTPS| Edge["AWS ALB<br/>TLS termination"]
-    subgraph VPC["VPC · Kubernetes"]
-        Edge --> Ingress["Istio Ingress<br/>VirtualService"]
-        Ingress --> APIs["Domain APIs · Envoy<br/>HTTP / gRPC · mesh mTLS"]
-        Ingress -.->|대상 경로의 인증 위임| Auth["ext-authz<br/>JWT · blacklist"]
-        APIs --> MQ[("RabbitMQ<br/>Task queues")]
-        MQ --> Workers["AI · storage workers"]
-        APIs --> Data[("PostgreSQL · Redis")]
-        Workers --> Data
+    accDescr: Route 53 DNS 조회 뒤 사용자는 ALB에 HTTPS로 연결한다. Kubernetes 밖의 ALB는 instance target의 NodePort를 통해 전용 노드의 Ingress Gateway Pod로 전달한다. Gateway가 auth 노드의 ext-authz에 권한 검사를 위임하고 API로 라우팅한다. 비동기 작업과 데이터 접근도 별도 경로다.
+    Client(["Client<br/>DNS: Route 53"]) -->|HTTPS :443| Edge
+    subgraph VPC["AWS VPC"]
+        Edge["AWS ALB · ACM<br/>TLS termination"]
+        subgraph Cluster["Self-managed Kubernetes"]
+            NodePort["EC2 target · NodePort<br/>Service → gateway Pod"]
+            Ingress["Istio Ingress Gateway<br/>role=ingress-gateway"]
+            NodePort --> Ingress
+            Ingress -->|VirtualService routing| APIs["Domain APIs · Envoy<br/>HTTP / gRPC"]
+            Ingress -->|gRPC 권한 검사| Auth["ext-authz<br/>domain=auth"]
+            APIs --> MQ[("RabbitMQ<br/>Task queues")]
+            MQ --> Workers["AI · storage workers"]
+            APIs --> Data[("PostgreSQL · Redis")]
+            Workers --> Data
+        end
+        Edge -->|HTTP · instance target| NodePort
     end
-    Workers -->|AI: HTTPS| External["LLM · external APIs"]
 ```
 
-도식은 Pod 간 논리 경로입니다. Terraform의 public/private subnet 정의를 실제 workload의 private 배치 보장으로 해석하지 않습니다. NetworkPolicy에는 허용 규칙이 있지만 **전역 `default-deny-all`은 kustomization에서 비활성화**돼 있어 전체 네트워크가 default-deny라고 표시하지 않았습니다.
+실선은 요청·작업 전달이며 응답선은 생략했습니다. ext-authz는 권한 검사에 응답할 뿐 애플리케이션 요청 전체를 중계하지 않습니다. VirtualService는 Gateway의 라우팅 설정이지 별도 프록시가 아닙니다. 외부 LLM 호출은 AI worker에서 나가는 별도 HTTPS 경로입니다.
 
-[README의 서비스 계층](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [VPC 정의](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway 인증 정책](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy 구성](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
+Gateway Pod의 전용 노드 배치가 ALB target을 그 노드로만 제한한다는 뜻은 아닙니다. Terraform의 EC2 선언은 public subnet을 사용하며, **전역 `default-deny-all`은 비활성화**돼 있습니다. 따라서 private-only 배치나 ALB만을 통한 접근, 전체 네트워크의 default-deny 격리를 주장하지 않습니다.
+
+[ALB bridge 설정](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/gateway.yaml) · [Istio·NodePort 설정](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/05-istio.yaml) · [VPC 정의](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway 인증 정책](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy 구성](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
 
 </details>
 
