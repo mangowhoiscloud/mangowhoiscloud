@@ -1,6 +1,6 @@
 # Profile notes · 출처, 범위, 업데이트 원칙
 
-Reviewed: **2026-09-17**. This document supports both [한국어](../README.md) and [English](../README_EN.md).
+Reviewed: **2026-09-18**. This document supports both [한국어](../README.md) and [English](../README_EN.md).
 
 The profile is an introduction, not a benchmark report. Published project records support the technical claims; the previous public profile supports retained career and client-delivery statements. A public statement is not the same as independently reproduced evidence.
 
@@ -12,7 +12,8 @@ The profile is an introduction, not a benchmark report. Published project record
 | [GEODE README](https://github.com/mangowhoiscloud/geode/blob/main/README.md) | Runtime / evaluation / experimental-evolution boundaries | Current architecture and experimental status, not proof of sustained improvement. |
 | [GEODE evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts) | Original evidence versus derived summaries; incomplete runs; tied results | Run-local claims retain their task, model, harness, and execution conditions. |
 | [Compiler AX Lab](https://github.com/mangowhoiscloud/compiler-ax-lab/blob/main/README.md) | CPU verification and A/B pilot boundaries, recorded 2026-09-16 | Independent work; no NPU, throughput, procedure-superiority, or employer-approval claim. |
-| [Eco² portfolio](https://mangowhoiscloud.github.io/eco2/) / [landing repository](https://github.com/mangowhoiscloud/eco2) | Current portfolio address, service closure, 24-node cluster, API-specific load results | Virtual-user load tests, not real user counts. Separate workloads are not one combined result. |
+| [Eco² portfolio](https://mangowhoiscloud.github.io/eco2/) / [backend repository](https://github.com/eco2-team/backend) | Portfolio address, service closure, task/event architecture, API-specific load results | Public project reports, not new measurements. Workload denominators and infrastructure snapshots need separate reconciliation, as noted below. |
+| [Profile before this revision](https://github.com/mangowhoiscloud/mangowhoiscloud/blob/55bfad72981afb86bb9ecfc693f3afc12601b07c/README.md) | Latest published narrative, architecture descriptions, and metric discrepancies | This refresh changes presentation; it does not rerun experiments or resolve conflicting historical records. |
 
 Only previously public information is included. Client code, private repositories, protected evaluation inputs, account data, and unpublished application material are not publication sources for this refresh.
 
@@ -31,17 +32,20 @@ Source: the previous public profile linked above. These are **March 2026 deliver
 
 The old profile also mentions Spring Boot 2→3. That label and Spring Framework 4→6 describe different version axes; the refresh does not conflate them or claim independent version verification of the private codebase.
 
+<a id="eco2"></a>
 ## Eco²: preserve the achievement, separate the workloads
 
 The award remains **2025 AI 새싹톤 우수상 / AI SeSACTHON Excellence Award (4th/181)**, as previously published. The project began with a five-person MVP and continued with solo development and operation. Its service is now marked **Closed** in the public portfolio.
 
 | Item | Previous profile | Current presentation |
 | --- | --- | --- |
-| Infrastructure | 14 EC2 nodes → 24-node Kubernetes; Terraform, Ansible, ArgoCD | Keep the 24-node operated cluster; preserve the starting point here. |
-| Scan load | 0→1,000 VU, 97.8% | Name the Scan API, 1,000 virtual users and 97.8%; the portfolio also reports 373 RPM. Not 1,000 real simultaneous customers. |
+| Infrastructure | Earlier notes and the backend README describe 24 nodes; the 2026-09-18 profile describes 20 EC2 instances. | These snapshots are not reconciled. Omit the node count from the profile rather than choose one as verified current infrastructure. Terraform, Ansible, Kubernetes, and ArgoCD remain supported architecture descriptions. |
+| Scan load | The backend README reports 97.8% at 1,000 VU; the latest profile also pairs 1,469/1,518 completed tasks with 97.8%. | 1,469 ÷ 1,518 = 96.77%, not 97.8%. Retain 97.8% only as a public project-reported rate, without the incompatible fraction. The original load-test receipt and its success definition are needed to reconcile the figures. |
 | Authentication | 48→1,500 RPS | Keep this historical shorthand here. The currently published ext-authz result is 1,477 RPS at 2,500 VU; do not silently equate distinct runs or use a rounded endpoint as a new measurement. |
 | Quality | 69.4→99.8/100; Swiss Cheese 3-Layer | Retained historical project-evaluation figure. The task set, rubric, judge, and repeatability must accompany any renewed headline use; this is not a general model-quality score. |
 | Architecture | Tool calling, LangGraph parallelism, SSE, Agent SDK | Retain the chatbot-to-workflow engineering story rather than an undated claim that the service is currently running. |
+
+The Scan percentage and ext-authz throughput belong to separate load tests. Neither is a count of real simultaneous users, and this profile revision does not independently reproduce either test.
 
 ## GEODE: historical figures are not live counters
 
@@ -75,11 +79,15 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 ## Editorial decisions
 
-**Lead with the person, then the system.** A conversational introduction and observable working habits come before technical classification. Each selected project explains what it does, what was built, and what the result supports.
+**Lead with current work and its evidence.** A short introduction leads directly to selected projects. Evolution and working methods follow the concrete systems rather than delaying them. Each project names the problem, design choice, and evidence boundary.
 
-**Explain the vocabulary at the point of need.** The main page briefly explains agent and harness; optional details explain Skill, regression test, ratchet, evaluation gate, and self-improvement. These are working definitions for this profile, not a universal taxonomy.
+**Choose diagrams by the question they answer.** Per language, nine sequence diagrams become four diagrams: a GEODE boundary/architecture view, one runtime request/response sequence, an Eco² task/event topology, and a branching experiment decision flow. Project evolution, workload differences, operational ownership, and evidence provenance use tables. No minimum diagram count or sequence-diagram quota belongs in CI.
 
-**Use badges as navigation, not decoration.** The GEODE release badge points to live release metadata. The evidence and CPU-test badges point to records. Profile CI has its own badge and is explicitly not project-performance certification. No visitor counters, contribution-score cards, tracking pixels, animated banners, or secrets are needed.
+**Use progressive disclosure.** The GEODE overview stays visible. Runtime detail, Eco² infrastructure, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded. Native Markdown, Mermaid, and GitHub's own typography keep the page maintainable and theme-aware; no separate frontend is needed.
+
+**Explain vocabulary at the point of need.** The main text defines meta-harness when introducing the build boundary. Optional definitions distinguish agent, harness, meta-harness, and RSI. These are working definitions for this profile, not a universal taxonomy.
+
+**Use badges as navigation, not decoration.** One GEODE release badge points to live release metadata. Profile CI has its own footer badge and is explicitly not project-performance certification. Evidence links stay beside their claims. No visitor counters, contribution-score cards, tracking pixels, animated banners, or secrets are needed.
 
 **Keep both languages aligned.** Titles, dates, results, evidence boundaries, project coverage, and destinations should change together. CI catches structural mistakes and selected fact/link drift, not translation quality or truthfulness.
 
@@ -88,6 +96,8 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 [Simon Willison's profile](https://github.com/simonw/simonw) informed the direct route from current work to releases and writing. [Anthony Fu's profile](https://github.com/antfu/antfu) informed compact navigation. Their content and assets are not copied; these are design references, not endorsements or a ranked survey.
 
 [GitHub profile README documentation](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme) defines profile publication. [Shields static-badge documentation](https://shields.io/badges/static-badge) informs badge formatting. This repository needs no separate Pages site: merging the root README into the default branch updates the profile.
+
+[GitHub diagram documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart reference](https://mermaid.js.org/syntax/flowchart.html) support the native diagram choices. Local rendering checks syntax and legibility; GitHub's deployed Mermaid version and theme still require a post-publication check.
 
 ## Maintenance and next improvements
 
@@ -103,6 +113,7 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 ```bash
 python3 scripts/check_profile.py
+python3 scripts/check_architecture_profile.py
 python3 -m unittest discover -s tests -v
 ```
 
