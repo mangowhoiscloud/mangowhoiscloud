@@ -354,6 +354,48 @@ Declared Istio trace sampling is 50%. This is a map of **collection paths and in
 
 </details>
 
+<details>
+<summary>Improvement loop · How observed failures changed the next architecture</summary>
+
+Eco² evolved less like a sequence of “new technologies added” and more like a loop of **reproducing the same pressure, narrowing a bottleneck hypothesis, deploying the smallest change, and measuring the same signal again**. This was not a production runtime rewriting its own source; it was an external engineering loop shared by a human and a coding agent.
+
+```mermaid
+sequenceDiagram
+    participant W as Reproducible Workload
+    participant O as Observability
+    participant H as Human and Coding Agent
+    participant D as Contract and Small Diff
+    participant CI as CI
+    participant G as Git and ArgoCD
+    participant K as Kubernetes
+    W->>O: Reproduce pressure or failure
+    O->>H: Metrics, logs, traces, events
+    H->>D: Falsifiable bottleneck hypothesis
+    D->>CI: Code and manifest checks
+    CI->>G: Accepted revision
+    G->>K: Reconcile desired state
+    K->>W: Run the same workload again
+    W->>O: New evidence
+    O-->>H: Keep, revise, or revert
+```
+
+| Observed pressure | Hypothesis | Change | What the next measurement revealed |
+| --- | --- | --- | --- |
+| Around 50 VU, SSE connections, RabbitMQ connections, and scan-api memory rose together until readiness returned 503s | task lifetime and progress-delivery lifetime were coupled | keep RabbitMQ for tasks, move progress to Redis Streams → Event Router → SSE Gateway | after connection amplification was reduced, queue wait, worker state, and external APIs became the next bottleneck candidates |
+| ACK after publish failure, reconnect gaps, duplicates, and a hot Pub/Sub channel | event delivery needed an explicit recovery contract, not only a fast live path | add ACK-on-success, reclaim, dedupe, Last-Event-ID catch-up, master-only Pub/Sub, and four-way sharding | recoverability after failure became a separate verification target |
+| repeated VU sweeps showed probe restarts and in-flight loss mattered more than raw CPU or memory in some failures | a guardrail can create a new failure when it mismatches the workload | tune KEDA min/max and workload signals; isolate probe behavior as its own cause | **the guardrail itself became an object of verification** |
+| one judge score could not explain Chat-answer quality failures | generation quality and evaluator reliability should not collapse into one score | split deterministic Code Grader, BARS LLM Judge, and Calibration Monitor | the measurement apparatus itself required drift and wiring validation, a lesson later carried into GEODE's evaluator separation |
+
+The important result is not a single success number but **a failure becoming a contract**. ACK rules, recovery behavior, KEDA fallback, CI checks, and Git desired state are deterministic boundaries rather than model judgements. Observability had no promotion authority; it was the feedback surface for the next hypothesis. A human retained the final keep/revise/revert decision.
+
+In compact form:
+
+`failure signal → reproducible workload → hypothesis → scoped code/manifest diff → CI → Git/ArgoCD → same workload → human verdict → next contract`
+
+GEODE later turns this loose external loop into explicit trajectories, revision-bound evaluation, ratchets, and promotion contracts. Eco² used production failures as input to the next change; GEODE makes the loop itself a reproducible research object.
+
+</details>
+
 The public project report gives a **Scan success rate of 97.8% at 1,000 VU**. A separate ext-authz load record gives **1,477 RPS at 2,500 VU**. These are different workloads, not real-user counts or one combined performance score. A mismatch between completion counts and the reported success-rate denominator is documented in the [source notes](docs/PROFILE_NOTES.md#eco2).
 
 [Portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)

@@ -27,16 +27,24 @@ COMMON = (
     "REJECT",
     "INVALID",
     "RSI",
+    "Event Router",
+    "ArgoCD",
 )
 
 KO = (
     "## 발전 과정",
     "## 검증, 재현, 기록",
+    "개선 루프 · 관측한 실패가 다음 구조를 바꾸는 방식",
+    "guardrail 자체도 검증 대상",
+    "same workload",
 )
 
 EN = (
     "## Evolution",
     "## Verification, reproduction, and records",
+    "Improvement loop · How observed failures changed the next architecture",
+    "guardrail itself became an object of verification",
+    "same workload",
 )
 
 FORBIDDEN = (
