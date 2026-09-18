@@ -131,31 +131,115 @@ sequenceDiagram
 
 ### Eco²
 
-재활용을 돕는 AI 서비스입니다. Vision LLM, RAG, 도구 호출, LangGraph 기반 멀티에이전트 처리, 비동기 SSE와 Kubernetes 환경을 하나의 서비스 런타임으로 연결했습니다.
+재활용을 돕는 AI 서비스입니다. Eco²는 하나의 “에이전트”가 아니라 **서로 다른 실행 계약을 가진 워크플로우, 클러스터, 그리고 그것을 바꾸는 제작 라인**으로 보는 편이 정확합니다. 현재 코드 기준 Chat은 10개 intent를 분류해 필요한 노드를 병렬 fan-out하고, Scan은 Vision → Rule/RAG → Answer → Reward의 Celery chain을 사용합니다. 이미지 생성은 별도 branch로 실행됩니다.
+
+#### 용도별 에이전트 워크플로우
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant A as API
-    participant W as Agent Workflow
-    participant L as LLM and RAG
-    participant T as Tools and Data
-    participant S as SSE Stream
-    participant K as Kubernetes
-    U->>A: Scan or chat request
-    A->>W: Dispatch async workflow
-    W->>L: Interpret and plan
-    L->>T: Retrieve or call tool
-    T-->>L: External observation
-    L-->>W: Structured result
-    W-->>S: Stream output
-    S-->>U: Async response
-    W->>K: Logs, metrics, traces
+    participant R as Intent Router
+    participant W as Domain Nodes
+    participant A as Aggregator
+    participant L as LLM Answer
+    participant S as SSE
+    U->>R: Chat request
+    R->>R: Classify primary and additional intents
+    par Domain work
+        R->>W: Waste, location, weather, price, search
+        W-->>A: Domain observations
+    and Optional enrichment
+        R->>W: Weather or web enrichment
+        W-->>A: Additional context
+    end
+    A->>L: Merged context
+    L-->>S: Token stream
+    S-->>U: Incremental answer
 ```
 
-Eco²에서 얻은 핵심 경험은 **모델을 서비스 런타임 안에서 운영하는 문제**였습니다. 비동기 작업, 스트리밍, 외부 데이터, 관측성, 인증, 배포 자동화와 부하 검증이 함께 움직여야 했고, 이 경험이 GEODE의 런타임과 메타 하네스 분리로 이어졌습니다.
+Chat은 **질문을 분해하고 필요한 도메인 작업을 병렬 합류시키는 workflow**입니다. 반복형 ReAct subagent 여러 개가 자유롭게 도는 구조로 과장하지 않습니다. 현재 production wiring은 대부분 한 번의 structured/function call로 인자를 정한 뒤 deterministic application command를 실행합니다.
 
-**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**, Terraform, Ansible, ArgoCD 기반 **24노드 Kubernetes**, Scan API **1,000 VU에서 97.8%**, 별도의 ext-authz 경로 **2,500 VU에서 1,477 RPS**. VU는 실제 이용자 수가 아닙니다. 서비스 운영은 종료됐습니다.
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as Scan API
+    participant Q as RabbitMQ
+    participant V as Vision
+    participant R as Rule and RAG
+    participant N as Answer
+    participant E as Reward
+    participant B as Event Bus
+    U->>A: Waste image
+    A->>Q: Enqueue scan
+    Q->>V: Vision classification
+    V->>R: Candidate class
+    R->>N: Rules and retrieval context
+    N->>E: Final answer
+    E->>B: Progress and completion events
+    B-->>U: Recoverable async status
+```
+
+Scan은 대화형 routing보다 **비동기 작업 파이프라인**에 가깝습니다. 긴 작업은 RabbitMQ/Celery가 소유하고, 진행 이벤트는 이후 Redis Streams, Event Router, Pub/Sub, SSE Gateway로 분리했습니다. 작업 실행과 client connection의 수명을 분리한 것이 핵심입니다.
+
+#### 클러스터와 이벤트 전달 구조
+
+검증 팩트 기준으로는 **EC2 20노드, 19개 마이크로서비스(9 API + 9 Worker + ext-authz)** 규모입니다. 기존 README의 24-node 표기는 내부 architecture facts와 불일치해 여기서는 코드와 검증 문서에 맞춘 20 EC2를 사용합니다. Istio가 edge/service traffic을, RabbitMQ가 task plane을, Redis가 event/recovery plane을, KEDA가 workload별 scaling을 맡습니다.
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant I as Istio Ingress
+    participant API as Domain API
+    participant MQ as RabbitMQ
+    participant W as Worker
+    participant RS as Redis Streams
+    participant ER as Event Router
+    participant PS as PubSub and State
+    participant SG as SSE Gateway
+    C->>I: HTTP request
+    I->>API: Route to service
+    API->>MQ: Queue long-running task
+    MQ->>W: Deliver work
+    W->>RS: Append progress event
+    RS->>ER: Consumer-group delivery
+    ER->>PS: Persist state and publish
+    PS->>SG: Realtime event
+    SG-->>C: SSE
+    Note over ER,SG: retry, reclaim, dedupe, Last-Event-ID recovery
+```
+
+이 구조는 “Redis를 썼다”보다 **권한과 수명을 분리했다**는 점이 중요합니다. RabbitMQ는 task orchestration, Event Router는 ACK/reclaim, State/Streams는 replay와 recovery, SSE Gateway는 client connection을 소유합니다. KEDA는 queue, pending, connection 같은 workload signal로 replica를 조정하고 ArgoCD는 replica field와 충돌하지 않도록 desired-state 책임을 분리합니다.
+
+#### 배포 구조와 Eco²의 메타 하네스
+
+Eco²에도 GEODE로 이어지는 **하네스 제작 장치의 초기 형태**가 있었습니다. 다만 runtime이 스스로 source를 고치는 자기개선 시스템은 아니었습니다. 사람이 coding agent와 함께 research/ADR에서 변경 가설을 만들고, CI가 code와 manifest를 검사하고, Git desired state를 ArgoCD가 cluster에 reconcile한 뒤, 같은 workload와 observability signal로 다시 측정해 사람이 keep/revise/revert를 결정했습니다.
+
+```mermaid
+sequenceDiagram
+    participant H as Human and Coding Agent
+    participant D as Research and ADR
+    participant C as Code and Manifest
+    participant CI as CI
+    participant G as Git Desired State
+    participant A as ArgoCD
+    participant K as Kubernetes
+    participant O as Observability
+    H->>D: Failure signal and hypothesis
+    D->>C: Small scoped change
+    C->>CI: Lint, test, render, schema checks
+    CI->>G: Accepted revision
+    G->>A: Desired state
+    A->>K: Reconcile by sync wave
+    K->>O: Metrics, logs, traces, events
+    O-->>H: Same workload, new evidence
+    H->>G: Keep, revise, or revert
+```
+
+배포 측면에서는 Terraform/Ansible로 기반을 만들고, Kubernetes manifest와 Git을 desired state로 두며, ArgoCD의 sync wave로 Redis, RabbitMQ, KEDA, Gateway, Router 같은 의존 순서를 관리했습니다. Prometheus/Grafana, EFK, Jaeger/OTEL, LangSmith가 서로 다른 관측면을 제공했습니다. 이때 observability는 승인 권한이 아니라 **다음 변경을 만들기 위한 feedback surface**였습니다.
+
+이 경험이 GEODE에서 더 명시적인 메타 하네스로 발전했습니다. Eco²에서는 `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict`가 사람과 coding agent가 함께 돌리는 외부 engineering loop였다면, GEODE에서는 제작 scaffold, trajectory, revision-bound evaluation, ratchet과 promotion contract를 별도 구조로 만들고 있습니다.
+
+**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**. Scan workload의 보존된 k6 결과 중 최종 VU 1,000 실행은 **1,469/1,518 완료, 97.8%**였고 같은 날 이전 실행에는 0% 회귀도 남아 있습니다. 따라서 이를 선형적인 성능 향상으로 표현하지 않습니다. 서비스 운영은 종료됐습니다.
 
 [기술 포트폴리오](https://mangowhoiscloud.github.io/eco2/) · [프로젝트 저장소](https://github.com/eco2-team/backend)
 
