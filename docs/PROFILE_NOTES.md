@@ -81,7 +81,7 @@ The image's historical node count, in-cluster external OpenAI API, and DNS-as-HT
 
 Placement evidence: [`terraform/main.tf`](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/main.tf), [Istio](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/05-istio.yaml), [ALB Controller](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/15-alb-controller.yaml), [ExternalDNS](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/16-external-dns.yaml), [ArgoCD installation](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/roles/argocd/tasks/main.yml), [KEDA](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/35-keda.yaml), [ext-authz](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains/ext-authz/base/deployment.yaml), and [namespace declarations](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/namespaces/base/namespaces.yaml). ext-authz selects `domain=auth`; KEDA selects `infra-type=monitoring`; logging disables sidecar injection. The source branch used by dev ArgoCD is `develop`; comparisons in both directions between reviewed main and develop found no changes in `terraform/`, `ansible/`, `clusters/`, or `workloads/`.
 
-No running cluster was queried. Single-master, PostgreSQL standalone, and RabbitMQ dev single-replica declarations are not HA evidence. PostgreSQL selects the broad `domain=data`, not an exclusive PostgreSQL-node label. EC2 modules reference public subnets; private-only placement and ALB-only access are not inferred. Existing main-branch improvement-loop content remains unchanged, and all Eco² views remain collapsed by default.
+No running cluster was queried. Single-master, PostgreSQL standalone, and RabbitMQ dev single-replica declarations are not HA evidence. PostgreSQL selects the broad `domain=data`, not an exclusive PostgreSQL-node label. EC2 modules reference public subnets; private-only placement and ALB-only access are not inferred. Existing main-branch improvement-loop prose and case tables remain unchanged, and all Eco² views remain collapsed by default.
 
 ## GEODE: historical figures are not live counters
 
@@ -135,9 +135,30 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 **Lead with current work and its evidence.** A short introduction leads directly to selected projects. Evolution and working methods follow the concrete systems rather than delaying them. Each project names the problem, design choice, and evidence boundary.
 
-**Choose diagrams by the question they answer.** Each language has two visible overviews (GEODE boundaries and Harbor evidence flow) and nine optional diagrams: GEODE development/CI, runtime request/response, six Eco² views, and experimental admission. Tables explain contracts, storage rules, and source boundaries without adding more arrows. No minimum diagram count or sequence-diagram quota belongs in CI.
+**Choose diagrams by the question they answer.** Each language has two visible overviews (GEODE boundaries and Harbor evidence flow) and ten optional diagrams: GEODE development/CI, runtime request/response, seven Eco² views including the developer's improvement cases, and experimental admission. Tables explain contracts, storage rules, and source boundaries without adding more arrows. No minimum diagram count or sequence-diagram quota belongs in CI.
 
-**Use progressive disclosure.** Only the GEODE overview and Harbor comparison stay visible. GEODE development/CI and runtime detail, the evaluation file map, all six Eco² views, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded independently. Native Markdown and GitHub's typography remain the page shell. Mermaid handles the other flow views; two theme-aware SVGs fix the Eco² boundary and ingress geometry. No separate frontend is needed.
+**Use progressive disclosure.** Only the GEODE overview and Harbor comparison stay visible. GEODE development/CI and runtime detail, the evaluation file map, all seven Eco² views, experiment gates, historical failure analysis, glossary, and secondary projects can be expanded independently. Native Markdown and GitHub's typography remain the page shell. All twelve diagrams now share theme-aware SVG typography and explicit routing. No separate frontend is needed.
+
+### Complete diagram refresh, 2026-09-19
+
+The two approved Eco² boundary figures establish the visual language for the remaining ten. Every figure answers one question; matching colors does not force every relationship into the same box-and-arrow layout. Technical SVG labels are shared between languages; alt text and the adjacent explanations are localized. Existing developer-written prose, case tables, metrics, and source links are preserved.
+
+| Figure | Reader question / visual grammar | Evidence boundary |
+| --- | --- | --- |
+| [GEODE overview](../assets/geode-overview.svg) | Who builds, executes, and proposes the next change? / responsibility boundaries | Runtime, development, experiment and operator authority stay separate. |
+| [CI ratchet](../assets/geode-ci-ratchet.svg) | What blocks a change from merging? / gate and correction path | Reviewed workflow and merge admission at the GEODE revision cited above. Green CI is not performance evidence. |
+| [Runtime](../assets/geode-runtime.svg) | What happens within a turn and what returns? / four-actor sequence | Contract-dependent verification, not an unconditional verifier call after every tool. |
+| [Harbor](../assets/harbor-rollout.svg) | How do independent trials become public evidence? / paired environments and artifact handoff | Historical one-tool GEODE arm; task-native verifiers remain separate for each trial. Raw jobs and public derivatives are not interchangeable. |
+| [Cluster](../assets/eco2-cluster.svg) | Which Kubernetes responsibilities have different lifetimes? / functional layers | Pinned backend README plus placement manifests, not a live inventory. |
+| [Ingress](../assets/eco2-ingress.svg) | How does traffic enter, and who configures or authorizes it? / network and control paths | ALB, NodePort, Envoy, ext-authz and Istiod have distinct roles. |
+| [Eco² development](../assets/eco2-build.svg) | Which producer hands which artifact to delivery? / build and GitOps handoff | Changed-service CI; image publication only on eligible builds. |
+| [Scan](../assets/eco2-scan.svg) | Why can a job survive a closed connection? / execution and event-delivery lanes | Celery chain, XADD, ACK-on-success and recovery rules from the pinned tasks and incident sources. |
+| [Chat](../assets/eco2-chat.svg) | Which work runs, and when can results join? / selective fork and join | LangGraph factory; optional compaction/Eval, not all branches per request. |
+| [Observability](../assets/eco2-observability.svg) | Which record narrows which failure? / producer, collection path and investigation | Configured telemetry paths; sampling and missing traces remain explicit. |
+| [Eco² improvement](../assets/eco2-improvement.svg) | How does an observed failure change the next revision? / responsibility lanes | The existing developer-written cases supply the evidence; human-owned keep/revise/revert, not runtime self-modification. |
+| [Experimental admission](../assets/experimental-admission.svg) | When does a candidate replace the baseline? / validity and gain/veto gates | Frozen experiment contract; every outcome retained, KEEP is not release authority. |
+
+The ten new SVGs are generated with Python's standard library and reuse the approved cluster figure's theme. `scripts/render_profile_diagrams.py --check` rejects generated-file drift; a regression test checks accessible descriptions and marker references. These checks do not replace pixel review or source verification. Small-screen readers can zoom; prose and alt text retain the explanation.
 
 **Explain vocabulary at the point of need.** The main text defines meta-harness when introducing the build boundary. Optional definitions distinguish agent, harness, meta-harness, and RSI. These are working definitions for this profile, not a universal taxonomy.
 
@@ -151,7 +172,7 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 
 [GitHub profile README documentation](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme) defines profile publication. [Shields static-badge documentation](https://shields.io/badges/static-badge) informs badge formatting. This repository needs no separate Pages site: merging the root README into the default branch updates the profile.
 
-[GitHub diagram documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart reference](https://mermaid.js.org/syntax/flowchart.html) support the native diagram choices. Local rendering checks syntax and legibility; GitHub's deployed Mermaid version and theme still require a post-publication check.
+[GitHub diagram documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams) and the [Mermaid flowchart reference](https://mermaid.js.org/syntax/flowchart.html) informed the original native diagrams. The current SVGs control layout directly. Local rendering checks syntax and legibility; the actual GitHub profile and theme still require a post-publication check.
 
 ## Maintenance and next improvements
 
@@ -168,6 +189,7 @@ The lab's repository CI is narrower than these recorded SDK experiments. A green
 ```bash
 python3 scripts/check_profile.py
 python3 scripts/check_architecture_profile.py
+python3 scripts/render_profile_diagrams.py --check
 python3 -m unittest discover -s tests -v
 ```
 

@@ -7,6 +7,7 @@ import unittest
 
 from scripts.check_profile import ROOT, external_destinations, inspect, validate_page, validate_repository
 from scripts.check_architecture_profile import validate_architecture
+from scripts.render_profile_diagrams import ASSETS, DIAGRAMS, validate_svg
 
 
 class ParserTests(unittest.TestCase):
@@ -42,6 +43,15 @@ class ParserTests(unittest.TestCase):
 
 
 class ArchitectureTests(unittest.TestCase):
+    def test_diagrams_are_reproducible_accessible_and_have_valid_markers(self):
+        for name, render in DIAGRAMS.items():
+            with self.subTest(diagram=name):
+                svg = render()
+                validate_svg(svg)
+                self.assertEqual(svg, (ASSETS / f"{name}.svg").read_text(encoding="utf-8"))
+                with self.assertRaises(AssertionError):
+                    validate_svg(svg.replace(f"url(#{name}-arrow)", "url(#missing-marker)"))
+
     def test_diagram_choice_does_not_change_content_requirements(self):
         text = (ROOT / "README_EN.md").read_text()
         text = re.sub(r"```mermaid\nsequenceDiagram.*?```", "", text, flags=re.S)

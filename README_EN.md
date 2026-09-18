@@ -21,20 +21,7 @@ An **autonomous agent runtime** that manages long-running memory, model connecti
 
 The build system is a separate concern. A **meta-harness builds, verifies, and revises the harness's code and scaffold**. Claude Code or Codex CLI reads `AGENTS.md`, `CLAUDE.md`, Skills, and CI contracts to change GEODE. It is not another controller sitting above a running agent.
 
-```mermaid
-flowchart TB
-    subgraph Build["Meta-harness · build"]
-        S["Build Scaffold<br/>Instructions · Skills · CI"] -->|Build contract| D["Development harness<br/>Claude Code · Codex CLI"]
-    end
-    subgraph Runtime["GEODE · execution"]
-        C["Context Control"] -->|Provide context| P["AgenticLoop<br/>Model · tools"]
-        P <-->|Contract-bound verification| V["Verify"]
-        P --> O["Observe<br/>Trajectory · usage"]
-    end
-    D -->|Reviewed runtime changes| P
-    O --> X["Experimental Loop<br/>Scaffold Search"]
-    X -.->|Candidate proposed for review| D
-```
+![GEODE build, runtime and experiment boundaries. Build Scaffold guides coding-agent changes. Context Control, AgenticLoop, Verify and Observe manage execution and Trajectory evidence. Experimental Loop and Scaffold Search propose candidates for review, not automatic deployment.](assets/geode-overview.svg)
 
 Execution records inform subsequent changes. **Candidate adoption is separate from PR merge and release approval**; deployment authority remains with the operator.
 
@@ -43,20 +30,7 @@ Execution records inform subsequent changes. **Candidate adoption is separate fr
 
 The developer sets scope and acceptance criteria. The coding agent reads the implementation and failure evidence, then works in an isolated worktree. **A fix includes a check that can catch the failure again.** Local checks and PR CI inspect the same change revision; failures return to diagnosis and correction.
 
-```mermaid
-flowchart TB
-    accTitle: GEODE development workflow and CI ratchet
-    accDescr: Scope and shared instructions guide a coding agent in an isolated worktree. Code and regression checks go through local verification and PR CI. Failures return to correction. Passing checks still require current PR evidence and authorized review before develop and main promotion.
-    Scope(["Developer<br/>Scope · acceptance"]) --> Agent
-    Scaffold["AGENTS.md · CLAUDE.md · Skills<br/>GAP audit · source check"]
-    Scaffold --> Agent["Claude Code · Codex CLI<br/>Isolated worktree"]
-    Agent --> Change["Code · regression tests<br/>Docs · CHANGELOG"]
-    Change --> Gate{"CI ratchet<br/>Checks · contracts pass?"}
-    Gate -->|Diagnose and correct| Agent
-    Gate -->|Pass| Review["Merge admission<br/>Current SHA · checks · authority"]
-    Scope -.->|Review authority| Review
-    Review --> Branches["develop → main<br/>CI recheck · approval"]
-```
+![GEODE CI Ratchet. Worktree changes and regression tests pass checks before merge admission verifies the current head, base, required checks and authority. Failures return to correction; green CI alone does not authorize merge.](assets/geode-ci-ratchet.svg)
 
 | CI invariant | Executable checks | Regression it addresses |
 | --- | --- | --- |
@@ -76,23 +50,7 @@ Changed paths determine which checks run. The CI ratchet **guards code and contr
 
 This is the part where request and response order matters. The runtime manages context assembly and compaction; verification follows the contract for that run.
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant R as AgenticLoop
-    participant T as Tool / Environment
-    participant V as Verifier
-    U->>R: Goal and session state
-    loop Until completion or a stopping condition
-        R->>T: Tool call
-        T-->>R: Observation or error
-        opt Verification required by the run contract
-            R->>V: Candidate result
-            V-->>R: Verdict and evidence
-        end
-    end
-    R-->>U: Result and execution trace
-```
+![GEODE execution sequence. AgenticLoop calls tools and receives observations or errors. A verifier supplies verdicts and evidence only when the run contract requires it. Completion, verification and termination are separate records.](assets/geode-runtime.svg)
 
 A model's completion statement, a verifier verdict, and a termination reason are different records. Separating context, execution, verification, and observation makes it possible to investigate which change affected the outcome.
 
@@ -107,22 +65,7 @@ I compared GEODE and native Codex in **paired rollouts** on Terminal-Bench 2.1. 
 
 The plan covered **89 tasks × 5 repetitions × 2 arms = 890 cells**. A cell is `task × repetition × arm`. Both arms used the OpenAI subscription route to `gpt-5.6-sol`, with requested effort `max`. The historical GEODE arm connected `AgenticLoop` to one Harbor-backed `terminal_exec` tool; later full-runtime experiments are separate.
 
-```mermaid
-flowchart TB
-    accTitle: Harbor paired rollouts and the path to public evidence
-    accDescr: A frozen contract governs independent GEODE and Codex trials in Harbor. Behavior records and verifier results are preserved separately, validated and sanitized, then published as artifacts and derived replay.
-    F["Frozen run spec<br/>Task · budget · repetition"] --> H["Harbor<br/>Trial lifecycle · isolation"]
-    H --> G["GEODE<br/>Trial container"]
-    H --> C["Native Codex<br/>Trial container"]
-    G -->|Environment state| V["Task verifier<br/>Result · reward"]
-    C -->|Environment state| V
-    G --> T["Trajectory · lineage<br/>Actions · observations"]
-    C --> T
-    V --> Q["Normalize · publication checks<br/>Schema · hashes · privacy"]
-    T --> Q
-    Q --> A[("geode-eval-artifacts")]
-    A --> R["Replay · docs<br/>Derived views"]
-```
+![Harbor paired rollouts. Frozen rules govern independent GEODE and native Codex containers and their task verifiers. Private raw evidence passes contract selection, normalization and publication checks before public artifacts and derived replay.](assets/harbor-rollout.svg)
 
 Harbor owns containers, timeouts, and task verifiers. **Scores follow verifier results and frozen selection rules; trajectories support investigation of tool calls and failure paths.** The branches represent independent arms, not simultaneous execution.
 
@@ -209,22 +152,7 @@ Terraform's EC2 declarations use public subnets, and global `default-deny-all` i
 
 The developer captured context and verification procedures in `CLAUDE.md`, Skills, and an SDK-compatibility command. Claude Code is a **development-side coding agent**, not a Chat/Scan worker serving users in the cluster. This view connects build tools and artifacts; it is not one mandatory execution sequence.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² meta-harness and deployment artifacts
-    accDescr: Developer requirements and instructions guide Claude Code. CI checks code and manifests; failure evidence guides correction. Qualifying builds produce images and update image tags in Git manifests. ArgoCD applies Git manifests to the cluster.
-    Scaffold["CLAUDE.md · Skills<br/>SDK check command"] --> Agent["Claude Code"]
-    Human(["Developer<br/>Scope · review"]) --> Agent
-    Agent --> Change["Code · manifests<br/>apps/ · workloads/"]
-    Human -->|Code review| Change
-    Change --> CI["GitHub Actions<br/>Format · lint · tests"]
-    CI -.->|Diagnose · correct · recheck| Agent
-    CI -->|Build · push| Image[("Container images<br/>Docker Hub")]
-    CI -->|Image tag update| Git[("Deployment manifests<br/>Git")]
-    Git --> CD["ArgoCD<br/>ApplicationSet · sync wave"]
-    CD --> Runtime["Cluster rollout"]
-    Image -.->|Image pull| Runtime
-```
+![Eco² development and delivery responsibilities. Developer scope and scaffold guide Claude Code. CI checks changed services; eligible builds publish images and update Git manifests. ArgoCD reconciles the cluster with Git.](assets/eco2-build.svg)
 
 | Build component | Role |
 | --- | --- |
@@ -243,22 +171,7 @@ During development, failure logs guide correction and rechecking. This is a deve
 
 The Scan API registers work and returns `202 + job_id`. A Celery chain executes through stage-specific RabbitMQ queues while a separate SSE connection delivers progress. Closing that connection does not itself cancel the worker's job.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² Scan task chain and event delivery
-    accDescr: The Scan API dispatches a Celery chain through Vision, Rule, Answer, and Reward. Each stage writes progress to Redis Streams. Event Router and SSE Gateway deliver these events to the client.
-    API["Scan API<br/>202 + job_id"] --> Queue[("RabbitMQ<br/>Celery chain")]
-    Queue --> Vision["Vision<br/>Image classification"]
-    Vision --> Rule["Rule<br/>Regulation lookup · Lite RAG"]
-    Rule --> Answer["Answer<br/>Disposal guidance"]
-    Answer --> Reward["Reward<br/>Character reward · storage request"]
-    Vision -.-> Events[("Redis Streams<br/>Stage events")]
-    Rule -.-> Events
-    Answer -.-> Events
-    Reward -.-> Events
-    Events --> Delivery["Event Router → Pub/Sub<br/>SSE Gateway"]
-    Delivery --> Client(["Client<br/>Progress · result"])
-```
+![Eco² Scan has two paths. RabbitMQ and a Celery chain execute Vision, Rule, Answer and Reward. Stage events enter Redis Streams and reach clients through Event Router, Pub/Sub and SSE, with separate ACK and reconnect recovery rules.](assets/eco2-scan.svg)
 
 | Path | Storage and delivery rule |
 | --- | --- |
@@ -275,21 +188,7 @@ flowchart TB
 
 The Chat API publishes to RabbitMQ; a TaskIQ worker executes LangGraph. The router selects nodes using intent and request context. The three branches below group node roles; they do not all run on every request.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² Chat selective parallel execution and answer generation
-    accDescr: Intent and optional Vision results guide a router that selects domain, external-tool, or image-generation nodes. An aggregator collects results before optional context compaction and answer streaming. A separate Eval stage runs when configured.
-    Input["Intent classifier<br/>Optional Vision"] --> Router{"Dynamic router<br/>LangGraph Send"}
-    Router -->|Selected| Domain["Domain nodes<br/>Waste RAG · character"]
-    Router -->|Selected| Tools["API / tool nodes<br/>Location · weather · search"]
-    Router -->|Selected| Image["Image generation"]
-    Domain --> Join["Aggregator<br/>Results · required context"]
-    Tools --> Join
-    Image --> Join
-    Join --> Compact["Context preparation<br/>Optional compaction"]
-    Compact --> Answer["Answer<br/>Token streaming"]
-    Answer -.->|When configured| Eval["Eval pipeline<br/>Grading · bounded regeneration"]
-```
+![Eco² Chat selects and joins work. Intent routing dispatches required domain, API/tool or image branches. Aggregation and context preparation precede answering; Eval is optional. Redis checkpoint and PostgreSQL archival have separate responsibilities.](assets/eco2-chat.svg)
 
 | Execution / state | Concrete responsibility |
 | --- | --- |
@@ -307,19 +206,7 @@ flowchart TB
 
 Queue buildup, Pod health, request paths, and LLM-node execution require different evidence. Operational metrics, logs, distributed traces, and LLM traces are collected through separate paths rather than collapsed into one score.
 
-```mermaid
-flowchart TB
-    accTitle: Eco² metrics, logs, distributed traces, and LLM traces
-    accDescr: APIs, workers, and Envoy emit metrics, logs, and spans to separate storage and query systems. Chat LangGraph and LLM calls use configured LangSmith tracing, optionally connected to OTEL.
-    Runtime["API · workers · Envoy"] -->|Metrics| Metrics["Prometheus<br/>ServiceMonitor · exporters"]
-    Metrics --> Dash["Grafana · Alertmanager"]
-    Metrics --> Mesh["Kiali<br/>Mesh topology"]
-    Runtime -->|stdout / stderr| Logs["Fluent Bit"]
-    Logs --> Search[("Elasticsearch · Kibana")]
-    Runtime -->|Spans| Trace["OpenTelemetry · Jaeger"]
-    LLM["Chat LangGraph<br/>LLM · tool calls"] --> Smith["LangSmith<br/>Nodes · tokens · errors"]
-    LLM -.->|When OTEL is configured| Trace
-```
+![Eco² observability maps API, worker and Envoy metrics, logs and request spans separately from Chat LangGraph LLM traces. Collection and query paths support investigations of queue pressure, failures, request latency and LLM-node execution.](assets/eco2-observability.svg)
 
 | Investigation | Records and use |
 | --- | --- |
@@ -338,25 +225,7 @@ Declared Istio trace sampling is 50%. This is a map of **collection paths and in
 
 Eco² evolved less like a sequence of “new technologies added” and more like a loop of **reproducing the same pressure, narrowing a bottleneck hypothesis, deploying the smallest change, and measuring the same signal again**. This was not a production runtime rewriting its own source; it was an external engineering loop shared by a human and a coding agent.
 
-```mermaid
-sequenceDiagram
-    participant W as Reproducible Workload
-    participant O as Observability
-    participant H as Human and Coding Agent
-    participant D as Contract and Small Diff
-    participant CI as CI
-    participant G as Git and ArgoCD
-    participant K as Kubernetes
-    W->>O: Reproduce pressure or failure
-    O->>H: Metrics, logs, traces, events
-    H->>D: Falsifiable bottleneck hypothesis
-    D->>CI: Code and manifest checks
-    CI->>G: Accepted revision
-    G->>K: Reconcile desired state
-    K->>W: Run the same workload again
-    W->>O: New evidence
-    O-->>H: Keep, revise, or revert
-```
+![Eco² improvement by responsibility. Reproduce a failure under the same workload; a human and coding agent form a hypothesis, small diff and regression check. After CI and Git/ArgoCD delivery, repeat the measurement. The human decides keep, revise or revert.](assets/eco2-improvement.svg)
 
 | Observed pressure | Hypothesis | Change | What the next measurement revealed |
 | --- | --- | --- | --- |
@@ -386,19 +255,7 @@ The search space is **scaffolding around the model**, including instructions, to
 <details>
 <summary>When the Baseline changes: KEEP / REJECT / INVALID</summary>
 
-```mermaid
-flowchart TB
-    F["Frozen Baseline + candidate<br/>Task pack · evaluator · budget"] --> E["Evaluation"]
-    E --> V{"Is the execution valid?"}
-    E -.->|Execution evidence| L[("Ledger · every attempt and verdict")]
-    V -->|No| I["INVALID<br/>Keep the Baseline"]
-    V -->|Yes| G{"Gain exceeds uncertainty<br/>and no critical veto?"}
-    G -->|No| R["REJECT<br/>Keep the Baseline"]
-    G -->|Yes| K["KEEP<br/>Adopt as the next Baseline"]
-    I -.-> L
-    R -.-> L
-    K -.-> L
-```
+![Experimental Loop Baseline admission. Frozen Evaluation must be valid, exceed uncertainty and avoid a critical veto. The Ledger retains every attempt and KEEP, REJECT or INVALID verdict; only KEEP changes the next Baseline.](assets/experimental-admission.svg)
 
 The Ratchet applies these conditions. A score increase alone, a tie, or an incomplete run does not change the baseline. `KEEP` is an experiment verdict, not deployment approval or evidence of sustained self-improvement.
 
