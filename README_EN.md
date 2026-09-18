@@ -30,7 +30,7 @@ My background spans distributed storage, backend engineering, and cloud infrastr
 <a id="evolution"></a>
 ## Evolution
 
-Eco² was a production service where I built an **asynchronous agent workflow and cloud runtime**. GEODE separated those lessons into a reusable **autonomous agent runtime and meta-harness**. SIL made scaffold changes measurable through external safety audits. Crucible then turned the lessons from those experiments into a **frozen experiment contract** that binds candidate, evaluator, task pack, budget, and promotion authority before execution. The current Experimental Loop feeds execution and evaluation evidence back into an outer scaffold-search loop.
+Eco² was a production service where I built an **asynchronous agent workflow and cloud runtime**. GEODE separated those lessons into a reusable **autonomous agent runtime**, then treated the build layer as a **meta-harness**. Here meta-harness does not mean a controller sitting above the runtime. It means the **system that builds the harness itself**, including the development harness, its instruction scaffold, Skills, verification, and ratchets. SIL made scaffold changes measurable through external safety audits. Crucible then turned the lessons from those experiments into a **frozen experiment contract** that binds candidate, evaluator, task pack, budget, and promotion authority before execution. The current Experimental Loop feeds execution and evaluation evidence back into an outer scaffold-search loop.
 
 ```mermaid
 sequenceDiagram
@@ -66,7 +66,7 @@ RSI is a direction, not a claimed current capability. The historical 2026-05-22 
 ```text
 service runtime
   -> autonomous agent runtime
-  -> observable meta-harness
+  -> autonomous agent harness\n  -> meta-harness: harness-building system
   -> SIL: safety-scaffold audit loop
   -> Crucible: frozen experiment + promotion ratchet   [current]
   -> repeated cross-task evidence and retained improvements
@@ -82,7 +82,28 @@ So the claim is not “RSI is implemented.” It is **building toward RSI by fir
 
 An **autonomous agent runtime** with long-running memory, multi-provider routing, tool execution, permission boundaries, observability, and evaluation. The distribution separates `core` for execution, `evals` for evidence production, and `evolve` for experimental scaffold search.
 
-Its meta-harness groups control mechanisms into Context Control, Plan and Execute, Verify, Observe, and Scaffold. These are code-backed control surfaces rather than conceptual labels.
+In GEODE, the **agent harness** and the **meta-harness** are different scopes. Context Control, Plan and Execute, Verify, and Observe belong to the shipped harness that converges an agent run. The meta-harness is the **apparatus that builds that harness**. Development harnesses such as Claude Code or Codex CLI read `CLAUDE.md`, `AGENTS.md`, development Skills, CI, and ratchets to produce and modify GEODE code and its runtime scaffold.
+
+`Scaffold` therefore describes the build-side contract rather than another runtime control category. Patterns validated in the runtime can move into the build line; failures found while building become tests, instructions, or CI ratchets. When the self-improving outer loop mutates and audits the runtime scaffold and promotes or reverts a candidate, that relationship begins to close recursively. Operator gates still retain PR merge and release authority.
+
+```mermaid
+sequenceDiagram
+    participant D as Development Harness
+    participant S as Build Scaffold
+    participant C as GEODE Code
+    participant H as Agent Harness
+    participant E as Evidence
+    participant X as Experimental Loop
+    D->>S: Read instructions, Skills, CI contracts
+    S->>C: Produce or modify GEODE
+    C->>H: Build autonomous execution harness
+    H->>E: Emit trajectories and verification
+    E->>X: Form next bounded hypothesis
+    X->>S: Promote accepted scaffold change
+    S-->>D: Ratchets constrain the next build
+```
+
+Here, meta means that **the harness itself is the object being built**, not merely that another layer observes it.
 
 ```mermaid
 sequenceDiagram
@@ -108,31 +129,115 @@ Context budgets and compaction, dynamic replanning and convergence detection, ve
 
 ### Eco²
 
-An AI recycling service that evolved from a chatbot into a multi-agent workflow using Vision LLM, RAG, tool calls, LangGraph-based processing, asynchronous SSE, and a Kubernetes platform.
+An AI recycling service. Eco² is more accurately described not as one “agent,” but as **multiple workflow contracts, a cluster runtime, and a production line that changed both**. In the verified code snapshot, Chat classifies 10 intents and fans out the required nodes in parallel, while Scan uses a Celery chain of Vision → Rule/RAG → Answer → Reward. Image generation runs as a separate graph branch.
+
+#### Workflows by purpose
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant A as API
-    participant W as Agent Workflow
-    participant L as LLM and RAG
-    participant T as Tools and Data
-    participant S as SSE Stream
-    participant K as Kubernetes
-    U->>A: Scan or chat request
-    A->>W: Dispatch async workflow
-    W->>L: Interpret and plan
-    L->>T: Retrieve or call tool
-    T-->>L: External observation
-    L-->>W: Structured result
-    W-->>S: Stream output
-    S-->>U: Async response
-    W->>K: Logs, metrics, traces
+    participant R as Intent Router
+    participant W as Domain Nodes
+    participant A as Aggregator
+    participant L as LLM Answer
+    participant S as SSE
+    U->>R: Chat request
+    R->>R: Classify primary and additional intents
+    par Domain work
+        R->>W: Waste, location, weather, price, search
+        W-->>A: Domain observations
+    and Optional enrichment
+        R->>W: Weather or web enrichment
+        W-->>A: Additional context
+    end
+    A->>L: Merged context
+    L-->>S: Token stream
+    S-->>U: Incremental answer
 ```
 
-The main lesson was operating models inside a service runtime: asynchronous work, streaming, external data, observability, authorization, deployment automation, and load verification had to move together. This became the starting point for GEODE's runtime and meta-harness split.
+Chat is a **routing and parallel-join workflow**. I do not describe the current production wiring as a collection of unconstrained ReAct subagents. Most domain nodes use one structured/function call to extract arguments and then execute a deterministic application command.
 
-**Recorded milestones:** **2025 AI SeSACTHON Excellence Award (4th/181)**, **24-node Kubernetes** with Terraform, Ansible, and ArgoCD, Scan API **97.8% at 1,000 VU**, and a separate ext-authz path at **1,477 RPS with 2,500 VU**. VU means virtual users, not actual users. The service has closed.
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as Scan API
+    participant Q as RabbitMQ
+    participant V as Vision
+    participant R as Rule and RAG
+    participant N as Answer
+    participant E as Reward
+    participant B as Event Bus
+    U->>A: Waste image
+    A->>Q: Enqueue scan
+    Q->>V: Vision classification
+    V->>R: Candidate class
+    R->>N: Rules and retrieval context
+    N->>E: Final answer
+    E->>B: Progress and completion events
+    B-->>U: Recoverable async status
+```
+
+Scan is closer to an **asynchronous job pipeline** than conversational routing. RabbitMQ/Celery owns long-running work. Progress delivery was later separated into Redis Streams, Event Router, Pub/Sub, and an SSE Gateway. The important change was separating task lifetime from client-connection lifetime.
+
+#### Cluster and event delivery
+
+The verified fact sheet records **20 EC2 nodes and 19 microservices (9 APIs + 9 Workers + ext-authz)**. An older 24-node README claim conflicts with the architecture facts, so this profile uses the verified 20-EC2 figure. Istio owns edge/service traffic, RabbitMQ the task plane, Redis the event/recovery plane, and KEDA workload-specific scaling.
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant I as Istio Ingress
+    participant API as Domain API
+    participant MQ as RabbitMQ
+    participant W as Worker
+    participant RS as Redis Streams
+    participant ER as Event Router
+    participant PS as PubSub and State
+    participant SG as SSE Gateway
+    C->>I: HTTP request
+    I->>API: Route to service
+    API->>MQ: Queue long-running task
+    MQ->>W: Deliver work
+    W->>RS: Append progress event
+    RS->>ER: Consumer-group delivery
+    ER->>PS: Persist state and publish
+    PS->>SG: Realtime event
+    SG-->>C: SSE
+    Note over ER,SG: retry, reclaim, dedupe, Last-Event-ID recovery
+```
+
+The point is not simply that Redis was present. **Ownership and lifetime were separated.** RabbitMQ owns task orchestration, Event Router owns ACK/reclaim, Streams/State own replay and recovery, and SSE Gateway owns client connections. KEDA adjusts replicas from workload signals such as queue depth, pending work, and connections, while ArgoCD avoids fighting the autoscaler over replica ownership.
+
+#### Deployment and the Eco² meta-harness
+
+Eco² contained an **early form of the harness-building apparatus** that later became explicit in GEODE. It was not a runtime autonomously rewriting its own source. A human and coding agent turned research and failure signals into a scoped change; CI checked code and manifests; Git held desired state; ArgoCD reconciled the cluster; the same workload and observability signals were measured again; a human made the keep/revise/revert decision.
+
+```mermaid
+sequenceDiagram
+    participant H as Human and Coding Agent
+    participant D as Research and ADR
+    participant C as Code and Manifest
+    participant CI as CI
+    participant G as Git Desired State
+    participant A as ArgoCD
+    participant K as Kubernetes
+    participant O as Observability
+    H->>D: Failure signal and hypothesis
+    D->>C: Small scoped change
+    C->>CI: Lint, test, render, schema checks
+    CI->>G: Accepted revision
+    G->>A: Desired state
+    A->>K: Reconcile by sync wave
+    K->>O: Metrics, logs, traces, events
+    O-->>H: Same workload, new evidence
+    H->>G: Keep, revise, or revert
+```
+
+Terraform and Ansible established the infrastructure base. Kubernetes manifests and Git formed desired state, while ArgoCD sync waves ordered dependencies such as Redis, RabbitMQ, KEDA, Gateway, and Router. Prometheus/Grafana, EFK, Jaeger/OTEL, and LangSmith exposed different observation surfaces. Observability had no promotion authority; it was a **feedback surface for the next build change**.
+
+This is the bridge to GEODE's more explicit meta-harness. In Eco², `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict` was an external engineering loop shared by a human and coding agent. GEODE turns the production scaffold, trajectories, revision-bound evaluation, ratchets, and promotion contracts into explicit system components.
+
+**Recorded milestone:** **2025 AI SeSACTHON Excellence Award (4th/181)**. In the preserved Scan k6 sweep, the final 1,000-VU run completed **1,469/1,518 tasks, 97.8%**, while earlier runs on the same day include 0% regressions. A separate ext-authz load record reports **1,477 RPS at 2,500 VU**; I do not combine it with the Scan workload into one performance metric. I therefore do not present the sequence as monotonic performance improvement. The service has closed.
 
 [Technical portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)
 
@@ -212,7 +317,7 @@ sequenceDiagram
 <a id="concepts"></a>
 ## Concepts
 
-An **agent** uses tools to make progress. A **harness** manages tools, memory, permissions, failure handling, and verification. A **meta-harness** makes that harness observable, bounded, and evolvable. **RSI (Recursive Self-Improvement)** here means feeding evidence from earlier executions back into later changes and experiments while keeping adoption and repeated improvement as separate claims.
+An **agent** uses tools to make progress. A **harness** manages tools, memory, permissions, failure handling, and verification. A **meta-harness** treats the harness itself as the artifact to build, verify, and revise. In GEODE, development harnesses, instruction scaffolds, Skills, and CI ratchets form that production line, with runtime evidence feeding the next build change. **RSI (Recursive Self-Improvement)** here means feeding evidence from earlier executions back into later changes and experiments while keeping adoption and repeated improvement as separate claims.
 
 <details>
 <summary><strong>Other work</strong></summary>

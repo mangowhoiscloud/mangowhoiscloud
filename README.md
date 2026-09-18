@@ -30,7 +30,7 @@
 <a id="evolution"></a>
 ## 발전 과정
 
-Eco²에서는 실제 서비스를 운영하며 **비동기 에이전트 워크플로우와 클라우드 런타임**을 만들었습니다. GEODE에서는 이를 범용 **자율 에이전트 런타임과 메타 하네스**로 분리했습니다. SIL에서는 “scaffold 변경이 안전성 기준을 개선하는가”를 외부 audit로 측정했고, Crucible에서는 그 경험을 바탕으로 **candidate, evaluator, task pack, budget을 먼저 동결하는 실험 계약**으로 발전시켰습니다. 현재 Experimental Loop에서는 실행과 평가 기록을 다시 외부 scaffold 탐색 루프에 투입합니다.
+Eco²에서는 실제 서비스를 운영하며 **비동기 에이전트 워크플로우와 클라우드 런타임**을 만들었습니다. GEODE에서는 이를 범용 **자율 에이전트 런타임**으로 분리했고, 별도의 제작 계층을 **메타 하네스**로 다루기 시작했습니다. 여기서 메타 하네스는 런타임을 감싸는 상위 제어기가 아니라, 하네스의 코드와 scaffold를 만들고 검증하고 다시 고치는 **하네스 제작 장치**를 뜻합니다. SIL에서는 “scaffold 변경이 안전성 기준을 개선하는가”를 외부 audit로 측정했고, Crucible에서는 그 경험을 바탕으로 **candidate, evaluator, task pack, budget을 먼저 동결하는 실험 계약**으로 발전시켰습니다. 현재 Experimental Loop에서는 실행과 평가 기록을 다시 외부 scaffold 탐색 루프에 투입합니다.
 
 ```mermaid
 sequenceDiagram
@@ -68,7 +68,7 @@ RSI는 목표 방향이지 현재 달성 상태를 뜻하지 않습니다. 2026-
 ```text
 service runtime
   -> autonomous agent runtime
-  -> observable meta-harness
+  -> autonomous agent harness\n  -> meta-harness: harness-building system
   -> SIL: safety-scaffold audit loop
   -> Crucible: frozen experiment + promotion ratchet   [current]
   -> repeated cross-task evidence and retained improvements
@@ -84,7 +84,28 @@ service runtime
 
 장기 실행 메모리, 여러 모델 제공자 연결, 도구 실행, 권한 경계, 관찰과 평가를 갖춘 **자율 에이전트 런타임**입니다. 배포 경계는 `core`, `evals`, `evolve`로 나뉩니다. `core`는 실행, `evals`는 증거 생산, `evolve`는 실험적인 scaffold 탐색을 담당합니다.
 
-메타 하네스는 Context Control, Plan and Execute, Verify, Observe, Scaffold로 제어 메커니즘을 구분합니다. 개념적인 분류가 아니라 실제 코드 경로와 제어 지점에 연결된 구조입니다.
+GEODE에서 **하네스**와 **메타 하네스**는 같은 층이 아닙니다. 하네스는 Context Control, Plan and Execute, Verify, Observe를 통해 실제 에이전트 실행을 수렴시킵니다. 메타 하네스는 그 하네스를 **제작하는 장치**입니다. Claude Code나 Codex CLI 같은 개발 하네스가 `CLAUDE.md`, `AGENTS.md`, 개발 Skill, CI와 ratchet을 읽어 GEODE의 코드와 runtime scaffold를 생산하고 수정합니다.
+
+그래서 `Scaffold`는 런타임 제어 항목 하나가 아니라 **제작 측면의 계약**입니다. 런타임에서 검증된 패턴이 제작 라인으로 올라가고, 제작 과정에서 발견된 실패는 테스트, 지침, CI ratchet으로 고정됩니다. self-improving outer loop가 runtime scaffold를 변이하고 audit한 뒤 승격 또는 revert하는 단계에서는 이 관계가 재귀적으로 닫힙니다. 다만 PR merge와 release 권한은 운영자 게이트에 남습니다.
+
+```mermaid
+sequenceDiagram
+    participant D as Development Harness
+    participant S as Build Scaffold
+    participant C as GEODE Code
+    participant H as Agent Harness
+    participant E as Evidence
+    participant X as Experimental Loop
+    D->>S: Read instructions, Skills, CI contracts
+    S->>C: Produce or modify GEODE
+    C->>H: Build autonomous execution harness
+    H->>E: Emit trajectories and verification
+    E->>X: Form next bounded hypothesis
+    X->>S: Promote accepted scaffold change
+    S-->>D: Ratchets constrain the next build
+```
+
+이 의미에서 meta는 단순히 “더 위에서 관찰한다”는 뜻이 아니라 **하네스를 대상으로 삼아 하네스를 만들어 내는 층**이라는 뜻에 가깝습니다.
 
 ```mermaid
 sequenceDiagram
@@ -110,31 +131,115 @@ sequenceDiagram
 
 ### Eco²
 
-재활용을 돕는 AI 서비스입니다. Vision LLM, RAG, 도구 호출, LangGraph 기반 멀티에이전트 처리, 비동기 SSE와 Kubernetes 환경을 하나의 서비스 런타임으로 연결했습니다.
+재활용을 돕는 AI 서비스입니다. Eco²는 하나의 “에이전트”가 아니라 **서로 다른 실행 계약을 가진 워크플로우, 클러스터, 그리고 그것을 바꾸는 제작 라인**으로 보는 편이 정확합니다. 현재 코드 기준 Chat은 10개 intent를 분류해 필요한 노드를 병렬 fan-out하고, Scan은 Vision → Rule/RAG → Answer → Reward의 Celery chain을 사용합니다. 이미지 생성은 별도 branch로 실행됩니다.
+
+#### 용도별 에이전트 워크플로우
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant A as API
-    participant W as Agent Workflow
-    participant L as LLM and RAG
-    participant T as Tools and Data
-    participant S as SSE Stream
-    participant K as Kubernetes
-    U->>A: Scan or chat request
-    A->>W: Dispatch async workflow
-    W->>L: Interpret and plan
-    L->>T: Retrieve or call tool
-    T-->>L: External observation
-    L-->>W: Structured result
-    W-->>S: Stream output
-    S-->>U: Async response
-    W->>K: Logs, metrics, traces
+    participant R as Intent Router
+    participant W as Domain Nodes
+    participant A as Aggregator
+    participant L as LLM Answer
+    participant S as SSE
+    U->>R: Chat request
+    R->>R: Classify primary and additional intents
+    par Domain work
+        R->>W: Waste, location, weather, price, search
+        W-->>A: Domain observations
+    and Optional enrichment
+        R->>W: Weather or web enrichment
+        W-->>A: Additional context
+    end
+    A->>L: Merged context
+    L-->>S: Token stream
+    S-->>U: Incremental answer
 ```
 
-Eco²에서 얻은 핵심 경험은 **모델을 서비스 런타임 안에서 운영하는 문제**였습니다. 비동기 작업, 스트리밍, 외부 데이터, 관측성, 인증, 배포 자동화와 부하 검증이 함께 움직여야 했고, 이 경험이 GEODE의 런타임과 메타 하네스 분리로 이어졌습니다.
+Chat은 **질문을 분해하고 필요한 도메인 작업을 병렬 합류시키는 workflow**입니다. 반복형 ReAct subagent 여러 개가 자유롭게 도는 구조로 과장하지 않습니다. 현재 production wiring은 대부분 한 번의 structured/function call로 인자를 정한 뒤 deterministic application command를 실행합니다.
 
-**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**, Terraform, Ansible, ArgoCD 기반 **24노드 Kubernetes**, Scan API **1,000 VU에서 97.8%**, 별도의 ext-authz 경로 **2,500 VU에서 1,477 RPS**. VU는 실제 이용자 수가 아닙니다. 서비스 운영은 종료됐습니다.
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as Scan API
+    participant Q as RabbitMQ
+    participant V as Vision
+    participant R as Rule and RAG
+    participant N as Answer
+    participant E as Reward
+    participant B as Event Bus
+    U->>A: Waste image
+    A->>Q: Enqueue scan
+    Q->>V: Vision classification
+    V->>R: Candidate class
+    R->>N: Rules and retrieval context
+    N->>E: Final answer
+    E->>B: Progress and completion events
+    B-->>U: Recoverable async status
+```
+
+Scan은 대화형 routing보다 **비동기 작업 파이프라인**에 가깝습니다. 긴 작업은 RabbitMQ/Celery가 소유하고, 진행 이벤트는 이후 Redis Streams, Event Router, Pub/Sub, SSE Gateway로 분리했습니다. 작업 실행과 client connection의 수명을 분리한 것이 핵심입니다.
+
+#### 클러스터와 이벤트 전달 구조
+
+검증 팩트 기준으로는 **EC2 20노드, 19개 마이크로서비스(9 API + 9 Worker + ext-authz)** 규모입니다. 기존 README의 24-node 표기는 내부 architecture facts와 불일치해 여기서는 코드와 검증 문서에 맞춘 20 EC2를 사용합니다. Istio가 edge/service traffic을, RabbitMQ가 task plane을, Redis가 event/recovery plane을, KEDA가 workload별 scaling을 맡습니다.
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant I as Istio Ingress
+    participant API as Domain API
+    participant MQ as RabbitMQ
+    participant W as Worker
+    participant RS as Redis Streams
+    participant ER as Event Router
+    participant PS as PubSub and State
+    participant SG as SSE Gateway
+    C->>I: HTTP request
+    I->>API: Route to service
+    API->>MQ: Queue long-running task
+    MQ->>W: Deliver work
+    W->>RS: Append progress event
+    RS->>ER: Consumer-group delivery
+    ER->>PS: Persist state and publish
+    PS->>SG: Realtime event
+    SG-->>C: SSE
+    Note over ER,SG: retry, reclaim, dedupe, Last-Event-ID recovery
+```
+
+이 구조는 “Redis를 썼다”보다 **권한과 수명을 분리했다**는 점이 중요합니다. RabbitMQ는 task orchestration, Event Router는 ACK/reclaim, State/Streams는 replay와 recovery, SSE Gateway는 client connection을 소유합니다. KEDA는 queue, pending, connection 같은 workload signal로 replica를 조정하고 ArgoCD는 replica field와 충돌하지 않도록 desired-state 책임을 분리합니다.
+
+#### 배포 구조와 Eco²의 메타 하네스
+
+Eco²에도 GEODE로 이어지는 **하네스 제작 장치의 초기 형태**가 있었습니다. 다만 runtime이 스스로 source를 고치는 자기개선 시스템은 아니었습니다. 사람이 coding agent와 함께 research/ADR에서 변경 가설을 만들고, CI가 code와 manifest를 검사하고, Git desired state를 ArgoCD가 cluster에 reconcile한 뒤, 같은 workload와 observability signal로 다시 측정해 사람이 keep/revise/revert를 결정했습니다.
+
+```mermaid
+sequenceDiagram
+    participant H as Human and Coding Agent
+    participant D as Research and ADR
+    participant C as Code and Manifest
+    participant CI as CI
+    participant G as Git Desired State
+    participant A as ArgoCD
+    participant K as Kubernetes
+    participant O as Observability
+    H->>D: Failure signal and hypothesis
+    D->>C: Small scoped change
+    C->>CI: Lint, test, render, schema checks
+    CI->>G: Accepted revision
+    G->>A: Desired state
+    A->>K: Reconcile by sync wave
+    K->>O: Metrics, logs, traces, events
+    O-->>H: Same workload, new evidence
+    H->>G: Keep, revise, or revert
+```
+
+배포 측면에서는 Terraform/Ansible로 기반을 만들고, Kubernetes manifest와 Git을 desired state로 두며, ArgoCD의 sync wave로 Redis, RabbitMQ, KEDA, Gateway, Router 같은 의존 순서를 관리했습니다. Prometheus/Grafana, EFK, Jaeger/OTEL, LangSmith가 서로 다른 관측면을 제공했습니다. 이때 observability는 승인 권한이 아니라 **다음 변경을 만들기 위한 feedback surface**였습니다.
+
+이 경험이 GEODE에서 더 명시적인 메타 하네스로 발전했습니다. Eco²에서는 `failure → hypothesis → code/manifest → CI → Git/ArgoCD → remeasure → human verdict`가 사람과 coding agent가 함께 돌리는 외부 engineering loop였다면, GEODE에서는 제작 scaffold, trajectory, revision-bound evaluation, ratchet과 promotion contract를 별도 구조로 만들고 있습니다.
+
+**주요 기록:** **2025 AI 새싹톤 우수상(4th/181)**. Scan workload의 보존된 k6 결과 중 최종 VU 1,000 실행은 **1,469/1,518 완료, 97.8%**였고 같은 날 이전 실행에는 0% 회귀도 남아 있습니다. 별도의 ext-authz 부하 기록은 **2,500 VU에서 1,477 RPS**이며 Scan 결과와 하나의 성능 지표로 합치지 않습니다. 따라서 이를 선형적인 성능 향상으로 표현하지 않습니다. 서비스 운영은 종료됐습니다.
 
 [기술 포트폴리오](https://mangowhoiscloud.github.io/eco2/) · [프로젝트 저장소](https://github.com/eco2-team/backend)
 
@@ -214,7 +319,7 @@ sequenceDiagram
 <a id="concepts"></a>
 ## 개념
 
-**에이전트**는 도구를 사용해 작업을 진행합니다. **하네스**는 도구, 메모리, 권한, 실패 처리와 검증을 관리합니다. **메타 하네스**는 그 하네스 자체를 관찰 가능하고 제한 가능하며 발전 가능한 대상으로 만드는 제어 계층입니다. **RSI(Recursive Self-Improvement)**는 여기서 이전 실행의 증거를 이후 변경과 실험으로 되돌리는 문제를 뜻하며, 변경 채택과 반복 개선은 별개의 증거를 요구합니다.
+**에이전트**는 도구를 사용해 작업을 진행합니다. **하네스**는 도구, 메모리, 권한, 실패 처리와 검증을 관리합니다. **메타 하네스**는 하네스를 대상으로 삼아 그 코드와 scaffold를 제작, 검증, 수정하는 제작 시스템입니다. GEODE에서는 개발 하네스, instruction scaffold, Skills, CI ratchet이 이 제작 라인을 이루며, runtime evidence가 다음 제작 변경으로 되먹임됩니다. **RSI(Recursive Self-Improvement)**는 여기서 이전 실행의 증거를 이후 변경과 실험으로 되돌리는 문제를 뜻하며, 변경 채택과 반복 개선은 별개의 증거를 요구합니다.
 
 <details>
 <summary><strong>그 밖의 작업</strong></summary>
