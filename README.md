@@ -187,4 +187,65 @@ GEODE에서 출발한 코드 마이그레이션 하네스입니다. OpenRewrite�
 <a id="evidence"></a>
 ## 검증, 재현, 기록
 
-**검증은 결과의 모양이 아니라 계약을 확인합니다.** 로컬 테스트, CI, 외부 평가, 설치, 배포 확인은 서로 대체하지 않습니다. 각 기록에는 무엇
+**검증은 결과의 모양이 아니라 계약을 확인합니다.** 로컬 테스트, CI, 외부 평가, 설치, 배포 확인은 서로 대체하지 않습니다. 각 기록에는 무엇을 확인했는지 범위를 붙입니다.
+
+**재현은 조건을 고정하는 데서 시작합니다.** 모델 경로, harness revision, task set, effort, timeout, seed, attempt lineage처럼 결과를 바꿀 수 있는 조건을 실행 기록에 묶습니다. baseline과 candidate는 같은 측정 조건을 공유하고 오류나 quota로 오염된 실행은 분리합니다.
+
+**trajectory는 연구 데이터입니다.** 요청, 도구 호출, 외부 observation, 실패와 retry, 최종 verdict가 하나의 실행 궤적을 이룹니다. 성공 trajectory는 어떤 제어가 작동했는지 보여주고, 실패 trajectory는 회귀 테스트와 mutation hypothesis의 재료가 됩니다. 공개 기록은 원본을 우선하고 provenance와 privacy review를 함께 관리합니다.
+
+```mermaid
+sequenceDiagram
+    participant A as Action
+    participant O as Observation
+    participant T as Trajectory
+    participant V as Verification
+    participant R as Regression Contract
+    participant N as Next Experiment
+    A->>O: Tool or environment interaction
+    O->>T: Preserve raw observation
+    T->>V: Replay with run conditions
+    V-->>R: Pass, failure, tie, or invalid evidence
+    R->>N: Test, gate, prior, or new hypothesis
+    N-->>A: Next bounded execution
+```
+
+**래칫은 기억을 자동화합니다.** 이해한 실패는 회귀 테스트나 deterministic check로 고정하고, 승격된 baseline은 다음 비교의 기준으로 사용합니다. 검사가 실패했을 때 threshold를 먼저 낮추지 않고 원인을 조사합니다.
+
+<a id="concepts"></a>
+## 개념
+
+**에이전트**는 도구를 사용해 작업을 진행합니다. **하네스**는 도구, 메모리, 권한, 실패 처리와 검증을 관리합니다. **메타 하네스**는 그 하네스 자체를 관찰 가능하고 제한 가능하며 발전 가능한 대상으로 만드는 제어 계층입니다. **RSI(Recursive Self-Improvement)**는 여기서 이전 실행의 증거를 이후 변경과 실험으로 되돌리는 문제를 뜻하며, 변경 채택과 반복 개선은 별개의 증거를 요구합니다.
+
+<details>
+<summary><strong>그 밖의 작업</strong></summary>
+
+**Kiki @ pinxlab · 2026.04–05:** Slack 기반 멀티에이전트 분석, 구현, 리뷰와 2단계 검증 게이트.  
+**Cotton @ pinxlab · 2026.05:** RPG 번역 SaaS. 대화를 그래프로 모델링.  
+**[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb) · 2026.05:** replay 가능한 CLI 에이전트 게임 스튜디오 실험.  
+**[DREAM](https://github.com/KakaoTech-Hackathon-Dream) · 2024.09:** 생성형 AI 서사와 이미지 서비스.  
+**[Aimo](https://github.com/KTB16Team) · 2024:** LLM 기반 갈등 중재 백엔드.
+
+</details>
+
+<a id="experience"></a>
+## 이력
+
+| 기간 | 경험 |
+| --- | --- |
+| 2026.02–현재 | **GEODE** · 단독 개발 · SIL 2026.05–06 · Crucible 2026.07–현재 |
+| 2026.03–05 | **pinxlab** · 프리랜서 · REODE, Kiki, Cotton |
+| 2025.10–2026.02 | **Eco²** · 백엔드/인프라에서 단독 개발·운영까지 · 2025 AI 새싹톤 우수상 |
+| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · PB급 분산 스토리지 |
+| 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
+| 2017.03–2023.08 | **부산대학교** · 컴퓨터공학 학사 |
+
+Rakuten에서는 **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0**에 참여했습니다.
+
+<a id="more"></a>
+## 기록
+
+구현 과정과 실험에서 얻은 내용은 [블로그](https://rooftopsnow.tistory.com)와 [YouTube](https://www.youtube.com/@mango_fr)에 남깁니다. [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · 이전 GitHub 계정: [@mng990](https://github.com/mng990)
+
+<sub>내용 검토: 2026-09-17 · <a href="docs/PROFILE_NOTES.md">수치의 출처와 범위</a></sub>
+
+[![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
