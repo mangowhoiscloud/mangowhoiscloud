@@ -1,367 +1,167 @@
-<p align="right"><a href="README.md">한국어</a> · <strong>English</strong></p>
-
-# Jihwan Ryu
-
-**Build agent runtimes and verify the effects of changing them.**
-
-My background spans distributed storage, backend engineering, and cloud infrastructure. I now develop autonomous agent runtimes and evaluation systems: tracing failed tool calls, then testing whether a code or scaffold change improves the result under the same conditions.
-
-[GEODE](https://mangowhoiscloud.github.io/geode/) · [Blog](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
-
-[![GEODE release](https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&label=GEODE)](https://github.com/mangowhoiscloud/geode/releases/latest)
-
-[Selected work](#selected-work) · [Evolution](#evolution) · [How I work](#how-i-work) · [Verification and records](#evidence) · [Experience](#experience)
-
-<a id="selected-work"></a>
-## Selected work
-
-### GEODE · Separating execution from the system that builds it
-
-An **autonomous agent runtime** that manages long-running memory, model connections, tools, permissions, and verification. `core` owns execution, `evals` measurement, and `evolve` experimental scaffold search.
-
-The build system is a separate concern. A **meta-harness builds, verifies, and revises the harness's code and scaffold**. Claude Code or Codex CLI reads `AGENTS.md`, `CLAUDE.md`, Skills, and CI contracts to change GEODE. It is not another controller sitting above a running agent.
-
-![GEODE build, runtime and experiment boundaries. Build Scaffold guides coding-agent changes. Context Control, AgenticLoop, Verify and Observe manage execution and Trajectory evidence. Experimental Loop and Scaffold Search propose candidates for review, not automatic deployment.](assets/geode-overview.svg)
-
-Execution records inform subsequent changes. **Candidate adoption is separate from PR merge and release approval**; deployment authority remains with the operator.
-
-<details>
-<summary>Meta-harness · Building changes and blocking regressions with a CI ratchet</summary>
-
-The developer sets scope and acceptance criteria. The coding agent reads the implementation and failure evidence, then works in an isolated worktree. **A fix includes a check that can catch the failure again.** Local checks and PR CI inspect the same change revision; failures return to diagnosis and correction.
-
-![GEODE CI Ratchet. Worktree changes and regression tests pass checks before merge admission verifies the current head, base, required checks and authority. Failures return to correction; green CI alone does not authorize merge.](assets/geode-ci-ratchet.svg)
-
-| CI invariant | Executable checks | Regression it addresses |
-| --- | --- | --- |
-| Behavior, types, and dependencies | Ruff, mypy, pytest, import contracts | Behavioral failures, type mismatches, and dependency-boundary violations. |
-| Baselines and policy | Legacy import ratchet, architecture exception debt, performance baseline | Newly introduced legacy imports, policy violations, and performance-baseline failures. |
-| Prompt, evaluation, and documentation consistency | Prompt hash, eval catalog/contract, generated-doc checks | Unintended prompt changes and code/contract/documentation drift. |
-| PR-bound admission evidence | Required CI `Gate` + `scripts/merge_pr.py` | Missing or failed prerequisite jobs, stale head/base SHAs, and mismatched branch-protection evidence. |
-
-Changed paths determine which checks run. The CI ratchet **guards code and contract invariants**; the Experimental Loop ratchet below **decides whether an experimental candidate is adopted**. Green CI is neither merge authority nor evidence of a performance gain.
-
-[Development workflow](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/docs/workflow.md) · [CI implementation](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/.github/workflows/ci.yml) · [Merge admission](https://github.com/mangowhoiscloud/geode/blob/fd53e0b9c95c1179f8f36ee91a5d3f0b15674af5/scripts/merge_pr.py)
-
-</details>
-
-<details>
-<summary>What repeats within a run?</summary>
-
-This is the part where request and response order matters. The runtime manages context assembly and compaction; verification follows the contract for that run.
-
-![GEODE execution sequence. AgenticLoop calls tools and receives observations or errors. A verifier supplies verdicts and evidence only when the run contract requires it. Completion, verification and termination are separate records.](assets/geode-runtime.svg)
-
-A model's completion statement, a verifier verdict, and a termination reason are different records. Separating context, execution, verification, and observation makes it possible to investigate which change affected the outcome.
-
-</details>
-
-[Code](https://github.com/mangowhoiscloud/geode) · [Landing page](https://mangowhoiscloud.github.io/geode/) · [Docs](https://mangowhoiscloud.github.io/geode/docs) · [Evaluation records](https://github.com/mangowhoiscloud/geode-eval-artifacts)
-
-<a id="harbor-rollout"></a>
-#### Harbor · Investigating score differences through execution records
-
-I compared GEODE and native Codex in **paired rollouts** on Terminal-Bench 2.1. The two arms receive matched task/repetition assignments but work independently, with a separate container for each attempt. This is neither GEODE imitating Codex's actions nor production shadow traffic.
-
-The plan covered **89 tasks × 5 repetitions × 2 arms = 890 cells**. A cell is `task × repetition × arm`. Both arms used the OpenAI subscription route to `gpt-5.6-sol`, with requested effort `max`. The historical GEODE arm connected `AgenticLoop` to one Harbor-backed `terminal_exec` tool; later full-runtime experiments are separate.
-
-![Harbor paired rollouts. Frozen rules govern independent GEODE and native Codex containers and their task verifiers. Private raw evidence passes contract selection, normalization and publication checks before public artifacts and derived replay.](assets/harbor-rollout.svg)
-
-Harbor owns containers, timeouts, and task verifiers. **Scores follow verifier results and frozen selection rules; trajectories support investigation of tool calls and failure paths.** The branches represent independent arms, not simultaneous execution.
-
-The secondary observation on 429 common-valid pairs recorded **339/429 passes for GEODE and 331/429 for Codex**. Infrastructure exclusions and unresolved cells leave the preregistered full-suite metric not measurable. This is not an official leaderboard rank or evidence that the current full GEODE runtime is superior.
-
-[Execution contract and limits](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/terminal-bench-2.md) · [Public run artifacts](https://github.com/mangowhoiscloud/geode-eval-artifacts/tree/main/terminal-bench/terminalbench21-sol-max-fullsuite-paired-20260827t190300z) · [GEODE / Codex replay](https://mangowhoiscloud.github.io/geode/benchmarks/terminal-bench/replay/)
-
-<details>
-<summary>What was retained, and how was measurement improved?</summary>
-
-| Data | Public files | What they support |
-| --- | --- | --- |
-| Execution contract | `run-spec.json`, `task-manifest.json` | Establish model, tasks, budgets, and comparison scope. |
-| Attempt lineage | `attempts.jsonl` | Track original and supplementary attempts, validity, and selection. |
-| Behavior records | `trajectory.json`, replay derivatives | Investigate action order and provenance from retained ATIF/session evidence. |
-| Scoring evidence and analysis | `native-results.json`, `verifier-receipts.json`, `outcomes.json`, `analysis.json` | Distinguish raw reward, contract-selected outcomes, and aggregation denominators. |
-| Publication manifest | `publication*.json` | Identify admitted files, hashes, and validation scope. |
-
-Raw jobs remain private. Public derivatives pass schema, lineage, hash, secret, PII, and local-path checks. An ATIF-reconstructed `recording.cast` is **derived replay**, not an original PTY recording. Observer PTY capture is separate procedural evidence. Public replay does not expose every prompt or output body, and later reruns do not overwrite missing historical records or scores.
-
-Follow-up integration review found missing cache-write separation in inclusive-input cost estimates, cleanup paths that could mask the first execution error, and unretained raw samples from failed performance checks. Changes corrected cost accounting, preserved the first error and original samples, and made usage producers and denominators explicit.
-
-A later, **separate Astra smoke** froze its run spec and recorded reward 1/1, verifier 6/6, errors/retries 0/0, tool calls/results 2/2, and 0 orphans on Harbor 0.22.0. This is a 1/89-task, k=1 account-scoped integration check, not another sample in the `gpt-5.6-sol` comparison or evidence of suite-level performance, Reflexion effectiveness, or complete whole-runtime usage.
-
-[Harbor gap closure PR #3311](https://github.com/mangowhoiscloud/geode/pull/3311) · [Terminal-Bench Astra smoke](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/2026-09-05-terminalbench-astra-openssl-smoke.md)
-
-</details>
-
-### Eco² · Let the work outlive the connection
-
-I built and operated the backend and Kubernetes infrastructure for an AI recycling service. Long-running AI workers and the SSE connections delivering progress have separate lifetimes. The project received the **2025 AI SeSACTHON Excellence Award (4th/181)**. The service has closed.
-
-| Workload | Execution model | Design focus |
-| --- | --- | --- |
-| Chat | Intent routing, selected domain nodes running in parallel, then a join | Choose the required work and combine its results into an answer. |
-| Scan | Celery chain: Vision → Rule/RAG → Answer → Reward | Separate long-running execution from progress delivery. |
-| Image generation | Separate graph branch | Use a distinct path from the other conversational work. |
-
-Development, networking, placement, the two AI workflows, and observability are separate views. Expand only the detail you need below.
-
-<details>
-<summary>Cluster composition · Control, request handling, and task execution</summary>
-
-**API responses, AI tasks, and progress events do not share one lifetime.** The backend README's five layers explain which responsibilities sit together inside Kubernetes and which use separate execution or delivery paths.
-
-![Eco² cluster architecture. Kubernetes control-plane components and platform controllers sit above the Edge, Service, Integration, and Persistence layers; request, work, and telemetry paths are distinct.](assets/eco2-cluster.svg)
-
-The gateway routes requests; domain APIs register work. **RabbitMQ task delivery and Redis-based progress delivery are separate paths.** AI workers execute Scan and Chat; storage workers handle DB writes and checkpoint synchronization. Event Router and SSE Gateway deliver progress independently of task execution.
-
-The figure groups responsibilities. The placement conditions below are a separate axis: one group is not one node or one namespace.
-
-| Placement boundary | Source-backed condition |
-| --- | --- |
-| Cluster and platform control | A single `k8s-master` hosts the kubeadm control plane. Istiod, ALB Controller, and ExternalDNS selectors and the ArgoCD installation procedure also use that role. KEDA selects `infra-type=monitoring`. |
-| Entry point and authorization | Gateway selects `role=ingress-gateway`; ext-authz uses `domain=auth` and the `auth` namespace. The proxy requesting authorization and the server deciding it have distinct placements. |
-| Work and event delivery | `worker-ai` and `worker-storage` are separate roles. Event Router selects `domain=event-router`; SSE Gateway selects `domain=sse`, with separate `event-router` and `sse-consumer` namespaces. |
-| State and observation | PostgreSQL, purpose-specific Redis, RabbitMQ, monitoring, and logging have separate roles. PostgreSQL selects the broad `domain=data`; the `logging` namespace disables sidecar injection. |
-
-**Placement separation does not establish HA or security isolation.** Single-master, PostgreSQL standalone, and RabbitMQ dev single-replica declarations remain. State KV is a Redis data role, not another DB server. Conflicting historical node counts are not collapsed into one number. This describes source code for a closed service.
-
-[Five layers in the README](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/README.md#service-architecture) · [Node declarations](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/main.tf) · [kubeadm bootstrap](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/ansible/playbooks/02-master-init.yml) · [Namespace boundaries](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/namespaces/base/namespaces.yaml) · [Cluster manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps) · [Workload placement](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/domains)
-
-</details>
-
-<details>
-<summary>Network topology · From ALB to the application</summary>
-
-**ALB forwards traffic; the gateway routes it and delegates authorization.** DNS resolution, Istiod configuration, and ext-authz checks are distinct from the HTTP forwarding path.
-
-![Eco² ingress path. A client sends HTTPS to ALB outside Kubernetes; traffic reaches the gateway and API through an instance target's NodePort. ext-authz authorization and Istiod configuration use separate paths.](assets/eco2-ingress.svg)
-
-- **AWS boundary:** ALB terminates TLS with ACM and sends HTTP to an EC2 NodePort using `instance` targets. A dedicated Gateway Pod does not by itself restrict ALB targets to that node.
-- **Gateway boundary:** VirtualService and EnvoyFilter configure Envoy; they are not additional proxies. The `CUSTOM` AuthorizationPolicy delegates only covered paths to ext-authz over gRPC.
-- **Network foundation:** Calico VXLAN and kube-proxy provide Pod and Service delivery. AI workers call external LLMs over a separate outbound HTTPS path.
-
-Terraform's EC2 declarations use public subnets, and global `default-deny-all` is disabled. The figure therefore does not claim private-only placement, ALB-only access, or network-wide default-deny isolation. The Scan and Chat views below detail task queues and SSE event delivery.
-
-[ALB bridge configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/gateway.yaml) · [Istio and NodePort configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/05-istio.yaml) · [VPC definition](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/terraform/modules/vpc/main.tf) · [Gateway authorization policy](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/gateway/base/authorization-policy.yaml) · [NetworkPolicy configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/network-policies/base/kustomization.yaml)
-
-</details>
-
-<details>
-<summary>Meta-harness · How service and infrastructure changes are built</summary>
-
-The developer captured context and verification procedures in `CLAUDE.md`, Skills, and an SDK-compatibility command. Claude Code is a **development-side coding agent**, not a Chat/Scan worker serving users in the cluster. This view connects build tools and artifacts; it is not one mandatory execution sequence.
-
-![Eco² development and delivery responsibilities. Developer scope and scaffold guide Claude Code. CI checks changed services; eligible builds publish images and update Git manifests. ArgoCD reconciles the cluster with Git.](assets/eco2-build.svg)
-
-| Build component | Role |
-| --- | --- |
-| Instructions and Skills | `CLAUDE.md` and `.claude/skills/` provide domain context and architecture, code-review, Git-workflow, and Kubernetes-debugging procedures. |
-| Tools and checks | `.claude/commands/check-sdk-compat.md` guides SDK-compatibility checks; CI runs format, lint, and tests for changed services. |
-| Deployment artifacts | The cited CI runs quality checks on PRs. Qualifying push/manual runs build and push images, then update image tags in Git manifests. ArgoCD applies Git state. |
-
-During development, failure logs guide correction and rechecking. This is a development procedure, not CI autonomously fixing code. Eco²'s service-scoped CI is not the same implementation as GEODE's baseline and contract ratchets. Development/review authority, CI checks, and ArgoCD deployment remain distinct responsibilities.
-
-[Development context](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/CLAUDE.md) · [Skills and commands](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/.claude) · [Actual CI](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/.github/workflows/ci-services.yml) · [ArgoCD configuration](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps/40-apis-appset.yaml)
-
-</details>
-
-<details>
-<summary>Scan workflow · Separate execution from progress delivery</summary>
-
-The Scan API registers work and returns `202 + job_id`. A Celery chain executes through stage-specific RabbitMQ queues while a separate SSE connection delivers progress. Closing that connection does not itself cancel the worker's job.
-
-![Eco² Scan has two paths. RabbitMQ and a Celery chain execute Vision, Rule, Answer and Reward. Stage events enter Redis Streams and reach clients through Event Router, Pub/Sub and SSE, with separate ACK and reconnect recovery rules.](assets/eco2-scan.svg)
-
-| Path | Storage and delivery rule |
-| --- | --- |
-| Tasks | `scan.vision → scan.rule → scan.answer → scan.reward` queues connect stages. Reward here grants service characters; it is not a GEODE benchmark reward. |
-| Events | Workers `XADD`; the router reads through consumer groups. Failed processing leaves messages unacknowledged so a reclaimer can retry pending work. |
-| Reconnection | Pub/Sub handles live delivery. State KV and Streams support recovery/catch-up; Pub/Sub itself is not the durable log. |
-
-[Scan tasks](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/scan_worker/presentation/tasks) · [Event Router / SSE incident and fix](https://rooftopsnow.tistory.com/237) · [Load test and bottleneck analysis](https://rooftopsnow.tistory.com/255)
-
-</details>
-
-<details>
-<summary>Chat workflow · Select the needed tools, then join their results</summary>
-
-The Chat API publishes to RabbitMQ; a TaskIQ worker executes LangGraph. The router selects nodes using intent and request context. The three branches below group node roles; they do not all run on every request.
-
-![Eco² Chat selects and joins work. Intent routing dispatches required domain, API/tool or image branches. Aggregation and context preparation precede answering; Eval is optional. Redis checkpoint and PostgreSQL archival have separate responsibilities.](assets/eco2-chat.svg)
-
-| Execution / state | Concrete responsibility |
-| --- | --- |
-| Selection and join | `Send` dispatches multiple intents; the aggregator collects results. RAG feedback and Eval depend on configuration, not unlimited retry. |
-| Tool execution | Production wiring primarily chooses arguments with structured/function calls and executes application commands. This is not an unconstrained loop of multiple ReAct agents. |
-| Conversation state | Checkpoints go to Redis; a syncer archives them asynchronously to PostgreSQL. Read-through from PG on a Redis miss and the consumer persisting conversation messages are separate paths. |
-| User delivery | Answer token events also traverse Event Router and SSE Gateway. HTTP connections, worker execution, and checkpoint state have separate lifetimes. |
-
-[Graph factory](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/orchestration/langgraph/factory.py) · [Checkpoint implementation](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/orchestration/langgraph/sync) · [Redis / PostgreSQL design record](https://rooftopsnow.tistory.com/242)
-
-</details>
-
-<details>
-<summary>Observability · Which record explains a bottleneck or failure?</summary>
-
-Queue buildup, Pod health, request paths, and LLM-node execution require different evidence. Operational metrics, logs, distributed traces, and LLM traces are collected through separate paths rather than collapsed into one score.
-
-![Eco² observability maps API, worker and Envoy metrics, logs and request spans separately from Chat LangGraph LLM traces. Collection and query paths support investigations of queue pressure, failures, request latency and LLM-node execution.](assets/eco2-observability.svg)
-
-| Investigation | Records and use |
-| --- | --- |
-| Slow or queued work | Prometheus/Grafana queue depth, pending messages, connections, and Pod metrics help distinguish worker shortage from delivery bottlenecks. |
-| Failed requests | Search structured logs, then use Jaeger spans to narrow the service/MQ/worker path. Kiali shows mesh relationships. |
-| Slow LLM responses | LangSmith node execution, token usage, and error records help investigate tool waits and model calls. Availability depends on tracing configuration. |
-
-Declared Istio trace sampling is 50%. This is a map of **collection paths and investigation methods**, not a claim that every request has a retained trace. Logs and traces are observational evidence, not verifier verdicts about answer quality.
-
-[Logging manifests](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/logging) · [Trace sampling](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/workloads/routing/global/telemetry.yaml) · [LangSmith wiring](https://github.com/eco2-team/backend/blob/a0721271ac569679f1e4f19dd0745ab634a0c115/apps/chat_worker/infrastructure/telemetry/langsmith.py) · [Monitoring / tracing deployment](https://github.com/eco2-team/backend/tree/a0721271ac569679f1e4f19dd0745ab634a0c115/clusters/dev/apps)
-
-</details>
-
-<details>
-<summary>Improvement loop · How observed failures changed the next architecture</summary>
-
-Eco² evolved less like a sequence of “new technologies added” and more like a loop of **reproducing the same pressure, narrowing a bottleneck hypothesis, deploying the smallest change, and measuring the same signal again**. This was not a production runtime rewriting its own source; it was an external engineering loop shared by a human and a coding agent.
-
-![Eco² improvement by responsibility. Reproduce a failure under the same workload; a human and coding agent form a hypothesis, small diff and regression check. After CI and Git/ArgoCD delivery, repeat the measurement. The human decides keep, revise or revert.](assets/eco2-improvement.svg)
-
-| Observed pressure | Hypothesis | Change | What the next measurement revealed |
-| --- | --- | --- | --- |
-| Around 50 VU, SSE connections, RabbitMQ connections, and scan-api memory rose together until readiness returned 503s | task lifetime and progress-delivery lifetime were coupled | keep RabbitMQ for tasks, move progress to Redis Streams → Event Router → SSE Gateway | after connection amplification was reduced, queue wait, worker state, and external APIs became the next bottleneck candidates |
-| ACK after publish failure, reconnect gaps, duplicates, and a hot Pub/Sub channel | event delivery needed an explicit recovery contract, not only a fast live path | add ACK-on-success, reclaim, dedupe, Last-Event-ID catch-up, master-only Pub/Sub, and four-way sharding | recoverability after failure became a separate verification target |
-| repeated VU sweeps showed probe restarts and in-flight loss mattered more than raw CPU or memory in some failures | a guardrail can create a new failure when it mismatches the workload | tune KEDA min/max and workload signals; isolate probe behavior as its own cause | **the guardrail itself became an object of verification** |
-| one judge score could not explain Chat-answer quality failures | generation quality and evaluator reliability should not collapse into one score | split deterministic Code Grader, BARS LLM Judge, and Calibration Monitor | the measurement apparatus itself required drift and wiring validation, a lesson later carried into GEODE's evaluator separation |
-
-The important result is not a single success number but **a failure becoming a contract**. ACK rules, recovery behavior, KEDA fallback, CI checks, and Git desired state are deterministic boundaries rather than model judgements. Observability had no promotion authority; it was the feedback surface for the next hypothesis. A human retained the final keep/revise/revert decision.
-
-In compact form:
-
-`failure signal → reproducible workload → hypothesis → scoped code/manifest diff → CI → Git/ArgoCD → same workload → human verdict → next contract`
-
-GEODE later turns this loose external loop into explicit trajectories, revision-bound evaluation, ratchets, and promotion contracts. Eco² used production failures as input to the next change; GEODE makes the loop itself a reproducible research object.
-
-</details>
-
-The public project report gives a **Scan success rate of 97.8% at 1,000 VU**. A separate ext-authz load record gives **1,477 RPS at 2,500 VU**. These are different workloads, not real-user counts or one combined performance score. A mismatch between completion counts and the reported success-rate denominator is documented in the [source notes](docs/PROFILE_NOTES.md#eco2).
-
-[Portfolio](https://mangowhoiscloud.github.io/eco2/) · [Project repository](https://github.com/eco2-team/backend)
-
-### Experimental Loop · A higher score is not enough to adopt a change
-
-The search space is **scaffolding around the model**, including instructions, tool policy, Skills, and task decomposition, not model weights. Baseline and candidate share tasks, evaluator, and budget. A Ledger retains every attempt and verdict.
-
-<details>
-<summary>When the Baseline changes: KEEP / REJECT / INVALID</summary>
-
-![Experimental Loop Baseline admission. Frozen Evaluation must be valid, exceed uncertainty and avoid a critical veto. The Ledger retains every attempt and KEEP, REJECT or INVALID verdict; only KEEP changes the next Baseline.](assets/experimental-admission.svg)
-
-The Ratchet applies these conditions. A score increase alone, a tie, or an incomplete run does not change the baseline. `KEEP` is an experiment verdict, not deployment approval or evidence of sustained self-improvement.
-
-</details>
-
-[Two loops](https://mangowhoiscloud.github.io/geode/docs/concepts/two-loops/) · [Experiment design · frozen experiment kernel](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible-kernel.md) · [RSI experiment records](https://mangowhoiscloud.github.io/geode/self-improving/)
-
-### REODE @ pinxlab · Code migration
-
-A GEODE-derived code-migration harness combining OpenRewrite with LLM-based contextual repair. A **5,523-file** Java 1.8→22 and Spring 4→6 delivery passed **83/83 tests** plus frontend/backend end-to-end verification.
-
-The March 2026 delivery record covers 33 autonomous sessions, 1,133 rounds, and 5h 48m. Zero human intervention applies to that recorded run, not project preparation or final review. [Delivery scope](docs/PROFILE_NOTES.md#reode)
-
-<a id="evolution"></a>
-## Evolution
-
-Each project changed what needed to be verified.
-
-| Work | Problem | Design carried forward |
-| --- | --- | --- |
-| Eco² | AI work, connections, and deployments have different lifetimes. | Asynchronous execution, event recovery, and separate operational owners |
-| GEODE | Service-specific implementations need a reusable runtime. | Separate agent execution from the system that builds the harness |
-| SIL | Scaffold changes need safety measurements. | External audits, critical-dimension floors, and failure records |
-| Crucible | Passing rows from different revisions do not validate the final candidate. | Freeze candidate, evaluator, and task pack before comparison and promotion |
-
-<details>
-<summary>SIL → Crucible: a failure that changed the experiment design</summary>
-
-SIL used Petri-style multidimensional safety audits to evaluate scaffold candidates, connecting generation, audit, adoption, and revert with transcript and cost records.
-
-The July 2026 Crucible campaign exposed a problem: passing rows from different candidate revisions had been combined into an apparent target-set closure. That did not prove the final candidate passed all earlier rows. G4 rows inspected and used for repair could no longer count as held-out evidence.
-
-The current contract freezes candidate commit, evaluator/harness identity, content-bound task pack, paired comparison rule, budget, and vetoes before execution. Failed training rows may inform the next candidate; an opened sealed row cannot be reused for the same promotion claim.
-
-[Crucible frozen experiment kernel](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible-kernel.md) · [Historical Self-Improving Roadmap](https://github.com/mangowhoiscloud/geode/blob/main/docs/plans/2026-05-22-self-improving-roadmap.md)
-
-</details>
-
-**RSI (Recursive Self-Improvement) is a research direction, not a claimed achievement.** Current work builds an external system to execute, measure, and judge scaffold changes. The next evidence needed is whether adopted changes remain effective on other task families and fresh sealed evidence.
-
-<a id="how-i-work"></a>
-## How I work
-
-- **Make hypotheses falsifiable.** Specify the task family, candidate change, metric, and veto before execution.
-- **Build the smallest reproduction.** Find the failing input and call path, then define what may change and what must remain fixed.
-- **Leave the investigation in the implementation.** Confirmed causes become regression tests; repeatable investigations become Skills. Investigate a failed check before lowering its threshold.
-
-Task decomposition, context, tool choice, verification order, and evaluator composition can also become candidate variables. Individual runs have bounded budgets; the methodology is not treated as a fixed answer.
-
-<a id="evidence"></a>
-## Verification, reproduction, and records
-
-A Trajectory is research data. I connect **who produces a record, who reads it, and which decision it supports**.
-
-| Producer | Record | Reader and decision |
-| --- | --- | --- |
-| Runtime | Requests, tool calls/results, observations, retries, termination reason | An engineer identifies the failure and reproduction conditions. |
-| Evaluator | Run spec, revision, task ID, verifier result | Comparison analysis establishes valid samples and scores. |
-| Promotion gate | Ledger, lineage, KEEP / REJECT / INVALID | The experiment system selects the next Baseline or retains the current one. |
-| Operator | CI, installation, deployment checks, and approval | A human authorizes code merge and deployment. |
-
-Original records remain separate from derived summaries, with provenance and privacy checked before publication. Local tests, external evaluations, CI, and deployment checks do not substitute for one another.
-
-The [Harbor paired-rollout case](#harbor-rollout) shows the concrete files and measurement repairs.
-
-<a id="concepts"></a>
-<details>
-<summary>Terms: agent · harness · meta-harness · RSI</summary>
-
-- **Agent:** uses tools to make progress on a task.
-- **Harness:** manages tools, memory, permissions, failure handling, and verification.
-- **Meta-harness:** builds, verifies, and revises the harness's code and scaffold.
-- **RSI:** a research direction in which earlier evidence informs later changes and experiments. Adoption and repeated improvement require separate evidence.
-
-</details>
-
-<a id="experience"></a>
-## Experience
-
-| Period | Experience |
-| --- | --- |
-| 2026.02–present | **GEODE** · Solo development · SIL 2026.05–06 · Crucible 2026.07 · Harbor × Terminal-Bench 2.1, 890-cell rollout plan with Codex control, 2026.08–09 |
-| 2026.03–05 | **pinxlab** · Freelance, sole developer · REODE, Kiki, Cotton |
-| 2025.10–2026.02 | **Eco²** · Backend/infrastructure in a five-person FE/design/AI/backend-infra team (one month), then solo development and operation (three months) · 2025 AI SeSACTHON Excellence Award |
-| 2024.12–2025.08 | **Rakuten Symphony Korea** · Jr. Cloud Engineer, Storage Developer · Full-time · PB-scale distributed storage |
-| 2024.07–11 | **Kakao Tech Bootcamp** · Backend, DevOps, LLM |
-| 2017.03–2023.08 | **Pusan National University** · B.S., Computer Science & Engineering |
-
-Rakuten work included **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakuten Storage v1.0.0**.
-
-<details>
-<summary>Other work</summary>
-
-- **Kiki @ pinxlab · 2026.04–05:** Slack-directed multi-agent analysis, implementation, and review with a two-stage gate.
-- **Cotton @ pinxlab · 2026.05:** RPG translation SaaS modeling dialogue as a graph.
-- **[Crumb & Crumb Studio](https://github.com/mangowhoiscloud/crumb) · 2026.05:** replayable CLI-agent game-studio experiment.
-- **[DREAM](https://github.com/KakaoTech-Hackathon-Dream) · 2024.09:** generative AI narrative and image service.
-- **[Aimo](https://github.com/KTB16Team) · 2024:** LLM-based conflict-mediation backend.
-
-</details>
-
-<a id="more"></a>
-## Notes
-
-I document implementation and experiments on my [blog](https://rooftopsnow.tistory.com) and [YouTube](https://www.youtube.com/@mango_fr). Previous GitHub account: [@mng990](https://github.com/mng990)
-
-<sub>Content reviewed: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">Sources, scope, and maintenance notes</a></sub>
-
-[![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
+<p align="right">
+  <a href="README.md">🇰🇷 Korean</a> · <strong>🇺🇸 English</strong>
+</p>
+
+<h1 align="center">Jihwan Ryu</h1>
+
+<p align="center">
+  <strong>I build action, verification, and improvement as loops.</strong><br/>
+  LLMs diverge without control. My harness closes the loop until they converge.
+</p>
+
+<p align="center">
+  <a href="https://github.com/mangowhoiscloud?tab=followers"><img src="https://img.shields.io/github/followers/mangowhoiscloud?label=Follow&style=social" alt="Follow"></a>&nbsp;
+  <a href="https://www.youtube.com/@mango_fr"><img src="https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://rooftopsnow.tistory.com"><img src="https://img.shields.io/badge/Blog-FF5722?style=flat-square&logo=tistory&logoColor=white" alt="Blog"></a>
+  <a href="https://linkedin.com/in/jihwan-ryu-b6b04a202"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+  <a href="https://mangowhoiscloud.github.io/geode/self-improving/"><img src="https://img.shields.io/badge/Self--Improving_Hub-6B4FBB?style=flat-square&logo=githubpages&logoColor=white" alt="Self-Improving Hub"></a>
+</p>
+
+<p align="center">
+  Previous GitHub account: <a href="https://github.com/mng990"><strong>@mng990</strong></a>
+</p>
+
+---
+
+### Loops All the Way Down
+
+From a single agent turn to shipping to self-improvement, every layer runs as the same loop.
+The outer loop measures what the inner one produced, and that measurement becomes the next loop's input.
+
+```
+┌─ ⑤ Feedback Loop          market · users · hiring challenges → input to the next build
+│  ┌─ ④ Self-Improving Loop  quantify behavior → propose mutation → measurement gate → adopt/reject
+│  │  ┌─ ③ Production Loop   plan → build → CI ratchet → ship → share
+│  │  │  ┌─ ② Verify Loop    generate → verify → reflect → replan
+│  │  │  │  ┌─ ① Agentic Loop   while(tool_use): reason → act → observe
+```
+
+### How I Work
+
+- **I treat the agent as a search process over compute and wrap the system around it**: hands that call tools, a queue that schedules calls, memory that layers context, a permission gate in front of dangerous calls
+- **Verification in deterministic code outside the agent**: no trust in self-reports, generation and evaluation split across providers (cross-provider judge), noise bands and control arms before any improvement curve
+- **Each evaluation layer before the autonomy it allows**: one tool call, one new evaluation layer; code migration drew the deterministic 70% first, LLMs only in the ambiguous 30%
+
+### Harness Engineering
+
+| Axis | Role | Practice |
+|---|---|---|
+| **Orchestration** | Decide the next action from LLM output | AgenticLoop `while(tool_use)`, SubGoal DAG, parallel sub-agent delegation, lane queues |
+| **Context & Memory** | Layer, compress, recover long-session context | 5-Tier Memory, 2-Phase compaction, 200K absolute guard: zero overflow across long sessions, ~80% multi-turn input token cut via prompt-cache alignment |
+| **Gateway** | One control point over multiple providers | Single interface over Anthropic·OpenAI·Zhipu, 4-stage failover, circuit breakers, cross-provider dispatch, per-token cost tracking |
+| **Verify** | Converge nondeterministic output to trustable levels | Deterministic gates + LLM judges + drift detection in orthogonal layers, cross-LLM agreement (Krippendorff's α) |
+| **Observe & Improve** | Measure everything; adopt improvement only by measurement | Hook event bus, per-run transcripts, Petri behavioral audits + measurement gate (Self-Improving Loop) |
+
+#### Harness Landscape · 4-Quadrant Positioning
+
+```
+                          Autonomous
+                              ▲
+                              │
+           Q2                 │                Q1
+      Minimal+Autonomous      │       Comprehensive+Autonomous
+                              │
+      · SWE-agent             │         ★ GEODE (+ Self-Improving)
+      · Codex CLI       · Claude Code   · REODE (delivered)
+      · AutoGen          (← my build tool) · Devin · Manus
+                              │         · OpenHands
+                              │
+  ◄───────────────────────────┼───────────────────────────────►
+      Minimal                 │              Comprehensive
+                              │
+           Q3                 │                Q4
+      Minimal+Assisted        │        Comprehensive+Assisted
+                              │
+      · Aider                 │         · Cursor · Copilot
+      · Gemini CLI            │         · Eco² (Chat Harness)
+      · CrewAI                │         · Kiki (Slack Governance)
+                              │
+                              ▼
+                           Assisted
+```
+
+---
+
+### Projects
+
+**GEODE** · agentic-loop-based autonomous agent harness · [repo](https://github.com/mangowhoiscloud/geode) · [docs](https://mangowhoiscloud.github.io/geode/docs) · [portfolio](https://mangowhoiscloud.github.io/portfolio/geode)
+A long-running system specialized in exploration, research, and signal collection. Multi-provider gateway,
+5-tier memory, 4-layer tool dispatch, and HITL permission gates, built solo from the SDK runtime up.
+Runs my daily work autonomously.
+
+**GEODE Self-Improving Loop** · a closed loop of measured self-improvement · [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [raw audit logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [video](https://www.youtube.com/watch?v=TuEOGQrO9Us)
+Adversarial scenario generation (co-scientist topology) → Petri multi-dimensional behavioral audit → only mutations
+clearing the no-mutation control arms' noise band get adopted. The first real measurements surfaced silent defects
+(mutations that never fired, a lucky frozen baseline), published and corrected openly. All 408 Petri audit logs ship as raw files.
+
+**Crucible** · τ²-bench capability-axis gate loop · [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts)
+Moves the promotion discipline from the Petri/safety loop (champion chain, paired verdict, frozen judge) into capability
+evaluation; cheap surrogate gates compress candidates so expensive tau2 runs serve only as the final court.
+35 mutation attempts, zero core promotions, every rejection reason machine-recorded: the first cycle's product is a
+false-promotion guardrail.
+
+**REODE** · autonomous code-migration agent @ pinxlab (freelance, delivered)
+GEODE's harness redesigned into a coding-agent product, delivering a live service's Java 8→22 and
+Spring Boot 2→3 migration. Deterministic OpenRewrite (70%) split from LLM territory (30%); agent deception
+(weakening tests to pass builds) blocked by a 5-gate scorecard; a 40-repeat stuck-fix incident resolved by
+mandating explore-before-fix.
+
+| Real-World Result (delivered 2026.03) | |
+|------|------|
+| Target | 5,523 files (241 Java + 355 JSP + 47 XML), Java 1.8→22 · Spring 4→6 |
+| Outcome | 83/83 tests + FE/BE E2E verification passed |
+| Run | 33 autonomous sessions · 1,133 agentic rounds · 5h 48m (zero human intervention) |
+
+**Eco²** · AI multi-agent recycling service · [portfolio](https://mangowhoiscloud.github.io/portfolio/eco2) · 2025 AI SeSACTHON Excellence Award (4th/181)
+Started on 14 EC2 nodes, provisioned as code with Terraform·Ansible, run declaratively via ArgoCD on a 24-node K8s cluster, all solo.
+A strict temperature-0.1 chatbot grown into a production-level multi-agent system through tool calling,
+parallel LangGraph dispatch, SSE streaming, and Agent SDK. Concurrency 0→1,000 VU at 97.8%,
+evaluation quality 69.4→99.8/100 (Swiss Cheese 3-layer), auth handler 48→1,500 RPS.
+
+**Kiki** · Slack-native multi-agent governance @ pinxlab
+A CTO·PO·Lead·Dev·QA self-team autonomously analyzes, implements, and reviews a live legacy codebase;
+the manager directs and approves through Slack alone. A 2-stage gate blocks "conservative PASS" at the system level.
+
+**Cotton** · single-tenant SaaS for RPG game-script translation @ pinxlab
+Existing tools (Crowdin·Lokalise) treat game dialogue as key-value strings. Cotton models the branching dialogue graph
+as a first-class data model: branches, conditions, character voice, subtitle-length budgets. LLM CLI adapters
+(Codex·Claude Code) and a cross-provider judge converge translation quality.
+
+**Crumb & Crumb Studio** · multi-host agent game studio · [repo](https://github.com/mangowhoiscloud/crumb)
+A 3-day spike abstracting Claude Code, Codex, and Gemini CLI behind one interface. Replay-deterministic state via a
+transcript.jsonl single source of truth + pure reducers; same-provider evaluation inflation blocked by cross-provider placement.
+
+---
+
+### Timeline
+
+```
+mangowhoiscloud/
+├── 2017.03-2023.08/  Pusan National University · B.S. Computer Science & Engineering
+├── 2024.07-2024.11/  Kakao Tech Bootcamp · Backend · DevOps · LLM
+├── 2024.09/          DREAM · KakaoTech hackathon · generative-AI dream narratives and images · Backend/AI
+├── 2024.12-2025.08/  Rakuten Symphony Korea · Cloud Engineer (petabyte-scale distributed storage, global team)
+├── 2025.10-2026.02/  Eco² · BE/Infra in a team of 5 → solo E2E (24-node K8s, 2025 AI SeSACTHON Excellence Award)
+├── 2026.02-present/  GEODE · autonomous agent harness (solo)
+├── 2026.03-2026.05/  REODE · Kiki · Cotton @ pinxlab · freelance delivery
+├── 2026.05-2026.06/  GEODE Self-Improving Loop · measurement-gated self-improvement
+└── 2026.07-present/  Crucible · tau2-bench capability-axis gate loop
+```
+
+---
+
+### Project Links
+
+| Date | Project | Role | Link |
+|------|---------|------|------|
+| 2026.07-present | **Crucible**: τ²-bench capability-axis gate loop | Solo | [crucible.md](https://github.com/mangowhoiscloud/geode/blob/main/plugins/crucible/program.md) · [run logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.05-2026.06 | **Self-Improving Loop**: Petri audit × measurement gate | Solo | [hub](https://mangowhoiscloud.github.io/geode/self-improving/) · [audit logs](https://github.com/mangowhoiscloud/geode-eval-artifacts) |
+| 2026.05 | **Crumb**: multi-host agent studio | Solo | [mangowhoiscloud/crumb](https://github.com/mangowhoiscloud/crumb) |
+| 2026.05 | **Cotton**: RPG game-script translation SaaS · branching-dialogue-graph data model | Freelance | pinxlab |
+| 2026.04-2026.05 | **Kiki**: Slack-native agent-org orchestration | Freelance | pinxlab |
+| 2026.03-2026.04 | **REODE**: migration & coding agent, forked from GEODE | Freelance | pinxlab |
+| 2026.02-present | **GEODE**: autonomous agent harness | Solo | [mangowhoiscloud/geode](https://github.com/mangowhoiscloud/geode) · [docs](https://mangowhoiscloud.github.io/geode/docs) |
+| 2025.10-2026.02 | **Eco²**: AI multi-agent, 24-node K8s, 2025 AI SeSACTHON Excellence Award | BE/Infra → E2E | [SeSACTHON/backend](https://github.com/SeSACTHON/backend) |
+| 2024.12-2025.08 | **Rakuten Robin Storage · Object Storage**: distributed storage | Cloud Engineer | Rakuten Symphony |
+| 2024.09 | **DREAM**: hackathon service turning seniors' unrealized dreams into generative-AI narratives and images (LLM, RAG, Diffusion) | Backend/AI | [KakaoTech-Hackathon-Dream](https://github.com/KakaoTech-Hackathon-Dream) |
+| 2024 | **Aimo**: LLM conflict-mediation app | Backend | [KTB16Team](https://github.com/KTB16Team) |
