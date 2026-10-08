@@ -2,7 +2,7 @@
 
 # Jihwan Ryu
 
-**I build agent runtimes and verify the effects of changing them.**
+**Build agent runtimes and verify the effects of changing them.**
 
 My background spans distributed storage, backend engineering, and cloud infrastructure. I now develop autonomous agent runtimes and evaluation systems: tracing failed tool calls, then testing whether a code or scaffold change improves the result under the same conditions.
 
