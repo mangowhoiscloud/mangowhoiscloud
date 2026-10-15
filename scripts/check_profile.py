@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline checks for profile structure and retained public facts."""
+"""Offline checks for profile structure, retained facts, and the editorial rules in docs/PROFILE_NOTES.md."""
 from __future__ import annotations
 from html import unescape
 from html.parser import HTMLParser
@@ -10,13 +10,31 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ("README.md", "README_EN.md", "docs/PROFILE_NOTES.md")
-ANCHORS = {"how-i-work", "selected-work", "concepts", "experience", "more"}
+# The portfolio's Kiki page links to https://github.com/mangowhoiscloud#이력, so the Korean heading is a public anchor.
+HEADINGS = {
+    "README.md": ("## 작업", "## 이력", "## 보고서"),
+    "README_EN.md": ("## Work", "## Experience", "## Reports"),
+}
 RETAINED = (
-    "GEODE", "REODE", "Eco²", "Kiki", "Cotton", "Crumb",
-    "DREAM", "Aimo", "pinxlab", "Rakuten Symphony Korea", "mng990", "4th/181",
-    "83/83", "5,523", "1,477", "2,500", "97.8%",
-    "2017.03–2023.08", "2024.12–2025.08",
+    "GEODE", "Eco²", "Railshot", "REODE", "Kiki", "Cotton", "CRUMB",
+    "@LILT", "@pinxlab", "@Rakuten Symphony Korea",
+    "2026.10.16", "2026.03.16 – 2026.05.26", "2024.12.09 – 2025.08.31",
+    "https://mangowhois.ai", "jihwan.ryu@mangowhois.ai", "https://www.linkedin.com/in/mangowhois/",
+    "arXiv 2608.28641",
 )
+PINXLAB_WORK = ("REODE", "Kiki", "Cotton")
+# Owner rules for the READMEs: no disclosure triangles, arrow chains, em dashes, emoji, pay or retired wording.
+FORBIDDEN = (
+    (re.compile(r"<details|<summary", re.I), "disclosure element (<details>/<summary>)"),
+    (re.compile(r"[→←↔⇒➜➔]"), "arrow character"),
+    (re.compile(r"—"), "em dash (use an en dash for ranges)"),
+    (re.compile(r"[\U0001F000-\U0001FAFF☀-➿️]"), "emoji"),
+    (re.compile(r"\$\s?\d|₩|/hr\b|/yr\b"), "pay or salary"),
+    (re.compile(r"업무 프로젝트"), "retired wording '업무 프로젝트'"),
+    (re.compile(r"Compiler AX|compiler-ax-lab|FuriosaAI"), "removed Compiler AX reference"),
+)
+# Localized portfolio pages are the same destination in both languages.
+LOCALIZED = re.compile(r"^https://mangowhois\.ai/en/")
 
 class Markup(HTMLParser):
     def __init__(self) -> None:
@@ -66,6 +84,23 @@ def inspect(text: str) -> Markup:
         parser.errors.append("reference-style links are unsupported; use inline links")
     return parser
 
+def editorial_errors(name: str, text: str) -> list[str]:
+    errors = []
+    for heading in HEADINGS[name]:
+        if not re.search(rf"(?m)^{re.escape(heading)}\s*$", text):
+            errors.append(f"missing section heading: {heading}")
+    for fact in RETAINED:
+        if fact not in text:
+            errors.append(f"missing retained fact/project: {fact}")
+    for project in PINXLAB_WORK:
+        rows = [line for line in text.splitlines() if line.startswith(f"| **{project}**")]
+        if not rows or not all("@pinxlab" in row for row in rows):
+            errors.append(f"work row must name its company: {project} @pinxlab")
+    for pattern, label in FORBIDDEN:
+        if pattern.search(text):
+            errors.append(f"forbidden {label}")
+    return errors
+
 def validate_page(path: Path, root: Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     parsed = inspect(text)
@@ -78,12 +113,8 @@ def validate_page(path: Path, root: Path) -> list[str]:
         errors.append("unbalanced code fences")
     if re.search(r"(?m)^(<<<<<<< |=======\s*$|>>>>>>> )", text):
         errors.append("unresolved merge conflict")
-    if path.name in {"README.md", "README_EN.md"}:
-        for fact in RETAINED:
-            if fact not in text:
-                errors.append(f"missing retained fact/project: {fact}")
-        for anchor in sorted(ANCHORS - parsed.ids):
-            errors.append(f"missing navigation anchor: {anchor}")
+    if path.name in HEADINGS:
+        errors.extend(editorial_errors(path.name, text))
         alternate = "README_EN.md" if path.name == "README.md" else "README.md"
         if alternate not in parsed.links:
             errors.append("missing language switch")
@@ -109,7 +140,8 @@ def validate_page(path: Path, root: Path) -> list[str]:
     return errors
 
 def external_destinations(text: str) -> set[str]:
-    return {link for link in inspect(text).links if urlsplit(link).scheme == "https"}
+    return {LOCALIZED.sub("https://mangowhois.ai/", link)
+            for link in inspect(text).links if urlsplit(link).scheme in {"https", "mailto"}}
 
 def validate_repository(root: Path) -> list[str]:
     errors: list[str] = []
@@ -132,7 +164,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print("Profile checks passed: structure, retained facts, local links, anchors, and bilingual destinations.")
+    print("Profile checks passed: structure, retained facts, editorial rules, local links, and bilingual destinations.")
     return 0
 
 if __name__ == "__main__":
