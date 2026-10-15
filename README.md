@@ -1,14 +1,36 @@
 <p align="right"><strong>한국어</strong> · <a href="README_EN.md">English</a></p>
 
-# 류지환
+# 류지환 · Jihwan Ryu
 
-**에이전트의 실행을 만들고, 변경의 효과를 검증합니다.**
+**AI Agent Engineering · Backend & Infrastructure**
 
-분산 스토리지와 백엔드, 클라우드 인프라를 거쳐 자율 에이전트 런타임과 평가 시스템을 개발합니다. 도구 호출이 실패했을 때 원인을 추적할 수 있는지, 코드나 scaffold를 바꾼 뒤 같은 조건에서 결과가 나아지는지를 다룹니다.
+에이전트의 실행을 만들고, 변경의 효과를 검증합니다. 분산 스토리지와 백엔드, 클라우드 인프라 경험을 바탕으로 실행 경계, 실패 복구, 재현 가능한 평가를 설계합니다.
 
-[GEODE](https://mangowhoiscloud.github.io/geode/) · [블로그](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
+### [Portfolio → mangowhois.ai](https://mangowhois.ai)
+
+프로젝트의 설계, 구현, 검증 기록을 한곳에서 볼 수 있습니다.
+
+[LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · [YouTube](https://www.youtube.com/@mango_fr) · [Threads](https://www.threads.com/@mangowhois) · [블로그](https://rooftopsnow.tistory.com)
+
+## 주요 프로젝트
+
+| 프로젝트 | 다룬 문제 | 살펴보기 |
+| --- | --- | --- |
+| **GEODE** | 도구·메모리·권한·검증을 관리하는 자율 에이전트 런타임과 평가 시스템 | [사례](https://mangowhois.ai/geode/) · [코드](https://github.com/mangowhoiscloud/geode) |
+| **Eco²** | 긴 AI 작업과 SSE 연결의 수명을 분리한 백엔드·Kubernetes 인프라 | [사례](https://mangowhois.ai/eco2/) · [코드](https://github.com/eco2-team/backend) |
+| **REODE** | OpenRewrite와 LLM 기반 문맥 수정을 결합한 Java·Spring 마이그레이션 | [사례](https://mangowhois.ai/reode/) |
+| **Kiki · Cotton** | 업무 승인·실행 복구와 번역 검토 흐름 | [Kiki](https://mangowhois.ai/kiki/) · [Cotton](https://mangowhois.ai/cotton/) |
+
+## 연구와 검증
+
+Scaffold 변경을 같은 task·evaluator·budget에서 비교하고, 실행 기록과 검증 결과를 분리해 조사합니다. **RSI는 연구 방향**이며, 실험 결과는 측정 조건과 한계를 함께 공개합니다.
+
+[평가 artifact](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [Terminal-Bench 실행 계약](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/terminal-bench-2.md) · [Scaffold 실험 설계](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible-kernel.md)
 
 [![GEODE release](https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&label=GEODE)](https://github.com/mangowhoiscloud/geode/releases/latest)
+
+<details>
+<summary><strong>설계·실험·이력 상세 보기</strong> · 기존 도식과 검증 기록</summary>
 
 [대표 작업](#selected-work) · [발전 과정](#evolution) · [작업 방식](#how-i-work) · [검증과 기록](#evidence) · [이력](#experience)
 
@@ -365,3 +387,5 @@ Rakuten에서는 **Rakuten Cloud Native Platform, Storage Server v5.5.0 · Rakut
 <sub>내용 검토: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">수치의 출처와 범위</a></sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
+
+</details>

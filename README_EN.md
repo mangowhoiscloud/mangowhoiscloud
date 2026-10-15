@@ -2,13 +2,35 @@
 
 # Jihwan Ryu
 
-**Build agent runtimes and verify the effects of changing them.**
+**AI Agent Engineering · Backend & Infrastructure**
 
-My background spans distributed storage, backend engineering, and cloud infrastructure. I now develop autonomous agent runtimes and evaluation systems: tracing failed tool calls, then testing whether a code or scaffold change improves the result under the same conditions.
+Build agent runtimes and verify the effects of changing them. My background in distributed storage, backend engineering, and cloud infrastructure informs my work on execution boundaries, failure recovery, and reproducible evaluation.
 
-[GEODE](https://mangowhoiscloud.github.io/geode/) · [Blog](https://rooftopsnow.tistory.com) · [YouTube](https://www.youtube.com/@mango_fr) · [LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202)
+### [Portfolio → mangowhois.ai](https://mangowhois.ai)
+
+Explore project designs, implementations, and verification records in one place.
+
+[LinkedIn](https://linkedin.com/in/jihwan-ryu-b6b04a202) · [YouTube](https://www.youtube.com/@mango_fr) · [Threads](https://www.threads.com/@mangowhois) · [Blog](https://rooftopsnow.tistory.com)
+
+## Featured projects
+
+| Project | Engineering focus | Explore |
+| --- | --- | --- |
+| **GEODE** | An autonomous agent runtime and evaluation system for tools, memory, permissions, and verification | [Case study](https://mangowhois.ai/geode/) · [Code](https://github.com/mangowhoiscloud/geode) |
+| **Eco²** | Backend and Kubernetes infrastructure that separates long AI jobs from SSE connection lifetimes | [Case study](https://mangowhois.ai/eco2/) · [Code](https://github.com/eco2-team/backend) |
+| **REODE** | Java and Spring migration combining OpenRewrite with LLM-based contextual edits | [Case study](https://mangowhois.ai/reode/) |
+| **Kiki · Cotton** | Approval and execution recovery for work, and review workflows for translation | [Kiki](https://mangowhois.ai/kiki/) · [Cotton](https://mangowhois.ai/cotton/) |
+
+## Research and evaluation
+
+I compare scaffold changes under the same tasks, evaluator, and budget, and investigate execution traces separately from verifier results. **RSI is a research direction**; published results include their measurement conditions and limitations.
+
+[Evaluation artifacts](https://github.com/mangowhoiscloud/geode-eval-artifacts) · [Terminal-Bench run contract](https://github.com/mangowhoiscloud/geode/blob/main/docs/eval/terminal-bench-2.md) · [Scaffold experiment design](https://github.com/mangowhoiscloud/geode/blob/main/docs/architecture/crucible-kernel.md)
 
 [![GEODE release](https://img.shields.io/github/v/release/mangowhoiscloud/geode?style=flat-square&label=GEODE)](https://github.com/mangowhoiscloud/geode/releases/latest)
+
+<details>
+<summary><strong>Designs, experiments, and experience</strong> · Detailed diagrams and verification records</summary>
 
 [Selected work](#selected-work) · [Evolution](#evolution) · [How I work](#how-i-work) · [Verification and records](#evidence) · [Experience](#experience)
 
@@ -365,3 +387,5 @@ I document implementation and experiments on my [blog](https://rooftopsnow.tisto
 <sub>Content reviewed: 2026-09-18 · <a href="docs/PROFILE_NOTES.md">Sources, scope, and maintenance notes</a></sub>
 
 [![Profile checks](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml/badge.svg?branch=main)](https://github.com/mangowhoiscloud/mangowhoiscloud/actions/workflows/profile.yml)
+
+</details>
