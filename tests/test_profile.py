@@ -1,13 +1,10 @@
 """Positive and deliberate-fault tests for the profile checker, using no network."""
 from pathlib import Path
-import re
 import shutil
 import tempfile
 import unittest
 
-from scripts.check_profile import ROOT, external_destinations, inspect, validate_page, validate_repository
-from scripts.check_architecture_profile import validate_architecture
-from scripts.render_profile_diagrams import ASSETS, DIAGRAMS, validate_svg
+from scripts.check_profile import ROOT, external_destinations, inspect, validate_repository
 
 
 class ParserTests(unittest.TestCase):
@@ -15,6 +12,10 @@ class ParserTests(unittest.TestCase):
         text = "[![Status](https://example.com/badge.svg)](https://example.com/checks)"
         self.assertEqual(external_destinations(text), {
             "https://example.com/badge.svg", "https://example.com/checks"})
+
+    def test_localized_portfolio_pages_share_a_destination(self):
+        self.assertEqual(external_destinations("[Case](https://mangowhois.ai/en/geode/)"),
+                         external_destinations("[사례](https://mangowhois.ai/geode/)"))
 
     def test_html_entities_are_decoded(self):
         self.assertIn("https://example.com/?a=1&b=2",
@@ -42,26 +43,6 @@ class ParserTests(unittest.TestCase):
         self.assertFalse(inspect('```text\n[x](missing.md)\n```\n').links)
 
 
-class ArchitectureTests(unittest.TestCase):
-    def test_diagrams_are_reproducible_accessible_and_have_valid_markers(self):
-        for name, render in DIAGRAMS.items():
-            with self.subTest(diagram=name):
-                svg = render()
-                validate_svg(svg)
-                self.assertEqual(svg, (ASSETS / f"{name}.svg").read_text(encoding="utf-8"))
-                with self.assertRaises(AssertionError):
-                    validate_svg(svg.replace(f"url(#{name}-arrow)", "url(#missing-marker)"))
-
-    def test_diagram_choice_does_not_change_content_requirements(self):
-        text = (ROOT / "README_EN.md").read_text()
-        text = re.sub(r"```mermaid\nsequenceDiagram.*?```", "", text, flags=re.S)
-        self.assertEqual(validate_architecture(text), [])
-
-    def test_invalid_outcome_cannot_disappear(self):
-        text = (ROOT / "README_EN.md").read_text().replace("INVALID", "")
-        self.assertIn("missing architecture term 'INVALID'", validate_architecture(text))
-
-
 class RepositoryTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -71,7 +52,6 @@ class RepositoryTests(unittest.TestCase):
             target = self.root / filename
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / filename, target)
-        shutil.copytree(ROOT / 'assets', self.root / 'assets')
 
     def change(self, before, after, filename='README.md'):
         path = self.root / filename
@@ -79,45 +59,70 @@ class RepositoryTests(unittest.TestCase):
         self.assertIn(before, original)
         path.write_text(original.replace(before, after))
 
+    def append(self, text, filename='README.md'):
+        path = self.root / filename
+        path.write_text(path.read_text() + text)
+
     def errors(self):
         return '\n'.join(validate_repository(self.root))
 
     def test_current_repository_passes(self):
         self.assertEqual(validate_repository(self.root), [])
 
-    def test_missing_local_file_fails(self):
+    def test_missing_notes_fail(self):
         (self.root / 'docs/PROFILE_NOTES.md').unlink()
-        self.assertIn('missing local target', self.errors())
+        self.assertIn('missing page: docs/PROFILE_NOTES.md', self.errors())
 
-    def test_broken_anchor_fails(self):
-        self.change('id="how-i-work"', 'id="broken"')
-        self.assertIn('missing explicit anchor', self.errors())
+    def test_public_experience_anchor_is_kept(self):
+        self.change('## 이력', '## 경력')
+        self.assertIn('missing section heading: ## 이력', self.errors())
 
-    def test_lost_achievement_fails(self):
-        self.change('83/83', '83')
-        self.assertIn('missing retained fact/project: 83/83', self.errors())
+    def test_lost_experience_fails(self):
+        self.change('**@LILT**', '**LILT**', 'README_EN.md')
+        self.assertIn('README_EN.md: missing retained fact/project: @LILT', self.errors())
+
+    def test_company_work_names_its_company(self):
+        self.change('**Kiki**<br>@pinxlab', '**Kiki**')
+        self.assertIn('work row must name its company: Kiki @pinxlab', self.errors())
+
+    def test_disclosure_fails(self):
+        self.append('\n<details><summary>More</summary>\n\nText\n\n</details>\n')
+        self.assertIn('forbidden disclosure element', self.errors())
+
+    def test_arrow_chain_fails(self):
+        self.append('\nPlan → build → verify\n', 'README_EN.md')
+        self.assertIn('forbidden arrow character', self.errors())
+
+    def test_em_dash_fails(self):
+        self.change('2026.03.16 – 2026.05.26', '2026.03.16 — 2026.05.26')
+        self.assertIn('forbidden em dash', self.errors())
+
+    def test_pay_fails(self):
+        self.append('\nRemote · $55/hr\n', 'README_EN.md')
+        self.assertIn('forbidden pay or salary', self.errors())
 
     def test_language_destination_drift_fails(self):
         self.change('https://rooftopsnow.tistory.com', 'https://example.com', 'README_EN.md')
         self.assertIn('bilingual destination mismatch', self.errors())
+
+    def test_localized_case_drift_fails(self):
+        self.change('https://mangowhois.ai/en/kiki/', 'https://mangowhois.ai/en/cotton/', 'README_EN.md')
+        self.assertIn('bilingual destination mismatch: https://mangowhois.ai/kiki/', self.errors())
 
     def test_insecure_link_fails(self):
         self.change('https://rooftopsnow.tistory.com', 'http://rooftopsnow.tistory.com')
         self.assertIn('unsupported URL scheme', self.errors())
 
     def test_extra_heading_fails(self):
-        path = self.root / 'README.md'
-        path.write_text(path.read_text() + '\n# Another heading\n')
+        self.append('\n# Another heading\n')
         self.assertIn('level-one heading', self.errors())
 
     def test_repository_escape_fails(self):
-        path = self.root / 'docs/PROFILE_NOTES.md'
-        path.write_text(path.read_text() + '\n[Escape](../../outside.md)\n')
+        self.append('\n[Escape](../../outside.md)\n', 'docs/PROFILE_NOTES.md')
         self.assertIn('local link escapes repository', self.errors())
 
     def test_unbalanced_fence_fails(self):
-        path = self.root / 'docs/PROFILE_NOTES.md'
-        path.write_text(path.read_text() + '\n```text\n')
+        self.append('\n```text\n', 'docs/PROFILE_NOTES.md')
         self.assertIn('unbalanced code fences', self.errors())
 
 
