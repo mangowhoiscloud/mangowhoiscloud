@@ -20,7 +20,6 @@ RETAINED = (
     "@LILT", "@pinxlab", "@Rakuten Symphony Korea",
     "2026.10.16", "2026.03.16 – 2026.05.26", "2024.12.09 – 2025.08.31",
     "https://mangowhois.ai", "jihwan.ryu@mangowhois.ai", "https://www.linkedin.com/in/mangowhois/",
-    "arXiv 2608.28641",
 )
 PINXLAB_WORK = ("REODE", "Kiki", "Cotton")
 # Owner rules for the READMEs: no disclosure triangles, arrow chains, em dashes, emoji, pay or retired wording.

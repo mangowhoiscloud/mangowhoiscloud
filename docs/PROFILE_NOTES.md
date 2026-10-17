@@ -14,7 +14,8 @@ The profile is an index to [mangowhois.ai](https://mangowhois.ai), the reviewed 
 ## Editorial rules
 
 - Work done for a company is written `@company`: REODE, Kiki and Cotton are pinxlab AI R&D work and carry `@pinxlab`. Do not call them “업무 프로젝트”.
-- LILT: the Terminal-Bench-LILT paper (arXiv 2608.28641) predates the start of this contract. It is cited as the benchmark's paper; never state or imply that the owner wrote its tasks.
+- LILT: the line states the role from the public posting only, as the portfolio does. The benchmark's paper link is not used (client-identifying); never state or imply that the owner wrote that benchmark's tasks. No rate in the README.
+- Header: `assets/profile-header.png` is rendered from the portfolio's own material (a room from the live GEODE opener, the wordmark in Archivo, the station rule, the mono meta line, a hair-off-register plate). Re-render it when the portfolio's look changes.
 - Dates are numeric, `YYYY.MM.DD`, with an en dash for ranges. Pay and salary are never shown.
 - No disclosure (details) blocks, no arrow chains, no emoji, no em dashes. Tables only where columns are real; secondary facts go in a small caption line.
 - The portfolio's Kiki page links to [github.com/mangowhoiscloud#이력](https://github.com/mangowhoiscloud#이력) as a public career record, so the Korean README keeps the `## 이력` heading and names Kiki under @pinxlab.
